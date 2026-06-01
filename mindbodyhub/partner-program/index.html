@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>Партнёрская программа | MindBodyHub</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="header">
+        <div class="container header__inner">
+            <a href="/" class="logo">
+                <img src="brain.svg" alt="MindBodyHub" width="32" height="32" style="filter: drop-shadow(0 2px 4px rgba(59,130,246,0.3));">
+                <span>MindBodyHub</span>
+            </a>
+            
+            <nav class="nav nav--desktop">
+                <a href="/">Главная</a>
+                <a href="/support/">Поддержка</a>
+                <a href="/#problems">Выбрать проблемы</a>
+                <a href="/about-us/">О нас</a>
+                <a href="/partner-program/" class="active">Партнёрам</a>
+            </nav>
+            
+            <a href="/pricing-plan/" class="btn btn--accent btn--private">
+                <i class="fa-solid fa-lock"></i> Частный доступ
+            </a>
+            
+            <button class="burger" id="burgerBtn" aria-label="Меню">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+        
+        <div class="mobile-menu" id="mobileMenu">
+            <nav class="mobile-menu__nav">
+                <a href="/">Главная</a>
+                <a href="/support/">Поддержка</a>
+                <a href="/#problems">Выбрать проблемы</a>
+                <a href="/about-us/">О нас</a>
+                <a href="/partner-program/">Партнёрам</a>
+                <a href="/pricing-plan/" class="btn btn--accent btn--private mobile-menu__btn">
+                    <i class="fa-solid fa-lock"></i> Частный доступ
+                </a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <section class="partner-hero">
+            <div class="container">
+                <div class="partner-hero__content">
+                    <div class="partner-hero__badge">
+                        <i class="fa-solid fa-handshake"></i> Партнёрская программа
+                    </div>
+                    <h1 class="partner-hero__title">
+                        Зарабатывайте <span class="accent-text">до 30%</span> с каждой рекомендации
+                    </h1>
+                    <p class="partner-hero__subtitle">
+                        Приводите клиентов в MindBodyHub и получайте стабильный пассивный доход
+                    </p>
+                    <div class="partner-hero__buttons">
+                        <button class="btn btn--accent" id="becomePartnerBtn">
+                            <i class="fa-brands fa-telegram"></i> Стать партнёром
+                        </button>
+                        <button class="btn btn--outline" id="learnMoreBtn">
+                            Узнать условия
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="how-it-works" id="howItWorks">
+            <div class="container">
+                <h2 class="section-title">Как это работает</h2>
+                <div class="steps-grid">
+                    <div class="step-card">
+                        <div class="step-card__number">1</div>
+                        <div class="step-card__icon"><i class="fa-solid fa-user-plus"></i></div>
+                        <h3 class="step-card__title">Стать партнёром</h3>
+                        <p class="step-card__desc">Нажмите кнопку «Стать партнёром» и напишите нам в Telegram</p>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-card__number">2</div>
+                        <div class="step-card__icon"><i class="fa-solid fa-link"></i></div>
+                        <h3 class="step-card__title">Получите ссылку</h3>
+                        <p class="step-card__desc">Мы выдадим вам уникальную партнёрскую ссылку</p>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-card__number">3</div>
+                        <div class="step-card__icon"><i class="fa-solid fa-share-alt"></i></div>
+                        <h3 class="step-card__title">Рекомендуйте</h3>
+                        <p class="step-card__desc">Делитесь ссылкой в соцсетях, блоге, с друзьями</p>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-card__number">4</div>
+                        <div class="step-card__icon"><i class="fa-solid fa-coins"></i></div>
+                        <h3 class="step-card__title">Получайте доход</h3>
+                        <p class="step-card__desc">Выплаты до 30% с каждой покупки по вашей ссылке</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Удалён блок "Наши партнёры" с Т-Банком -->
+
+        <section class="why-partner">
+            <div class="container">
+                <div class="why-partner__grid">
+                    <div class="why-partner__content">
+                        <h2 class="why-partner__title">Почему стоит стать партнёром MindBodyHub?</h2>
+                        <ul class="why-partner__list">
+                            <li><i class="fa-solid fa-circle-check"></i> Высокие комиссии — до 30% с каждой продажи</li>
+                            <li><i class="fa-solid fa-circle-check"></i> Моментальные выплаты на карту или криптовалюту</li>
+                            <li><i class="fa-solid fa-circle-check"></i> Личный менеджер и промо-материалы</li>
+                            <li><i class="fa-solid fa-circle-check"></i> Скидка на все тарифы до 22% при статусе партнёра</li>
+                        </ul>
+                        <div class="why-partner__commission">
+                            <span class="label">Твоя комиссия:</span>
+                            <span class="value">30%</span>
+                            <span class="hint">с каждого клиента</span>
+                        </div>
+                        <div class="partner-status-info">
+                            <i class="fa-solid fa-info-circle"></i>
+                            <span>Статус партнёра присваивается после 3 оплаченных тарифов по вашей ссылке</span>
+                        </div>
+                    </div>
+                    <div class="why-partner__cta">
+                        <div class="cta-card">
+                            <i class="fa-brands fa-telegram"></i>
+                            <h3>Начни зарабатывать сейчас</h3>
+                            <p>Просто напиши нам в Telegram, и мы подключим тебя за 5 минут</p>
+                            <button class="btn btn--accent btn--full" id="ctaTelegramBtn">
+                                <i class="fa-brands fa-telegram"></i> Написать в Telegram
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="faq">
+            <div class="container">
+                <h2 class="section-title">Часто задаваемые вопросы</h2>
+                <div class="faq-grid">
+                    <div class="faq-item">
+                        <div class="faq-question"><span>Как я получу свою реферальную ссылку?</span><i class="fa-solid fa-chevron-down"></i></div>
+                        <div class="faq-answer">После обращения в Telegram мы выдадим вам уникальную партнёрскую ссылку.</div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-question"><span>Как часто выплачиваются комиссии?</span><i class="fa-solid fa-chevron-down"></i></div>
+                        <div class="faq-answer">Выплаты производятся еженедельно по запросу. Минимальная сумма выплаты — 1000 рублей.</div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-question"><span>Когда присваивается статус партнёра?</span><i class="fa-solid fa-chevron-down"></i></div>
+                        <div class="faq-answer">Статус партнёра присваивается после того, как по вашей ссылке было куплено от 3 тарифов. После этого вы получаете скидку до 22% на все тарифы.</div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-question"><span>Нужно ли быть экспертом в психологии?</span><i class="fa-solid fa-chevron-down"></i></div>
+                        <div class="faq-answer">Нет! Достаточно иметь аудиторию, которой может быть интересна психология здоровья и бизнеса. Мы предоставим все готовые материалы.</div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-question"><span>Могу ли я рекомендовать несколько продуктов?</span><i class="fa-solid fa-chevron-down"></i></div>
+                        <div class="faq-answer">Да! Вы можете рекламировать любые наши тарифы и продукты. Комиссия начисляется с каждой продажи.</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="final-cta">
+            <div class="container">
+                <div class="final-cta__content">
+                    <h2>Готов начать зарабатывать?</h2>
+                    <p>Присоединяйся к команде партнёров MindBodyHub</p>
+                    <button class="btn btn--accent btn--large" id="finalCtaBtn">
+                        <i class="fa-brands fa-telegram"></i> Стать партнёром
+                    </button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="container footer__inner">
+            <div class="footer__brand">
+                <span class="logo">
+                    <img src="brain.svg" alt="MindBodyHub" width="28" height="28">
+                    <span>MindBodyHub</span>
+                </span>
+                <p>Психология здоровья и бизнеса</p>
+            </div>
+            <div class="footer__copy">© 2026 MindBodyHub.pro — Все права защищены</div>
+        </div>
+    </footer>
+
+    <div class="toast" id="toast"><i class="fa-regular fa-circle-check"></i><span>Ссылка скопирована</span></div>
+
+    <script src="script.js"></script>
+</body>
+</html>

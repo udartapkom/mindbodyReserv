@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>MindBodyHub — психология здоровья и бизнеса</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="header">
+        <div class="container header__inner">
+            <a href="/" class="logo">
+                <img src="./brain.svg" alt="MindBodyHub" width="32" height="32" style="filter: drop-shadow(0 2px 4px rgba(59,130,246,0.3));">
+                <span>MindBodyHub</span>
+            </a>
+            
+            <nav class="nav nav--desktop">
+                <a href="/">Главная</a>
+                <a href="/support/">Поддержка</a>
+                <a href="#" class="nav__problems">Выбрать проблемы <i class="fa-solid fa-chevron-down"></i></a>
+                <a href="/about-us/">О нас</a>
+                <a href="/partner-program/">Партнёрам</a>
+            </nav>
+            
+            <a href="/pricing-plan/" class="btn btn--accent btn--private">
+                <i class="fa-solid fa-lock"></i> Частный доступ
+            </a>
+            
+            <button class="burger" id="burgerBtn" aria-label="Меню">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+        
+        <div class="mobile-menu" id="mobileMenu">
+            <nav class="mobile-menu__nav">
+                <a href="/">Главная</a>
+                <a href="/support/">Поддержка</a>
+                <a href="#">Выбрать проблемы</a>
+                <a href="/about-us/">О нас</a>
+                <a href="/partner-program/">Партнёрам</a>
+                <a href="/pricing-plan/" class="btn btn--accent btn--private mobile-menu__btn">
+                    <i class="fa-solid fa-lock"></i> Частный доступ
+                </a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <section class="hero">
+            <div class="container hero__content">
+                <h1 class="hero__title">
+                    <span id="animatedTitle">Тебе нужны психологи?</span>
+                </h1>
+                <p class="hero__subtitle">
+                    Мы <span id="rotatingWord">тебе</span> поможем
+                </p>
+                
+                <div class="hero__placeholder">
+                    <p>Здесь нет готовых решений. Есть настоящие инструменты, рабочие методики и живое пространство, где ты сам разбираешься со своими запросами. Находи проблему — работай с ней — двигайся дальше. Мы создаём условия, в которых это реально работает. Остальное — за тобой. Но поверь, здесь есть с чем работать.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="tariffs">
+            <div class="container">
+                <h2 class="section-title">Выберите свой путь</h2>
+                <div class="tariffs__grid">
+                    <div class="tariff-card">
+                        <div class="tariff-card__badge">Пробный</div>
+                        <div class="tariff-card__price">
+                            <span class="price">99₽</span>
+                            <span class="period">/ неделя</span>
+                        </div>
+                        <h3 class="tariff-card__title">Философия</h3>
+                        <ul class="tariff-card__features">
+                            <li><i class="fa-solid fa-check"></i> Доступ к мыслям и заметкам</li>
+                            <li><i class="fa-solid fa-check"></i> Еженедельные инсайты</li>
+                            <li><i class="fa-solid fa-check"></i> Закрытый Telegram-канал</li>
+                        </ul>
+                        <button class="btn btn--outline tariff-card__btn" data-tariff="99" data-tariff-name="Философия">Купить</button>
+                    </div>
+                    
+                    <div class="tariff-card tariff-card--popular">
+                        <div class="tariff-card__badge tariff-card__badge--popular">Популярный</div>
+                        <div class="tariff-card__price">
+                            <span class="price">999₽</span>
+                            <span class="period">/ месяц</span>
+                        </div>
+                        <h3 class="tariff-card__title">Отношения & Секс</h3>
+                        <ul class="tariff-card__features">
+                            <li><i class="fa-solid fa-check"></i> Решение проблем в отношениях</li>
+                            <li><i class="fa-solid fa-check"></i> Сексуальная психология</li>
+                            <li><i class="fa-solid fa-check"></i> Преодоление стеснения</li>
+                            <li><i class="fa-solid fa-check"></i> Личные границы</li>
+                        </ul>
+                        <button class="btn btn--accent tariff-card__btn" data-tariff="999" data-tariff-name="Отношения">Купить</button>
+                    </div>
+                    
+                    <div class="tariff-card">
+                        <div class="tariff-card__badge">VIP</div>
+                        <div class="tariff-card__price">
+                            <span class="price">3000₽</span>
+                            <span class="period">месяц</span>
+                        </div>
+                        <h3 class="tariff-card__title">Ментальные проблемы & Бизнес</h3>
+                        <ul class="tariff-card__features">
+                            <li><i class="fa-solid fa-check"></i> Ментальное здоровье</li>
+                            <li><i class="fa-solid fa-check"></i> Психология бизнеса</li>
+                            <li><i class="fa-solid fa-check"></i> Управление стрессом</li>
+                            <li><i class="fa-solid fa-check"></i> Продуктивность и фокус</li>
+                            <li><i class="fa-solid fa-check"></i> Личные консультации</li>
+                        </ul>
+                        <button class="btn btn--outline tariff-card__btn" data-tariff="3000" data-tariff-name="Бизнес">Купить</button>
+                    </div>
+                </div>
+                
+                <div class="access-block">
+                    <div class="access-block__content">
+                        <i class="fa-solid fa-key"></i>
+                        <h3>У вас куплен тариф?</h3>
+                        <p>Вставьте вашу уникальную ссылку доступа и начните решать свои проблемы</p>
+                        <div class="access-block__input-group">
+                            <input type="text" id="accessUrlInput" placeholder="https://mindbodyhub.pro/ваша_уникальная_ссылка">
+                            <button class="btn btn--accent" id="accessUrlBtn">
+                                Перейти <i class="fa-solid fa-arrow-right"></i>
+                            </button>
+                        </div>
+                        <p class="access-block__hint">
+                            <i class="fa-regular fa-circle-question"></i>
+                            Не знаете где взять ссылку? <a href="/support/">Напишите в поддержку</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="important-info">
+            <div class="container">
+                <div class="important-info__card">
+                    <div class="important-info__icon">
+                        <i class="fa-solid fa-circle-info"></i>
+                    </div>
+                    <h2 class="important-info__title">Перед покупкой важно знать</h2>
+                    <div class="important-info__grid">
+                        <div class="important-info__item">
+                            <i class="fa-solid fa-gem"></i>
+                            <div>
+                                <h4>Базовый тариф уже активен</h4>
+                                <p>Бесплатный доступ навсегда — <a href="/pricing-plan/">подробнее о тарифах</a></p>
+                            </div>
+                        </div>
+                        <div class="important-info__item">
+                            <i class="fa-solid fa-users-viewfinder"></i>
+                            <div>
+                                <h4>Реальные примеры</h4>
+                                <p>Форум основан на реальных жизненных ситуациях и опыте участников</p>
+                            </div>
+                        </div>
+                        <div class="important-info__item">
+                            <i class="fa-solid fa-toolbox"></i>
+                            <div>
+                                <h4>Это инструмент</h4>
+                                <p>Мы даём инструменты, а ты сам работаешь над своими задачами</p>
+                            </div>
+                        </div>
+                        <div class="important-info__item">
+                            <i class="fa-solid fa-brain"></i>
+                            <div>
+                                <h4>Не медицинская услуга</h4>
+                                <p>Информация носит ознакомительный характер. При серьёзных проблемах обращайтесь к специалистам</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="why-we">
+            <div class="container">
+                <h2 class="section-title">Мы</h2>
+                <div class="why-we__grid">
+                    <div class="why-we__card">
+                        <div class="why-we__icon"><i class="fa-solid fa-heart"></i></div>
+                        <h3 class="why-we__title">Забота</h3>
+                        <p class="why-we__desc">Мы искренне заботимся о каждом участнике и его ментальном здоровье</p>
+                    </div>
+                    <div class="why-we__card">
+                        <div class="why-we__icon"><i class="fa-solid fa-users"></i></div>
+                        <h3 class="why-we__title">Реальный опыт</h3>
+                        <p class="why-we__desc">Информация собрана на реальных людях и реальных жизненных опытах</p>
+                    </div>
+                    <div class="why-we__card">
+                        <div class="why-we__icon"><i class="fa-solid fa-shield"></i></div>
+                        <h3 class="why-we__title">Доверие</h3>
+                        <p class="why-we__desc">Полная конфиденциальность и безопасность ваших данных</p>
+                    </div>
+                    <div class="why-we__card">
+                        <div class="why-we__icon"><i class="fa-solid fa-clock"></i></div>
+                        <h3 class="why-we__title">24/7</h3>
+                        <p class="why-we__desc">Поддержка в любое время, когда она нужна</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <div class="toast" id="toast">
+            <i class="fa-regular fa-circle-check"></i>
+            <span>Номер карты скопирован</span>
+        </div>
+    </main>
+
+    <!-- МОДАЛЬНОЕ ОКНО ОПЛАТЫ -->
+    <div class="modal-overlay" id="paymentModal">
+        <div class="modal-container">
+            <button class="modal-close" id="closeModalBtn">&times;</button>
+            <h3 id="modalTariffTitle">Тариф: Философия (99₽)</h3>
+            
+            <div class="requisites-block" id="requisitesBlock" style="display: none;">
+                <div class="requisites-card">
+                    <i class="fa-regular fa-credit-card"></i>
+                    <span>Т-Банк: <strong>2200 7021 2388 9995</strong></span>
+                    <button class="copy-card-btn" id="copyCardBtnModal">Копировать</button>
+                </div>
+                <p class="refund-conditions">Отказ от тарифа — 3 дня, если не было перехода по ссылке. После перехода возврат невозможен.</p>
+            </div>
+            
+            <button class="btn-show-requisites" id="showRequisitesBtn">📋 Показать реквизиты</button>
+            
+            <div class="contacts-block">
+                <p class="contacts-title">📬 Куда отправить ссылку? (обязательно)</p>
+                <div class="contact-field">
+                    <i class="fa-regular fa-envelope"></i>
+                    <input type="email" id="contactEmail" placeholder="Email">
+                </div>
+                <div class="contact-field">
+                    <i class="fa-brands fa-vk"></i>
+                    <input type="text" id="contactVk" placeholder="Ссылка на ВК или ID">
+                </div>
+                <div class="contact-field">
+                    <i class="fa-brands fa-telegram"></i>
+                    <input type="text" id="contactTelegram" placeholder="@username или номер телефона">
+                </div>
+                <div class="contact-field">
+                    <i class="fa-regular fa-message"></i>
+                    <input type="text" id="contactOther" placeholder="Другой способ (WhatsApp, Signal и т.п.)">
+                </div>
+                <p class="contact-error" id="contactError" style="display: none;">⚠️ Заполните хотя бы одно поле для отправки ссылки</p>
+            </div>
+            
+            <div class="warning-note">
+                ⚠️ Во время оплаты не обновляйте и не покидайте страницу<br>
+                ❓ Если возникла проблема — <a href="/support/">срочно в поддержку</a>
+            </div>
+            
+            <div class="modal-buttons">
+                <button class="btn-back" id="backFromModalBtn">🔙 Назад</button>
+                <button class="btn-paid" id="paidConfirmBtn">✅ Я оплатил(а)</button>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="container footer__inner">
+            <div class="footer__brand">
+                <span class="logo">
+                    <img src="brain.svg" alt="MindBodyHub" width="28" height="28">
+                    <span>MindBodyHub</span>
+                </span>
+                <p>Психология здоровья и бизнеса</p>
+            </div>
+            <div class="footer__copy">© 2026 MindBodyHub.pro — Все права защищены</div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

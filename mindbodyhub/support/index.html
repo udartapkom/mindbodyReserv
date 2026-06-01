@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>Поддержка | MindBodyHub</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="header">
+        <div class="container header__inner">
+            <a href="/" class="logo">
+                <img src="../brain.svg" alt="MindBodyHub" width="32" height="32" style="filter: drop-shadow(0 2px 4px rgba(59,130,246,0.3));">
+                <span>MindBodyHub</span>
+            </a>
+            
+            <nav class="nav nav--desktop">
+                <a href="/">Главная</a>
+                <a href="/support/">Поддержка</a>
+                <a href="#" class="nav__problems">Выбрать проблемы <i class="fa-solid fa-chevron-down"></i></a>
+                <a href="/about-us/">О нас</a>
+                <a href="/partner-program/">Партнёрам</a>
+            </nav>
+            
+            <a href="/pricing-plan/" class="btn btn--accent btn--private">
+                <i class="fa-solid fa-lock"></i> Частный доступ
+            </a>
+            
+            <button class="burger" id="burgerBtn" aria-label="Меню">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+        
+        <div class="mobile-menu" id="mobileMenu">
+            <nav class="mobile-menu__nav">
+                <a href="/">Главная</a>
+                <a href="/support/">Поддержка</a>
+                <a href="#">Выбрать проблемы</a>
+                <a href="/about-us/">О нас</a>
+                <a href="/partner-program/">Партнёрам</a>
+                <a href="/pricing-plan/" class="btn btn--accent btn--private mobile-menu__btn">
+                    <i class="fa-solid fa-lock"></i> Частный доступ
+                </a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <section class="support-hero">
+            <div class="container">
+                <div class="support-hero__content">
+                    <div class="support-hero__icon">
+                        <i class="fa-solid fa-headset"></i>
+                    </div>
+                    <h1 class="support-hero__title">Служба поддержки</h1>
+                    <p class="support-hero__subtitle">Мы здесь, чтобы помочь. Ответим на любые вопросы в течение 15 минут</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="contact-channels">
+            <div class="container">
+                <div class="contact-channels__grid">
+                    <div class="contact-card">
+                        <div class="contact-card__icon">
+                            <i class="fa-brands fa-telegram"></i>
+                        </div>
+                        <h3 class="contact-card__title">Telegram</h3>
+                        <p class="contact-card__desc">Связь с поддержкой</p>
+                        <button class="btn btn--accent contact-card__btn" id="supportTelegramBtn">
+                            Написать в Telegram <i class="fa-solid fa-arrow-right"></i>
+                        </button>
+                    </div>
+
+                    <div class="contact-card">
+                        <div class="contact-card__icon">
+                            <i class="fa-brands fa-vk"></i>
+                        </div>
+                        <h3 class="contact-card__title">ВКонтакте</h3>
+                        <p class="contact-card__desc">Связь с поддержкой</p>
+                        <button class="btn btn--accent contact-card__btn" id="supportVkBtn">
+                            Написать в ВК <i class="fa-solid fa-arrow-right"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="faq-support">
+            <div class="container">
+                <h2 class="section-title">Часто задаваемые вопросы</h2>
+                <div class="faq-grid">
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            <span>Как получить доступ после оплаты?</span>
+                            <i class="fa-solid fa-chevron-down"></i>
+                        </div>
+                        <div class="faq-answer">
+                            Оплата происходит в наших ботах — ВКонтакте или Telegram. После оплаты нажмите кнопку «Я оплатил(а)», и вам будет выслан доступ к оплаченному тарифу.
+                        </div>
+                    </div>
+                    
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            <span>Что такое уникальная ссылка доступа?</span>
+                            <i class="fa-solid fa-chevron-down"></i>
+                        </div>
+                        <div class="faq-answer">
+                            После оплаты вы получаете персональную ссылку вида mindbodyhub.pro/ваш_уникальный_код/. Это ваш личный вход в закрытый раздел. Ссылку нельзя угадать или подобрать — она существует только для вас.
+                        </div>
+                    </div>
+                    
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            <span>Условия возврата</span>
+                            <i class="fa-solid fa-chevron-down"></i>
+                        </div>
+                        <div class="faq-answer">
+                            • Отказ от тарифа возможен в течение 3 дней после оплаты<br>
+                            • Возврат НЕ осуществляется, если вы переходили по уникальной ссылке доступа<br>
+                            • Переход по ссылке считается использованием товара<br>
+                            • Для оформления возврата напишите в поддержку
+                        </div>
+                    </div>
+                    
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            <span>Не пришёл доступ. Что делать?</span>
+                            <i class="fa-solid fa-chevron-down"></i>
+                        </div>
+                        <div class="faq-answer">
+                            Напишите в поддержку — мы решим вопрос в течение 15 минут. Укажите ваш Telegram или ID ВК и дату оплаты.
+                        </div>
+                    </div>
+                    
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            <span>Потерял свою уникальную ссылку. Что делать?</span>
+                            <i class="fa-solid fa-chevron-down"></i>
+                        </div>
+                        <div class="faq-answer">
+                            Обратитесь в поддержку — мы восстановим доступ. Рекомендуем сохранять ссылку в надёжном месте.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="support-cta">
+            <div class="container">
+                <div class="support-cta__content">
+                    <i class="fa-solid fa-message"></i>
+                    <h3>Не нашли ответ?</h3>
+                    <p>Напишите нам напрямую — поможем решить любой вопрос</p>
+                    <button class="btn btn--accent" id="ctaSupportBtn">
+                        <i class="fa-brands fa-telegram"></i> Связаться с поддержкой
+                    </button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="container footer__inner">
+            <div class="footer__brand">
+                <span class="logo">
+                    <img src="../brain.svg" alt="MindBodyHub" width="28" height="28">
+                    <span>MindBodyHub</span>
+                </span>
+                <p>Психология здоровья и бизнеса</p>
+            </div>
+            <div class="footer__copy">© 2026 MindBodyHub.pro — Все права защищены</div>
+        </div>
+    </footer>
+
+    <div class="toast" id="toast">
+        <i class="fa-regular fa-circle-check"></i>
+        <span>Ссылка скопирована</span>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

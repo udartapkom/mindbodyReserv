@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>О нас | MindBodyHub</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="header">
+        <div class="container header__inner">
+            <a href="/" class="logo">
+                <img src="../brain.svg" alt="MindBodyHub" width="32" height="32" style="filter: drop-shadow(0 2px 4px rgba(59,130,246,0.3));">
+                <span>MindBodyHub</span>
+            </a>
+            
+            <nav class="nav nav--desktop">
+                <a href="/">Главная</a>
+                <a href="/support/">Поддержка</a>
+                <a href="#" class="nav__problems">Выбрать проблемы <i class="fa-solid fa-chevron-down"></i></a>
+                <a href="/about-us/" class="active">О нас</a>
+                <a href="/partner-program/">Партнёрам</a>
+            </nav>
+            
+            <a href="/pricing-plan/" class="btn btn--accent btn--private">
+                <i class="fa-solid fa-lock"></i> Частный доступ
+            </a>
+            
+            <button class="burger" id="burgerBtn" aria-label="Меню">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+        
+        <div class="mobile-menu" id="mobileMenu">
+            <nav class="mobile-menu__nav">
+                <a href="/">Главная</a>
+                <a href="/support/">Поддержка</a>
+                <a href="#">Выбрать проблемы</a>
+                <a href="/about-us/">О нас</a>
+                <a href="/partner-program/">Партнёрам</a>
+                <a href="/pricing-plan/" class="btn btn--accent btn--private mobile-menu__btn">
+                    <i class="fa-solid fa-lock"></i> Частный доступ
+                </a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <section class="about-hero">
+            <div class="container">
+                <div class="about-hero__content">
+                    <div class="about-hero__icon">
+                        <i class="fa-solid fa-brain"></i>
+                    </div>
+                    <h1 class="about-hero__title">О нас</h1>
+                    <p class="about-hero__subtitle">MindBodyHub — пространство для самостоятельной работы над собой</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="about-mission">
+            <div class="container">
+                <div class="about-mission__grid">
+                    <div class="about-mission__content">
+                        <h2>Наша миссия</h2>
+                        <p>Мы создали MindBodyHub для тех, кто готов сам разбираться со своими запросами. Здесь нет готовых решений — есть инструменты, методики и живое пространство, где ты сам находишь проблему и работаешь с ней.</p>
+                        <p>Мы не заменяем врачей и не даём медицинских советов. Мы даём опору, знания и среду, в которой можно двигаться дальше.</p>
+                    </div>
+                    <div class="about-mission__values">
+                        <div class="value-card">
+                            <i class="fa-solid fa-heart"></i>
+                            <h3>Человечность</h3>
+                            <p>Мы искренне заботимся о каждом участнике</p>
+                        </div>
+                        <div class="value-card">
+                            <i class="fa-solid fa-shield"></i>
+                            <h3>Безопасность</h3>
+                            <p>Полная конфиденциальность и уникальные ссылки доступа</p>
+                        </div>
+                        <div class="value-card">
+                            <i class="fa-solid fa-clock"></i>
+                            <h3>Доступность</h3>
+                            <p>Поддержка 24/7 и бесплатный базовый тариф навсегда</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="about-story">
+            <div class="container">
+                <h2 class="section-title">Как всё начиналось</h2>
+                <div class="about-story__content">
+                    <p>MindBodyHub родился из идеи, что человек может быть своим лучшим терапевтом — если у него есть правильные инструменты и поддерживающее сообщество.</p>
+                    <p>Мы объединили реальный жизненный опыт, системные методики и закрытое пространство, где каждый может работать над своими задачами без осуждения и давления.</p>
+                    <p>Сегодня это форум, база знаний и инструмент для саморазвития в сфере психологии здоровья и бизнеса.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="about-features">
+            <div class="container">
+                <h2 class="section-title">Почему мы?</h2>
+                <div class="about-features__grid">
+                    <div class="feature-card">
+                        <div class="feature-card__icon">
+                            <i class="fa-solid fa-lock"></i>
+                        </div>
+                        <h3>Уникальная защита</h3>
+                        <p>Каждый пользователь получает персональную ссылку из 800 символов — это математически невозможно взломать или подобрать.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-card__icon">
+                            <i class="fa-solid fa-database"></i>
+                        </div>
+                        <h3>Никаких паролей</h3>
+                        <p>Мы не храним пароли и не собираем персональные данные. Ваша приватность — наш приоритет.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-card__icon">
+                            <i class="fa-solid fa-message"></i>
+                        </div>
+                        <h3>Поддержка 24/7</h3>
+                        <p>Мы всегда на связи через Telegram и ВКонтакте. Ответим на любой вопрос в течение 15 минут.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-card__icon">
+                            <i class="fa-solid fa-gem"></i>
+                        </div>
+                        <h3>Бесплатный базовый тариф</h3>
+                        <p>Базовый доступ к закрытому пространству — бесплатно навсегда без скрытых условий.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="toast" id="toast">
+            <i class="fa-regular fa-circle-check"></i>
+            <span>Ссылка скопирована</span>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container footer__inner">
+            <div class="footer__brand">
+                <span class="logo">
+                    <img src="../brain.svg" alt="MindBodyHub" width="28" height="28">
+                    <span>MindBodyHub</span>
+                </span>
+                <p>Психология здоровья и бизнеса</p>
+            </div>
+            <div class="footer__copy">© 2026 MindBodyHub.pro — Все права защищены</div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

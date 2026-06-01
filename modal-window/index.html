@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Модалка оплаты | MindBodyHub</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="tariff-container">
+        <button class="demo-btn" data-tariff="Философия" data-price="99" data-period="неделя">Философия — 99₽/нед</button>
+        <button class="demo-btn" data-tariff="Мастер" data-price="990" data-period="месяц">Мастер — 990₽/мес</button>
+        <button class="demo-btn" data-tariff="VIP" data-price="1990" data-period="месяц">VIP — 1990₽/мес</button>
+    </div>
+
+    <div class="modal" id="paymentModal">
+        <div class="modal-card">
+            <button class="close-modal" id="closeModal">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+            </button>
+            
+            <div class="modal-header">
+                <div class="modal-title">Оплата тарифа</div>
+                <div class="modal-sub" id="tariffName">Философия — 99₽ / неделя</div>
+            </div>
+
+            <div class="payment-choice">
+                <button class="choice-btn" data-pay="site">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="2" y="5" width="20" height="14" rx="2" stroke="currentColor" stroke-width="1.5"/>
+                        <path d="M2 10H22" stroke="currentColor" stroke-width="1.5"/>
+                        <path d="M7 15H9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                    </svg>
+                    На сайте
+                </button>
+                <button class="choice-btn" data-pay="vk">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M22 4L20.2 6.8C19.2 8.7 18 10.5 16.5 12C18 13.5 19.2 15.3 20.2 17.2L22 20H18.5L17 17.5C16 16 15.1 14.5 14 13C13.5 14.5 12.8 16 12 17.5L10.5 20H7L8.8 17.2C9.8 15.3 11 13.5 12.5 12C11 10.5 9.8 8.7 8.8 6.8L7 4H10.5L12 6.5C13 8 13.9 9.5 15 11C15.5 9.5 16.2 8 17 6.5L18.5 4H22Z" fill="currentColor"/>
+                    </svg>
+                    ВКонтакте
+                </button>
+            </div>
+
+            <!-- Блок для оплаты на сайте -->
+            <div id="sitePaymentBlock" style="display: none;">
+                <div class="contacts-area" id="contactsArea">
+                    <div class="contact-field">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M22 6L12 13L2 6M22 6C22 4.9 21.1 4 20 4H4C2.9 4 2 4.9 2 6M22 6V18C22 19.1 21.1 20 20 20H4C2.9 20 2 19.1 2 18V6" stroke="currentColor" stroke-width="1.5"/>
+                        </svg>
+                        <input type="email" id="contactEmail" placeholder="Email">
+                    </div>
+                    <div class="contact-field">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M22 4L20.2 6.8C19.2 8.7 18 10.5 16.5 12C18 13.5 19.2 15.3 20.2 17.2L22 20H18.5L17 17.5C16 16 15.1 14.5 14 13C13.5 14.5 12.8 16 12 17.5L10.5 20H7L8.8 17.2C9.8 15.3 11 13.5 12.5 12C11 10.5 9.8 8.7 8.8 6.8L7 4H10.5L12 6.5C13 8 13.9 9.5 15 11C15.5 9.5 16.2 8 17 6.5L18.5 4H22Z" fill="currentColor"/>
+                        </svg>
+                        <input type="text" id="contactVk" placeholder="Ссылка на ВК или ID">
+                    </div>
+                    <div class="error-message" id="contactError">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 8V12M12 16H12.01M3 12C3 16.97 7.03 21 12 21C16.97 21 21 16.97 21 12C21 7.03 16.97 3 12 3C7.03 3 3 7.03 3 12Z" stroke="currentColor" stroke-width="1.5"/>
+                        </svg>
+                        Заполните хотя бы одно поле корректно
+                    </div>
+                </div>
+
+                <div class="payment-block" id="paymentBlock" style="display: none;">
+                    <div class="qr-container">
+                        <a href="https://finance.ozon.ru/apps/sbp/ozonbankpay/019e22a8-ff1e-7b5f-99fb-8ce06ccc61ff" target="_blank" class="qr-link">
+                            <img id="qrImage" src="qr-sbp.jpg" alt="QR-код для оплаты" class="qr-image">
+                        </a>
+                        
+                        <div class="payment-link-wrapper">
+                            <a href="https://finance.ozon.ru/apps/sbp/ozonbankpay/019e22a8-ff1e-7b5f-99fb-8ce06ccc61ff" target="_blank" class="ozon-link">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M18 13V19C18 20.1 17.1 21 16 21H5C3.9 21 3 20.1 3 19V8C3 6.9 3.9 6 5 6H11" stroke="currentColor" stroke-width="1.5"/>
+                                    <path d="M15 3H21V9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                                    <path d="M10 14L21 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                                </svg>
+                                Оплатить через Ozon СБП
+                            </a>
+                            <button id="copyOzonLinkBtn" class="copy-link-btn">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <rect x="9" y="9" width="13" height="13" rx="2" stroke="currentColor" stroke-width="1.5"/>
+                                    <path d="M5 15H4C2.9 15 2 14.1 2 13V4C2 2.9 2.9 2 4 2H13C14.1 2 15 2.9 15 4V5" stroke="currentColor" stroke-width="1.5"/>
+                                </svg>
+                                Копировать ссылку
+                            </button>
+                        </div>
+                        
+                        <div class="refund-text">
+                            Отказ от тарифа — 3 дня, если не было перехода по ссылке
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Блок поздравления -->
+                <div class="success-block" id="successBlock" style="display: none;">
+                    <div class="success-icon">
+                        <svg width="56" height="56" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.5"/>
+                            <path d="M8 12L11 15L16 9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                        </svg>
+                    </div>
+                    <div class="success-title" id="successTitle">Поздравляем!</div>
+                    <div class="success-message" id="successMessage"></div>
+                    <div class="success-footer">
+                        Уникальная ссылка на тариф отправлена
+                    </div>
+                    <div class="problem-block">
+                        <a href="#" id="problemSupportLink" class="problem-link">
+                            Возникла проблема? Обратитесь в поддержку
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="action-buttons">
+                <button class="btn-back" id="backBtn">Назад</button>
+                <button class="btn-start-pay" id="startPayBtn" disabled>Начать оплату</button>
+                <button class="btn-paid" id="paidBtn" style="display: none;">Я оплатил(а)</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

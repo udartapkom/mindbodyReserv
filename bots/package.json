@@ -1,0 +1,21 @@
+{
+  "name": "bots",
+  "version": "1.0.0",
+  "description": "VK bot for MindBodyHub",
+  "main": "vk-bot.js",
+  "scripts": {
+    "start": "node vk-bot.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.6",
+    "dotenv": "^16.6.1",
+    "express": "^5.2.1",
+    "http": "^0.0.1-security",
+    "https-proxy-agent": "^9.0.0",
+    "telegraf": "^4.16.3",
+    "vk-io": "^4.9.2"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
