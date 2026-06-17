@@ -210,62 +210,7 @@
                 </div>
             </div>
         </section>
-        
-        <div class="toast" id="toast">
-            <i class="fa-regular fa-circle-check"></i>
-            <span>Номер карты скопирован</span>
-        </div>
     </main>
-
-    <!-- МОДАЛЬНОЕ ОКНО ОПЛАТЫ -->
-    <div class="modal-overlay" id="paymentModal">
-        <div class="modal-container">
-            <button class="modal-close" id="closeModalBtn">&times;</button>
-            <h3 id="modalTariffTitle">Тариф: Философия (99₽)</h3>
-            
-            <div class="requisites-block" id="requisitesBlock" style="display: none;">
-                <div class="requisites-card">
-                    <i class="fa-regular fa-credit-card"></i>
-                    <span>Т-Банк: <strong>2200 7021 2388 9995</strong></span>
-                    <button class="copy-card-btn" id="copyCardBtnModal">Копировать</button>
-                </div>
-                <p class="refund-conditions">Отказ от тарифа — 3 дня, если не было перехода по ссылке. После перехода возврат невозможен.</p>
-            </div>
-            
-            <button class="btn-show-requisites" id="showRequisitesBtn">📋 Показать реквизиты</button>
-            
-            <div class="contacts-block">
-                <p class="contacts-title">📬 Куда отправить ссылку? (обязательно)</p>
-                <div class="contact-field">
-                    <i class="fa-regular fa-envelope"></i>
-                    <input type="email" id="contactEmail" placeholder="Email">
-                </div>
-                <div class="contact-field">
-                    <i class="fa-brands fa-vk"></i>
-                    <input type="text" id="contactVk" placeholder="Ссылка на ВК или ID">
-                </div>
-                <div class="contact-field">
-                    <i class="fa-brands fa-telegram"></i>
-                    <input type="text" id="contactTelegram" placeholder="@username или номер телефона">
-                </div>
-                <div class="contact-field">
-                    <i class="fa-regular fa-message"></i>
-                    <input type="text" id="contactOther" placeholder="Другой способ (WhatsApp, Signal и т.п.)">
-                </div>
-                <p class="contact-error" id="contactError" style="display: none;">⚠️ Заполните хотя бы одно поле для отправки ссылки</p>
-            </div>
-            
-            <div class="warning-note">
-                ⚠️ Во время оплаты не обновляйте и не покидайте страницу<br>
-                ❓ Если возникла проблема — <a href="/support/">срочно в поддержку</a>
-            </div>
-            
-            <div class="modal-buttons">
-                <button class="btn-back" id="backFromModalBtn">🔙 Назад</button>
-                <button class="btn-paid" id="paidConfirmBtn">✅ Я оплатил(а)</button>
-            </div>
-        </div>
-    </div>
 
     <footer class="footer">
         <div class="container footer__inner">
@@ -277,6 +222,13 @@
                 <p>Психология здоровья и бизнеса</p>
             </div>
             <div class="footer__copy">© 2026 MindBodyHub.pro — Все права защищены</div>
+        </div>
+        <div class="footer-links">
+            <a href="https://telegra.ph/Politika-konfidencialnosti-04-01-26" target="_blank">Политика конфиденциальности</a>
+            <span>|</span>
+            <a href="https://telegra.ph/Polzovatelskoe-soglashenie-04-01-19" target="_blank">Пользовательское соглашение</a>
+            <span>|</span>
+            <a href="/support/">Поддержка</a>
         </div>
     </footer>
 

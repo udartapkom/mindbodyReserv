@@ -84,10 +84,6 @@ a {
     color: var(--accent);
 }
 
-.btn--full {
-    width: 100%;
-}
-
 .btn--private {
     background: var(--white);
     border-color: var(--gray-200);
@@ -573,35 +569,6 @@ a {
     line-height: 1.5;
 }
 
-.toast {
-    position: fixed;
-    bottom: 30px;
-    left: 50%;
-    transform: translateX(-50%) translateY(100px);
-    background: var(--text-dark);
-    color: var(--white);
-    padding: 14px 24px;
-    border-radius: 40px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    font-weight: 500;
-    box-shadow: var(--shadow-lg);
-    opacity: 0;
-    transition: all 0.3s ease;
-    z-index: 2000;
-    white-space: nowrap;
-}
-
-.toast.show {
-    opacity: 1;
-    transform: translateX(-50%) translateY(0);
-}
-
-.toast i {
-    color: var(--green);
-}
-
 .footer {
     background: var(--white);
     padding: 40px 0;
@@ -634,22 +601,23 @@ a {
     font-size: 0.9rem;
 }
 
-.refund-note {
-    font-size: 0.7rem;
-    color: var(--text-light);
+.footer-links {
     text-align: center;
-    margin-top: 16px;
-    opacity: 0.6;
-    transition: opacity 0.2s;
-}
-
-.refund-note:hover {
-    opacity: 1;
-}
-
-.refund-note i {
-    margin-right: 6px;
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 1px solid var(--gray-200);
     font-size: 0.7rem;
+}
+
+.footer-links a {
+    color: var(--text-light);
+    text-decoration: none;
+    margin: 0 4px;
+}
+
+.footer-links a:hover {
+    color: var(--accent);
+    text-decoration: underline;
 }
 
 @media (max-width: 1024px) {
@@ -730,12 +698,6 @@ a {
     .footer__brand {
         align-items: center;
     }
-    .toast {
-        white-space: normal;
-        width: 90%;
-        text-align: center;
-        justify-content: center;
-    }
 }
 
 @media (max-width: 480px) {
@@ -751,145 +713,4 @@ a {
     .mobile-menu.active {
         display: none;
     }
-}
-
-/* ===== МОДАЛЬНОЕ ОКНО ОПЛАТЫ ===== */
-.modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.7);
-    backdrop-filter: blur(4px);
-    z-index: 3000;
-    display: none;
-    align-items: center;
-    justify-content: center;
-}
-.modal-overlay.active {
-    display: flex;
-}
-.modal-container {
-    background: var(--white);
-    border-radius: 24px;
-    max-width: 500px;
-    width: 90%;
-    padding: 28px;
-    position: relative;
-    max-height: 90vh;
-    overflow-y: auto;
-}
-.modal-close {
-    position: absolute;
-    top: 16px;
-    right: 20px;
-    background: none;
-    border: none;
-    font-size: 28px;
-    cursor: pointer;
-    color: var(--text-light);
-}
-.requisites-card {
-    background: var(--accent-light);
-    padding: 16px;
-    border-radius: 16px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 12px;
-    margin: 16px 0;
-}
-.copy-card-btn {
-    background: var(--accent);
-    color: white;
-    border: none;
-    padding: 6px 14px;
-    border-radius: 30px;
-    cursor: pointer;
-    font-size: 0.8rem;
-}
-.btn-show-requisites {
-    width: 100%;
-    padding: 10px;
-    background: var(--gray-200);
-    border: none;
-    border-radius: 40px;
-    cursor: pointer;
-    font-weight: 600;
-    margin: 8px 0;
-}
-.refund-conditions {
-    font-size: 0.7rem;
-    color: var(--text-light);
-    text-align: center;
-    margin-top: 12px;
-}
-.contacts-block {
-    background: var(--gray-100);
-    padding: 16px;
-    border-radius: 16px;
-    margin: 16px 0;
-}
-.contacts-title {
-    font-size: 0.9rem;
-    font-weight: 600;
-    margin-bottom: 12px;
-}
-.contact-field {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    background: var(--white);
-    border-radius: 30px;
-    padding: 6px 16px;
-    margin-bottom: 10px;
-    border: 1px solid var(--gray-300);
-}
-.contact-field i {
-    width: 22px;
-    color: var(--accent);
-}
-.contact-field input {
-    flex: 1;
-    border: none;
-    padding: 10px 0;
-    background: transparent;
-    outline: none;
-}
-.warning-note {
-    font-size: 0.7rem;
-    color: var(--text-light);
-    text-align: center;
-    padding: 12px;
-    background: #FFF5E6;
-    border-radius: 12px;
-    margin: 16px 0;
-}
-.modal-buttons {
-    display: flex;
-    gap: 12px;
-    margin-top: 20px;
-}
-.btn-back, .btn-paid {
-    flex: 1;
-    padding: 12px;
-    border-radius: 40px;
-    font-weight: 600;
-    border: none;
-    cursor: pointer;
-}
-.btn-back {
-    background: var(--gray-200);
-}
-.btn-paid {
-    background: var(--accent);
-    color: white;
-}
-.contact-error {
-    color: red;
-    font-size: 0.7rem;
-    text-align: center;
-    margin-top: 8px;
 }

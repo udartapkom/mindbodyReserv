@@ -4,7 +4,7 @@ const mobileMenu = document.getElementById('mobileMenu');
 const toast = document.getElementById('toast');
 
 // Контакты админа
-const TELEGRAM_USERNAME = 'slex39';
+const TELEGRAM_USERNAME = 'mbh_support';
 
 // Модалка
 const modal = document.getElementById('paymentModal');
@@ -57,7 +57,6 @@ document.querySelectorAll('.tariff-card__btn').forEach(btn => {
         currentTariff.price = btn.getAttribute('data-tariff');
         modalTariffTitle.textContent = `Тариф: ${currentTariff.name} (${currentTariff.price}₽)`;
         
-        // Сброс полей
         contactEmail.value = '';
         contactVk.value = '';
         contactTelegram.value = '';
@@ -105,9 +104,9 @@ paidConfirmBtn.addEventListener('click', () => {
     }
     contactError.style.display = 'none';
     
-    const message = `🟢 ОПЛАТА ТАРИФА\n\n👤 Пользователь запросил доступ к тарифу: ${currentTariff.name} (${currentTariff.price}₽)\n📬 Контакт для отправки ссылки: ${contact.type}: ${contact.value}`;
+    const message = `ОПЛАТА ТАРИФА\n\nПользователь запросил доступ к тарифу: ${currentTariff.name} (${currentTariff.price}₽)\nКонтакт для отправки ссылки: ${contact.type}: ${contact.value}`;
     window.open(`https://t.me/${TELEGRAM_USERNAME}?text=${encodeURIComponent(message)}`, '_blank');
-    showToast('✅ Успешно! Ваш платёж в обработке. Ожидайте ссылку в выбранный канал связи.');
+    showToast('Ваш платёж в обработке. Ожидайте ссылку в выбранный канал связи.');
     closeModal();
 });
 

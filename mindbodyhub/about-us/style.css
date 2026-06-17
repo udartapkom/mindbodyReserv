@@ -88,7 +88,7 @@ a {
     background: var(--white);
     border-color: var(--gray-200);
     color: var(--text-dark);
-    padding: 10px 20px;
+    padding: 10px 20px);
 }
 
 .btn--private:hover {
@@ -407,33 +407,23 @@ a {
     font-size: 0.9rem;
 }
 
-.toast {
-    position: fixed;
-    bottom: 30px;
-    left: 50%;
-    transform: translateX(-50%) translateY(100px);
-    background: var(--text-dark);
-    color: var(--white);
-    padding: 14px 24px;
-    border-radius: 40px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    font-weight: 500;
-    box-shadow: var(--shadow-lg);
-    opacity: 0;
-    transition: all 0.3s ease;
-    z-index: 2000;
-    white-space: nowrap;
+.footer-links {
+    text-align: center;
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 1px solid var(--gray-200);
+    font-size: 0.7rem;
 }
 
-.toast.show {
-    opacity: 1;
-    transform: translateX(-50%) translateY(0);
+.footer-links a {
+    color: var(--text-light);
+    text-decoration: none;
+    margin: 0 4px;
 }
 
-.toast i {
-    color: var(--green);
+.footer-links a:hover {
+    color: var(--accent);
+    text-decoration: underline;
 }
 
 @media (max-width: 1024px) {
@@ -446,68 +436,48 @@ a {
     .container {
         padding: 0 20px;
     }
-
     .nav--desktop {
         display: none;
     }
-
     .header .btn--private {
         display: none;
     }
-
     .burger {
         display: flex;
     }
-
     .about-hero {
         padding: 50px 0 30px;
     }
-
     .about-hero__title {
         font-size: 1.8rem;
     }
-
     .about-hero__subtitle {
         font-size: 1rem;
     }
-
     .about-mission__grid {
         grid-template-columns: 1fr;
         gap: 30px;
     }
-
     .about-mission__content h2 {
         font-size: 1.6rem;
     }
-
     .section-title {
         font-size: 1.6rem;
     }
-
     .about-features__grid {
         grid-template-columns: 1fr;
         max-width: 350px;
         margin: 0 auto;
     }
-
     .feature-card {
         padding: 28px 20px;
     }
-
     .footer__inner {
         flex-direction: column;
         text-align: center;
     }
-
     .footer__brand {
         align-items: center;
-    }
-
-    .toast {
-        white-space: normal;
-        width: 90%;
-        text-align: center;
-        justify-content: center;
     }
 }
 
@@ -515,7 +485,6 @@ a {
     .about-mission__content p {
         font-size: 0.95rem;
     }
-
     .about-story__content p {
         font-size: 0.95rem;
     }

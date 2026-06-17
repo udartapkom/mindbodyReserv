@@ -963,3 +963,21 @@ a {
     text-align: center;
     margin-top: 8px;
 }
+
+
+.footer-links {
+    text-align: center;
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 1px solid var(--gray-200);
+    font-size: 0.7rem;
+}
+.footer-links a {
+    color: var(--text-light);
+    text-decoration: none;
+    margin: 0 4px;
+}
+.footer-links a:hover {
+    color: var(--accent);
+    text-decoration: underline;
+}

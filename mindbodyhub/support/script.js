@@ -1,23 +1,16 @@
 // ===== DOM Elements =====
 const burgerBtn = document.getElementById('burgerBtn');
 const mobileMenu = document.getElementById('mobileMenu');
-const toast = document.getElementById('toast');
 
-const TELEGRAM_USERNAME = 'slex39';
+// Контакты поддержки
+const TELEGRAM_SUPPORT = 'mbh_support';
 const VK_BOT_LINK = 'https://vk.com/mindbodyhubpro';
 
 // Сообщение для поддержки
 const SUPPORT_MESSAGE = encodeURIComponent('Здравствуйте! У меня возникла проблема:');
 
-function showToast(message) {
-    const toastMessage = toast.querySelector('span');
-    if (toastMessage) toastMessage.textContent = message;
-    toast.classList.add('show');
-    setTimeout(() => toast.classList.remove('show'), 2500);
-}
-
 function redirectToTelegram() {
-    window.open(`https://t.me/${TELEGRAM_USERNAME}?text=${SUPPORT_MESSAGE}`, '_blank');
+    window.open(`https://t.me/${TELEGRAM_SUPPORT}?text=${SUPPORT_MESSAGE}`, '_blank');
 }
 
 function redirectToVKBot() {

@@ -1,17 +1,10 @@
 const burgerBtn = document.getElementById('burgerBtn');
 const mobileMenu = document.getElementById('mobileMenu');
-const toast = document.getElementById('toast');
 
-const TELEGRAM_USERNAME = 'slex39';
+const TELEGRAM_USERNAME = 'mbh_support';
 
-const PARTNER_MESSAGE = encodeURIComponent('Здравствуйте! Я хочу стать партнёром MindBodyHub. Где мне взять мою уникальную партнёрскую ссылку?');
-
-function showToast(message) {
-    const toastMessage = toast.querySelector('span');
-    if (toastMessage) toastMessage.textContent = message;
-    toast.classList.add('show');
-    setTimeout(() => toast.classList.remove('show'), 2500);
-}
+// Сообщение для партнёров
+const PARTNER_MESSAGE = encodeURIComponent('Здравствуйте! Я хочу стать партнёром MindBodyHub! Что от меня требуется?');
 
 function redirectToTelegram() {
     window.open(`https://t.me/${TELEGRAM_USERNAME}?text=${PARTNER_MESSAGE}`, '_blank');
@@ -41,6 +34,15 @@ partnerButtons.forEach(id => {
         btn.addEventListener('click', redirectToTelegram);
     }
 });
+
+// Кнопка "Узнать больше" в статусе
+const statusMoreLink = document.getElementById('statusMoreLink');
+if (statusMoreLink) {
+    statusMoreLink.addEventListener('click', (e) => {
+        e.preventDefault();
+        window.open(`https://t.me/${TELEGRAM_USERNAME}?text=${encodeURIComponent('Здравствуйте! Хочу узнать подробнее о статусе партнёра.')}`, '_blank');
+    });
+}
 
 document.getElementById('learnMoreBtn')?.addEventListener('click', () => {
     document.getElementById('howItWorks')?.scrollIntoView({ behavior: 'smooth' });

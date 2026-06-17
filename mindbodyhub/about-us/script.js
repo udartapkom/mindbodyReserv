@@ -1,14 +1,6 @@
 // ===== DOM Elements =====
 const burgerBtn = document.getElementById('burgerBtn');
 const mobileMenu = document.getElementById('mobileMenu');
-const toast = document.getElementById('toast');
-
-function showToast(message) {
-    const toastMessage = toast.querySelector('span');
-    if (toastMessage) toastMessage.textContent = message;
-    toast.classList.add('show');
-    setTimeout(() => toast.classList.remove('show'), 2500);
-}
 
 // ===== BURGER MENU =====
 if (burgerBtn) {
