@@ -1,0 +1,39 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+        <linearGradient id="brainGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#60A5FA"/>
+            <stop offset="40%" stop-color="#3B82F6"/>
+            <stop offset="100%" stop-color="#1E3A8A"/>
+        </linearGradient>
+        <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+            <feGaussianBlur in="SourceAlpha" stdDeviation="2"/>
+            <feMerge>
+                <feMergeNode in="offsetblur"/>
+                <feMergeNode in="SourceGraphic"/>
+            </feMerge>
+        </filter>
+    </defs>
+    
+    <!-- Основная форма мозга -->
+    <path d="M32 10C21 10 14 17.5 14 26.5C14 31.5 16.5 35.5 20 38C18 40.5 17 44 17 47C17 52.5 21.5 57 28 57H36C42.5 57 47 52.5 47 47C47 44 46 40.5 44 38C47.5 35.5 50 31.5 50 26.5C50 17.5 43 10 32 10Z" 
+          fill="url(#brainGrad)" stroke="#1E40AF" stroke-width="1.2" filter="url(#glow)"/>
+    
+    <!-- Левое полушарие - борозды -->
+    <path d="M22 19C24.5 16.5 27.5 17.5 28.5 21" stroke="#BFDBFE" stroke-width="1.8" stroke-linecap="round" fill="none" opacity="0.8"/>
+    <path d="M19 25C22 22 25 23 26 27" stroke="#BFDBFE" stroke-width="1.8" stroke-linecap="round" fill="none" opacity="0.8"/>
+    <path d="M20 32C23 29 26 30 27 34" stroke="#BFDBFE" stroke-width="1.8" stroke-linecap="round" fill="none" opacity="0.8"/>
+    <path d="M22 39C24.5 36.5 27 37.5 28 41" stroke="#BFDBFE" stroke-width="1.8" stroke-linecap="round" fill="none" opacity="0.8"/>
+    
+    <!-- Правое полушарие - борозды -->
+    <path d="M42 19C39.5 16.5 36.5 17.5 35.5 21" stroke="#BFDBFE" stroke-width="1.8" stroke-linecap="round" fill="none" opacity="0.8"/>
+    <path d="M45 25C42 22 39 23 38 27" stroke="#BFDBFE" stroke-width="1.8" stroke-linecap="round" fill="none" opacity="0.8"/>
+    <path d="M44 32C41 29 38 30 37 34" stroke="#BFDBFE" stroke-width="1.8" stroke-linecap="round" fill="none" opacity="0.8"/>
+    <path d="M42 39C39.5 36.5 37 37.5 36 41" stroke="#BFDBFE" stroke-width="1.8" stroke-linecap="round" fill="none" opacity="0.8"/>
+    
+    <!-- Центральная борозда (разделение полушарий) -->
+    <path d="M32 12V55" stroke="#93C5FD" stroke-width="1.2" stroke-linecap="round" fill="none" opacity="0.5"/>
+    
+    <!-- Блики -->
+    <ellipse cx="24" cy="22" rx="3" ry="2" fill="white" opacity="0.15"/>
+    <ellipse cx="40" cy="22" rx="3" ry="2" fill="white" opacity="0.15"/>
+</svg>

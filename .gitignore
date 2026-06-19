@@ -1,0 +1,31 @@
+# dependencies
+node_modules/
+
+# next.js (frontend)
+mindbodyhub-front/.next/
+mindbodyhub-front/out/
+
+# production
+build/
+dist/
+
+# misc
+.DS_Store
+*.pem
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# env files
+.env*
+bots/.env
+
+# vercel
+.vercel
+
+# typescript
+*.tsbuildinfo
+mindbodyhub-front/next-env.d.ts

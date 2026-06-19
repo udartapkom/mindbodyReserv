@@ -1,0 +1,80 @@
+import type { IconDefinition } from "@fortawesome/fontawesome-svg-core";
+import {
+  faArrowRight,
+  faBrain,
+  faCheck,
+  faChevronDown,
+  faCircleCheck,
+  faCircleInfo,
+  faClock,
+  faCoins,
+  faDatabase,
+  faGem,
+  faHandshake,
+  faHeadset,
+  faHeart,
+  faKey,
+  faLink,
+  faLock,
+  faMessage,
+  faShareNodes,
+  faShield,
+  faToolbox,
+  faUserPlus,
+  faUsers,
+  faUsersViewfinder,
+} from "@fortawesome/free-solid-svg-icons";
+import {
+  faCircle,
+  faCircleCheck as faCircleCheckRegular,
+  faCircleQuestion,
+  faCreditCard,
+  faEnvelope,
+  faMessage as faMessageRegular,
+} from "@fortawesome/free-regular-svg-icons";
+import { faTelegram, faVk } from "@fortawesome/free-brands-svg-icons";
+import type { IconName, IconVariant } from "./types";
+
+export const iconRegistry: Record<
+  IconVariant,
+  Partial<Record<IconName, IconDefinition>>
+> = {
+  solid: {
+    "arrow-right": faArrowRight,
+    brain: faBrain,
+    check: faCheck,
+    "chevron-down": faChevronDown,
+    "circle-check": faCircleCheck,
+    "circle-info": faCircleInfo,
+    clock: faClock,
+    coins: faCoins,
+    database: faDatabase,
+    gem: faGem,
+    handshake: faHandshake,
+    headset: faHeadset,
+    heart: faHeart,
+    "info-circle": faCircleInfo,
+    key: faKey,
+    link: faLink,
+    lock: faLock,
+    message: faMessage,
+    "share-alt": faShareNodes,
+    shield: faShield,
+    toolbox: faToolbox,
+    "user-plus": faUserPlus,
+    users: faUsers,
+    "users-viewfinder": faUsersViewfinder,
+  },
+  regular: {
+    circle: faCircle,
+    "circle-check": faCircleCheckRegular,
+    "circle-question": faCircleQuestion,
+    "credit-card": faCreditCard,
+    envelope: faEnvelope,
+    message: faMessageRegular,
+  },
+  brand: {
+    telegram: faTelegram,
+    vk: faVk,
+  },
+};

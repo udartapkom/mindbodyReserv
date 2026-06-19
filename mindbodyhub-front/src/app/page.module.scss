@@ -1,0 +1,37 @@
+@use "../styles/variables" as *;
+
+.main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: $spacing-page-y $spacing-page-x;
+}
+
+.title {
+  margin: 0;
+  font-size: 2.25rem;
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  color: $color-text;
+}
+
+.subtitle {
+  margin: 1rem 0 0;
+  max-width: 32rem;
+  text-align: center;
+  font-size: 1.125rem;
+  line-height: 1.6;
+  color: $color-text-muted;
+}
+
+@media (prefers-color-scheme: dark) {
+  .title {
+    color: $color-text-dark;
+  }
+
+  .subtitle {
+    color: $color-text-muted-dark;
+  }
+}
