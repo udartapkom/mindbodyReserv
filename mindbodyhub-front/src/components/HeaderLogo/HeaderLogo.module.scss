@@ -1,0 +1,11 @@
+@use "../../styles/variables" as v;
+.headerLogo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    &__text {
+        font-size: 24px;
+        font-weight: 700;
+        color: v.$text-light-color;
+    }
+}

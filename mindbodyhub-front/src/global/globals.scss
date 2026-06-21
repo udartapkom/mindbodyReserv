@@ -13,8 +13,9 @@ html {
 body {
   min-height: 100%;
   margin: 0;
-  color: $color-text;
+  color: $text-light-color;
   font-family: $font-sans;
+  background-color: #F0F8FF;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }

@@ -17,7 +17,7 @@ const inter = Inter({
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "MindBodyHub",
+    default: "MindBodyHub - психология здоровья и бизнеса",
     template: "%s | MindBodyHub",
   },
   description: "Психология здоровья и бизнеса",

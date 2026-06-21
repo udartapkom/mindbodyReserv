@@ -1,0 +1,22 @@
+@forward './_variables';
+@use './_variables' as *;
+
+@mixin hoverToLink {
+    color: $accent-color;
+}
+
+@mixin text14-400 {
+    font-family: $font-sans;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 122%;
+    color: $text-light-color;
+}
+
+@mixin text16-500 {
+    font-family: $font-sans;
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 122%;
+    color: $text-light-color;
+}

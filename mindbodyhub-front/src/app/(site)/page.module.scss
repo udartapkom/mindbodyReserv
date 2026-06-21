@@ -1,0 +1,10 @@
+@use "../../styles/variables" as v;
+
+.main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  min-height: calc(100vh - 80px);
+  justify-content: space-between;
+}

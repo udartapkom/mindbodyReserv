@@ -1,0 +1,29 @@
+@use "../../styles/variables" as v;
+@use "../../styles/mixins.scss" as m;
+
+.desktopNavigation {
+    display: flex;
+    align-items: center;
+
+    &__list {
+        display: flex;
+        align-items: center;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        gap: 32px;
+    }
+    &__item {
+        display: flex;
+        align-items: center;
+    }
+    &__link {
+        @include m.text16-500;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        &:hover {
+            @include m.hoverToLink;
+        }
+    }
+}

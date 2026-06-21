@@ -1,0 +1,54 @@
+@use "../../styles/variables" as v;
+@use "../../styles/mixins.scss" as m;
+
+.footer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    background-color: v.$white-color;
+    padding: 40px 0;
+    &__container {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+        max-width: 1280px;
+        padding: 0 24px;
+    }
+    &__logo {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+    }
+    &__logoText {
+        font-size: 14px;
+        font-weight: 400;
+        color: v.$text-light-color;
+        margin: 0;
+    }
+    &__copyright {
+        @include m.text14-400;
+        margin: 0;
+    }
+    &__line {
+        height: 2px;
+        width: 100%;
+        background-color: v.$color-border;
+        margin-top: 24px;
+        margin-bottom: 24px;
+    }
+    &__links {
+        display: flex;
+        gap: 8px;
+    }
+    &__link {
+        @include m.text14-400;
+        text-decoration: none;
+        &:hover {
+            @include m.hoverToLink;
+        }
+    }
+}
