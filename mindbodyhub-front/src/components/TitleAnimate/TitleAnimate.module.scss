@@ -1,0 +1,81 @@
+@use "../../styles/variables" as v;
+
+.titleAnimate {
+    padding: 60px 0 60px;
+}
+
+.content {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 v.$margin-page-x;
+    text-align: center;
+}
+
+.srOnly {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+.title {
+    position: relative;
+    margin: 0 0 24px;
+    color: v.$text-dark-color;
+    font-size: clamp(2rem, 8vw, 3.5rem);
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+.titleVisual {
+    display: inline-block;
+    opacity: 1;
+    transition: opacity 0.4s ease;
+}
+
+.titleVisualHidden {
+    opacity: 0;
+}
+
+.brandWord {
+    color: v.$accent-color;
+}
+
+.subtitle {
+    margin: 0;
+    min-height: 3rem;
+    color: v.$accent-color;
+    font-size: clamp(1.2rem, 4vw, 1.8rem);
+    font-weight: 500;
+}
+
+.pronoun {
+    display: inline-block;
+    min-width: 3.5ch;
+    font-weight: 700;
+    text-align: center;
+    opacity: 1;
+    transition: opacity 0.45s ease;
+}
+
+.pronounHidden {
+    opacity: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .titleVisual,
+    .pronoun {
+        transition: none;
+    }
+}
+
+@media (max-width: 768px) {
+    .titleAnimate {
+        padding: 48px 0 40px;
+    }
+}

@@ -20,3 +20,19 @@
     line-height: 122%;
     color: $text-light-color;
 }
+
+@mixin text18-400 {
+    font-family: $font-sans;
+    font-weight: 400;
+    font-size: 18px;
+    line-height: 122%;
+    color: $text-light-color;
+}
+
+@mixin text46-900 {
+    font-family: $font-sans;
+    font-weight: 900;
+    font-size: 46px;
+    line-height: 122%;
+    color: $text-dark-color;
+}

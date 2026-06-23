@@ -1,0 +1,25 @@
+@use "../../styles/variables" as v;
+@use "../../styles/mixins" as m;
+
+.mainText {
+    max-width: 1024px;
+    margin: 0 auto;
+    &__article {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        background-color: v.$white-color;
+        padding: 38px;
+        border-radius: 14px;
+        border: 1px solid v.$color-border;
+        box-shadow: v.$block-shadow;
+    }
+    &__text {
+        margin: 0;
+        @include m.text18-400;
+    }
+    &__span {
+        color: v.$accent-color;
+        font-weight: 700;
+    }
+}
