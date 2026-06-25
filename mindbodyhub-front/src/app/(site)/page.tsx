@@ -3,6 +3,8 @@ import TitleAnimate from "@/components/TitleAnimate/TitleAnimate";
 import MainText from "@/components/MainText/MainText";
 import PriceSection from "@/components/PriceSection/PriceSection";
 import We from "@/components/We/We";
+import AttentionSection from "@/components/AttentionSection/AttentionSection";
+import QuestionForm from "@/components/QuestionForm/QuestionForm";
 
 export default function Home() {
   return (
@@ -10,7 +12,9 @@ export default function Home() {
       <TitleAnimate />
       <MainText />
       <PriceSection />
+      <AttentionSection />
       <We />
+      <QuestionForm />
     </>
   );
 }

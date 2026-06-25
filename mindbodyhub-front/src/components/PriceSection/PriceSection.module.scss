@@ -1,5 +1,5 @@
-@use '@/styles/variables' as v;
-@use '@/styles/mixins' as m;
+@use '../../styles/variables' as v;
+@use '../../styles/mixins' as m;
 
 .priceSection {
     max-width: 1280px;
@@ -24,5 +24,6 @@
         grid-template-columns: repeat(3, 1fr);
         gap: 30px;
         margin-top: 18px;
+        padding-bottom: 40px;
     }
 }

@@ -142,8 +142,9 @@
         position: relative;
         z-index: 2;
         align-self: center;
-        width: 240px;
-        max-width: 100%;
+        max-width: 240px;
+        width: 100%;
+        margin-top: 24px;
         &:hover {
             background-color: v.$light-accent-color;
             border-color: v.$accent-color;

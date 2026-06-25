@@ -9,7 +9,7 @@ export const cardData: CardData[] = [
         period: '/ неделя',
         titleColor: '#B1AEAF',
         subTitle: 'Философия',
-        description: ['Доступ к мыслям и заметкам', 'Еженедельные инсайты', 'Цитаты', 'Закрытый Telegram-канал']
+        description: ['Доступ к мыслям и заметкам', 'Еженедельные инсайты', 'Цитаты']
     },
     {
         image: '/images/love.png',

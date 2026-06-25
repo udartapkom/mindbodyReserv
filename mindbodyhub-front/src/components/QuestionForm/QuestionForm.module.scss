@@ -1,0 +1,115 @@
+@use '../../styles/variables' as v;
+@use '../../styles/mixins' as m;
+
+.questionForm {
+    display: flex;
+    justify-content: center;
+    padding: 60px v.$margin-page-x;
+    width: 100%;
+
+    &__container {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 40px;
+        max-width: 1280px;
+        width: 100%;
+    }
+
+    &__content {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    &__title {
+        @include m.text32-600;
+        margin: 0;
+    }
+
+    &__text {
+        @include m.text18-400;
+        margin: 0;
+    }
+
+    &__form {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        justify-content: center;
+        gap: 10px;
+        width: 100%;
+        padding-top: 8px;
+    }
+
+    &__field {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        width: 100%;
+    }
+
+    &__error {
+        @include m.text14-400;
+        display: block;
+        min-height: calc(12px * 1.4);
+        color: v.$color-error;
+        padding-left: 12px
+    }
+
+    &__formInput {
+        @include m.text16-400;
+        width: 100%;
+        padding: 10px;
+        border: 1px solid v.$color-border;
+        border-radius: 10px;
+        height: 44px;
+        box-sizing: border-box;
+
+        &_error {
+            border-color: v.$color-error;
+        }
+    }
+
+    &__formTextarea {
+        @include m.text16-400;
+        width: 100%;
+        padding: 10px;
+        border: 1px solid v.$color-border;
+        border-radius: 10px;
+        box-sizing: border-box;
+        height: 100px;
+        resize: vertical;
+
+        &_error {
+            border-color: v.$color-error;
+        }
+    }
+
+    &__formButton {
+        @include m.text16-400;
+        width: 100%;
+        padding: 10px;
+        margin-top: 10px;
+        background-color: v.$accent-color;
+        border-radius: 10px;
+        border: none;
+        color: v.$white-color;
+        cursor: pointer;
+        height: 48px;
+        box-sizing: border-box;
+        transition: all 0.3s ease;
+
+        &:hover:not(:disabled) {
+            translate: 0 -2px;
+        }
+
+        &:active:not(:disabled) {
+            translate: 0 2px;
+        }
+
+        &:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+    }
+}
