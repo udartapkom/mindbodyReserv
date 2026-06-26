@@ -1,7 +1,7 @@
 'use client';
-
 import { FormEvent, useEffect, useState } from 'react';
 import { PatternFormat } from 'react-number-format';
+import WriteWeSocial from '../WriteWeSocial/WriteWeSocial';
 import styles from './QuestionForm.module.scss';
 import {
     getVisibleValidationErrors,
@@ -95,6 +95,18 @@ function QuestionForm() {
                     <p className={styles.questionForm__text}>
                         Конфиденциально и без навязчивых рассылок.
                     </p>
+{/*                     <Image
+                        src={questionFormImage}
+                        alt="Question Form"
+                        className={styles.questionForm__image}
+                        width={500}
+                        height={300}
+                        priority
+                    /> */}
+                    <WriteWeSocial />
+                    <div className={styles.questionForm__imageContainer}>
+
+                    </div>
                 </div>
 
                 <form className={styles.questionForm__form} onSubmit={handleSubmit} noValidate>

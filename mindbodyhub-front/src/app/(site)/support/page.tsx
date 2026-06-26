@@ -1,14 +1,12 @@
-import styles from "./page.module.scss";
+import SupportHead from '@/components/SupportHead/SupportHead';
+import SupportCardSection from '@/components/SupportCardSection/SupportCardSection';
 
 function SupportPage() {
     return (
         <>
-            <main className={styles.page__main}>
-                <h1>Страница поддержки</h1>
-            </main>
+            <SupportHead />
+            <SupportCardSection />
         </>
-
-
     );
 }
 

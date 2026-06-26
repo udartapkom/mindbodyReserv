@@ -1,0 +1,18 @@
+.writeWeSocial {
+    display: flex;
+    justify-content: left;
+    gap: 40px;
+    margin-top: 36px;
+    cursor: pointer;
+    &__icon {
+        width: 72px;
+        height: 72px;
+    }
+    &__iconImage {
+        transition: all 0.3s ease;
+        &:hover {
+            opacity: 0.8;
+            transform: scale(1.1);
+        }
+    }
+}

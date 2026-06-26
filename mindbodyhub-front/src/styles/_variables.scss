@@ -16,6 +16,8 @@ $color-text-muted-dark: #a1a1aa;
 $header-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.02);
 $block-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);
 
+$section-gradient: linear-gradient(135deg, #eff6ff 0%, #ffffff 100%);
+
 $font-sans: var(--font-inter), -apple-system, BlinkMacSystemFont, sans-serif;
 
 $container-max: 1280px;
