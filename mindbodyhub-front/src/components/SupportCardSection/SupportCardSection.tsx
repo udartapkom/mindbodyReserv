@@ -9,11 +9,11 @@ const SupportCardSection = () => {
             {supportCard.map((card) => (
                 <SupportCard
                     key={card.id}
-                title={card.title} 
-                description={card.description} 
-                icon={card.icon} 
-                buttonText={card.buttonText} 
-                link={card.link} />
+                    title={card.title} 
+                    description={card.description} 
+                    icon={card.icon} 
+                    buttonText={card.buttonText} 
+                    link={card.link} />
             ))}
         </section>
     );

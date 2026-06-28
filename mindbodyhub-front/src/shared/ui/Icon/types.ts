@@ -3,6 +3,7 @@ export type IconVariant = "solid" | "regular" | "brand";
 export type IconName =
   | "arrow-right"
   | "brain"
+  | "bug"
   | "check"
   | "chevron-down"
   | "circle"
@@ -11,6 +12,7 @@ export type IconName =
   | "circle-question"
   | "clock"
   | "coins"
+  | "compass"
   | "credit-card"
   | "database"
   | "envelope"
@@ -23,6 +25,7 @@ export type IconName =
   | "link"
   | "lock"
   | "message"
+  | "rotate-left"
   | "share-alt"
   | "shield"
   | "telegram"

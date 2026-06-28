@@ -26,6 +26,6 @@ export const supportCard: SupportCardProps = [
         description: 'Напишите нам в мессенджере MAX.',
         icon: maxIcon,
         buttonText: 'Написать в MAX',
-        link: 'https://max.com/mbh_support',
+        link: 'https://max.ru',
     },
 ];

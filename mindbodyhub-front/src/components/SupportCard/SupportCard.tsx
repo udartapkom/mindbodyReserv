@@ -13,7 +13,7 @@ function SupportCard(
     }: Omit<SupportCardItem, 'id'>) {
         
         const handleClick = () => {
-            console.log('clicked');
+            window.open(link, '_blank');
         };
     return (
         <div className={styles.supportCard} onClick={handleClick}>
