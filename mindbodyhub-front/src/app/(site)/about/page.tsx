@@ -1,15 +1,16 @@
-import Header from "@/components/Header/Header";
-import styles from "./page.module.scss";
+import AboutUsBrainSection from "@/components/AboutUsBrainSection/AboutUsBrainSection";
+import OurMissionSection from "@/components/OurMissionSection/OurMissionSection";
+import AboutUsTextSection from "@/components/AboutUsTextSection/AboutUsTextSection";
+import WhatWeSection from "@/components/WhatWeSection/WhatWeSection";
 
 function AboutPage() {
     return (
         <>
-            <main className={styles.page__main}>
-                <h1>Страница о нас</h1>
-            </main>
+            <AboutUsBrainSection />
+            <OurMissionSection />
+            <AboutUsTextSection />
+            <WhatWeSection />
         </>
-
-
     );
 }
 

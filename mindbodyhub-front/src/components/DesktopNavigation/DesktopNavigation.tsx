@@ -12,19 +12,24 @@ function DesktopNavigation() {
           </Link>
         </li>
         <li className={styles.desktopNavigation__item}>
-          <Link className={styles.desktopNavigation__link} href="/support">
-            Поддержка
+        <Link className={styles.desktopNavigation__link} href="/instructions">
+            Как это работает
           </Link>
         </li>
         <ProblemsDropdown />
+        <li className={styles.desktopNavigation__item}>
+          <Link className={styles.desktopNavigation__link} href="/price">
+            Тарифы
+          </Link>
+        </li>
         <li className={styles.desktopNavigation__item}>
           <Link className={styles.desktopNavigation__link} href="/about">
             О нас
           </Link>
         </li>
         <li className={styles.desktopNavigation__item}>
-          <Link className={styles.desktopNavigation__link} href="/partners">
-            Партнёрам
+          <Link className={styles.desktopNavigation__link} href="/support">
+            Поддержка
           </Link>
         </li>
       </ul>

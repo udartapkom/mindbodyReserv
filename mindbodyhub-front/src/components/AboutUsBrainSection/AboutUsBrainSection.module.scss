@@ -1,0 +1,35 @@
+@use '../../styles/variables' as v;
+@use '../../styles/mixins' as m;
+
+.aboutUsBrainSection {
+    background: v.$section-gradient;
+    padding: 60px 0;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    &__container {
+        max-width: 1280px;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+    &__icon {
+        color: v.$accent-color;
+        width: 64px;
+        height: 64px;
+    }
+    &__title {
+        @include m.text46-900;
+        color: v.$text-dark-color;
+    }
+    &__description {
+        @include m.text18-400;
+        color: v.$text-dark-color;
+        &_bold {
+            color: v.$accent-color;
+            font-weight: 700;
+        }
+    }
+}

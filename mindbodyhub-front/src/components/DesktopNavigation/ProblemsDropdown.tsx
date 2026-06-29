@@ -40,7 +40,7 @@ function ProblemsDropdown() {
         aria-haspopup="true"
         onClick={() => setIsOpen((prev) => !prev)}
       >
-        Выбрать проблемы
+        Готовые решения
         <Icon
           name="chevron-down"
           className={`${styles.dropdown__icon} ${isOpen ? styles.dropdown__iconOpen : ""}`}

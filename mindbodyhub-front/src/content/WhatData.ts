@@ -36,6 +36,6 @@ export const whatData: WhatWrite[] = [
         title: 'Другой вопрос',
         description: 'Тема не из списка — напишите в мессенджер или оставьте заявку в форме, ответим лично',
         icon: 'message',
-        color: '#eff6ff',
+        color: 'linear-gradient(to right, #ffffff 0%, #f5f9ff 45%, #e8f0fe 100%)',
     }
 ];
