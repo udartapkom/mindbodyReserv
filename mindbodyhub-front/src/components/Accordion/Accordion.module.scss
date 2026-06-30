@@ -1,0 +1,59 @@
+@use '../../styles/variables' as v;
+@use '../../styles/mixins' as m;
+
+.accordion {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    width: 100%;
+
+    &__item {
+        width: 100%;
+        background: v.$white-color;
+        border-radius: 12px;
+        box-shadow: v.$block-shadow;
+        cursor: pointer;
+        transition: box-shadow 0.3s ease-in-out;
+        overflow: hidden;
+    }
+
+    &__header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 16px 24px;
+    }
+
+    &__title {
+        @include m.text22-600;
+        color: v.$text-dark-color;
+        margin: 0;
+    }
+
+    &__icon {
+        font-size: 24px;
+        color: v.$accent-color;
+        transition: transform 0.3s ease-in-out;
+
+        &_active {
+            transform: rotate(180deg);
+        }
+    }
+
+    &__answer {
+        @include m.text16-400;
+        color: v.$text-dark-color;
+        margin: 0;
+        padding: 0 24px;
+        max-height: 0;
+        overflow: hidden;
+        opacity: 0;
+        transition: max-height 0.3s ease-in-out, padding 0.3s ease-in-out, opacity 0.3s ease-in-out;
+
+        &_active {
+            max-height: 400px;
+            padding: 24px;
+            opacity: 1;
+        }
+    }
+}

@@ -1,0 +1,36 @@
+@use '../../styles/variables' as v;
+@use '../../styles/mixins' as m;
+
+.we {
+    padding-top: 60px;
+    padding-bottom: 60px;
+    background-color: v.$white-color;
+    width: 100%;
+    display: grid;
+    grid-template-rows: auto 1fr;
+    justify-content: center;
+    &__header {
+        width: 100%;
+        max-width: 1280px;
+        padding: 0 v.$margin-page-x 60px;
+        text-align: center;
+        justify-self: center;
+    }
+    &__container {
+        padding: 0 v.$margin-page-x;
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 20px;
+        max-width: 1280px;
+        width: 100%;
+    }
+    &__title {
+        @include m.text32-600;
+        margin: 0 0 16px;
+    }
+    &__lead {
+        @include m.text18-400;
+        max-width: 720px;
+        margin: 0 auto;
+    }
+}

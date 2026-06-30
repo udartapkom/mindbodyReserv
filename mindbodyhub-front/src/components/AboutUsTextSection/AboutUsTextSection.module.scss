@@ -1,0 +1,40 @@
+@use '../../styles/variables' as v;
+@use '../../styles/mixins' as m;
+
+.aboutUsTextSection {
+    padding: 60px 0;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: v.$white-color;
+    &__text {
+        @include m.text18-400;
+        color: v.$text-dark-color;
+        margin: 0;
+        padding: 0 24px;
+    }
+    &__title {
+        @include m.text46-900;
+        color: v.$text-dark-color;
+        margin: 0;
+        padding-bottom: 24px;
+    }
+    &__subtitle {
+        @include m.text32-600;
+        color: v.$text-dark-color;
+        margin: 0;
+        padding-top: 24px;
+        padding-bottom: 24px;
+    }
+    &__container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        width: 100%;
+        max-width: 1280px;
+        padding: 0 24px;
+    }
+}

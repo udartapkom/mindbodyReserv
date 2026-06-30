@@ -1,0 +1,35 @@
+@use '../../styles/variables' as v;
+@use '../../styles/mixins' as m;
+
+.questionForm {
+    display: flex;
+    justify-content: center;
+    padding: 60px v.$margin-page-x;
+    width: 100%;
+
+    &__container {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 40px;
+        max-width: 1280px;
+        width: 100%;
+        padding: 24px;
+    }
+
+    &__content {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    &__title {
+        @include m.text32-600;
+        margin: 0;
+    }
+
+    &__text {
+        @include m.text18-400;
+        color: v.$text-dark-color;
+        margin: 0;
+    }
+}

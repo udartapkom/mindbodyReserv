@@ -1,0 +1,35 @@
+@use '../../styles/variables' as v;
+@use '../../styles/mixins' as m;
+
+.whatWeSection {
+    padding: 60px 0;
+
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    &__container {
+        max-width: 1280px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 24px;
+        margin: 0;
+        padding: 24px;
+    }
+    &__title {
+        @include m.text46-900;
+        color: v.$text-dark-color;
+        margin: 0;
+    }
+    &__cards {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        gap: 24px;
+        margin: 0;
+        padding-top: 24px;
+    }
+}

@@ -1,0 +1,55 @@
+@use '../../styles/variables' as v;
+@use '../../styles/mixins' as m;
+
+.ourMissionSection {
+    padding: 60px 0;
+    background: v.$section-gradient;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    &__container {
+        max-width: 1280px;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 24px;
+    }
+    &__contentContainer {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
+        gap: 24px;
+        padding: 24px;
+    }
+    &__content {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        margin: 0;
+        max-width: 560px;
+        width: 100%;
+        gap: 24px;
+    }
+    &__title {
+        @include m.text46-900;
+        color: v.$text-dark-color;
+        margin: 0;
+    }
+    &__description {
+        @include m.text18-400;
+        color: v.$text-dark-color;
+        margin: 0;
+    }
+    &__cards {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 24px;
+    }
+}

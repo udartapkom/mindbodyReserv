@@ -23,13 +23,10 @@ export const metadata: Metadata = {
   description: "Психология здоровья и бизнеса",
   icons: {
     icon: [
-      { url: "/icons/favicon.ico", sizes: "any" },
-      { url: "/icons/brain.svg", type: "image/svg+xml" },
-      { url: "/icons/icon-192.png", sizes: "192x192", type: "image/png" },
-      { url: "/icons/icon-512.png", sizes: "512x512", type: "image/png" },
+      { url: "/icons/icon.svg", type: "image/svg+xml" },
+      { url: "/icons/favicon.ico", sizes: "32x32" },
     ],
     apple: [{ url: "/icons/apple-touch-icon.png", sizes: "180x180" }],
-    shortcut: ["/icons/favicon.ico"],
   },
   manifest: "/site.webmanifest",
   openGraph: {

@@ -1,6 +1,6 @@
 "use client";
 
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { FontAwesomeIcon, type FontAwesomeIconProps } from "@fortawesome/react-fontawesome";
 import { iconRegistry } from "./iconRegistry";
 import styles from "./Icon.module.scss";
 import type { IconName, IconVariant } from "./types";
@@ -9,6 +9,7 @@ type IconProps = {
   name: IconName;
   variant?: IconVariant;
   className?: string;
+  style?: FontAwesomeIconProps["style"];
   title?: string;
 };
 
@@ -16,6 +17,7 @@ export function Icon({
   name,
   variant = "solid",
   className,
+  style,
   title,
 }: IconProps) {
   const icon = iconRegistry[variant][name];
@@ -28,6 +30,7 @@ export function Icon({
     <FontAwesomeIcon
       icon={icon}
       className={[styles.icon, className].filter(Boolean).join(" ")}
+      style={style}
       title={title}
     />
   );

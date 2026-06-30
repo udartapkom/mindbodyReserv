@@ -1,0 +1,21 @@
+@use '../../styles/variables' as v;
+@use '../../styles/mixins' as m;
+
+.faqSupportSection {
+    width: 100%;
+    padding: 60px 0;
+    background: v.$white-color;
+    &__title {
+        font-size: 32px;
+        font-weight: 700;
+        color: v.$text-dark-color;
+        text-align: center;
+        margin-bottom: 40px;
+    }
+    &__container {
+        max-width: v.$container-max;
+        margin: 0 auto;
+        padding-right: 24px;
+        padding-left: 24px;
+    }
+}

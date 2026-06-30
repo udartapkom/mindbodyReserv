@@ -1,0 +1,37 @@
+@use '../../styles/variables' as v;
+@use '../../styles/mixins' as m;
+
+.supportHead {
+    padding: 60px 0;
+    background: v.$section-gradient;
+    border-radius: 16px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    &__icon {
+        width: 64px;
+        height: 64px;
+        color: v.$accent-color;
+    }
+    &__title {
+        @include m.text46-900;
+        color: v.$text-dark-color;
+    }
+    &__content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        max-width: 1280px;
+        justify-content: center;
+    }
+    &__description {
+        @include m.text18-400;
+        color: v.$text-dark-color;
+        text-align: center;
+        margin-bottom: 0;
+    }
+    &__descriptionSpan {
+        color: v.$accent-color;
+        font-weight: 600;
+    }
+}
