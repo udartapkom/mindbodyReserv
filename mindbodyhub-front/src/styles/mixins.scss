@@ -1,5 +1,5 @@
-@forward './_variables';
-@use './_variables' as *;
+@forward './variables';
+@use './variables' as *;
 
 @mixin hoverToLink {
     color: $accent-color;
