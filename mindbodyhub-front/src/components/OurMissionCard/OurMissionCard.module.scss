@@ -12,6 +12,11 @@
     background: v.$mission-card-gradient;
     border-radius: 12px;
     box-shadow: v.$block-shadow;
+    @include m.until-desktop {
+        flex-direction: column;
+        gap: 16px;
+    }
+
     &__iconContainer {
         display: flex;
         flex-direction: column;
@@ -20,6 +25,9 @@
         gap: 8px;
         width: 100%;
         height: 100%;
+        @include m.until-desktop {
+            padding-top: 16px;
+        }
     }
     &__icon {
         width: 40px;
@@ -34,6 +42,7 @@
     &__description {
         @include m.text18-400;
         color: v.$text-dark-color;
+        text-align: center;
         margin: 0;
     }
     &__text {

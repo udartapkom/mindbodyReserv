@@ -3,7 +3,6 @@
 
 .whatWeSection {
     padding: 60px 0;
-
     width: 100%;
     display: flex;
     flex-direction: column;
@@ -17,6 +16,12 @@
         gap: 24px;
         margin: 0;
         padding: 24px;
+        @include m.until-desktop {
+            padding: 12px;
+        }
+        @include m.mobile {
+            padding: 24px;
+        }
     }
     &__title {
         @include m.text46-900;
@@ -31,5 +36,9 @@
         gap: 24px;
         margin: 0;
         padding-top: 24px;
+        @include m.until-desktop {
+            flex-direction: column;
+            gap: 16px;
+        }
     }
 }

@@ -26,4 +26,7 @@ $dark-gradient: linear-gradient(135deg, #1a2a4a 0%, #2a3a5a 100%);
 $font-sans: var(--font-inter), -apple-system, BlinkMacSystemFont, sans-serif;
 
 $container-max: 1280px;
+$container-min-desktop: 1024px;
+$container-max-tablet: 992px;
+$container-max-mobile: 768px;
 $margin-page-x: 24px;

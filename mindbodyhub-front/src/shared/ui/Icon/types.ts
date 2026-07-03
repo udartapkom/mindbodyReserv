@@ -2,6 +2,7 @@ export type IconVariant = "solid" | "regular" | "brand";
 
 export type IconName =
   | "arrow-right"
+  | "bars"
   | "brain"
   | "bug"
   | "check"
@@ -33,4 +34,5 @@ export type IconName =
   | "user-plus"
   | "users"
   | "users-viewfinder"
-  | "vk";
+  | "vk"
+  | "xmark";

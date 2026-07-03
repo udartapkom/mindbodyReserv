@@ -27,6 +27,7 @@
     &__description {
         @include m.text18-400;
         color: v.$text-dark-color;
+        text-align: center;
         &_bold {
             color: v.$accent-color;
             font-weight: 700;

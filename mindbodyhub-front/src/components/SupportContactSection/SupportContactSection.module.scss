@@ -16,6 +16,13 @@
         max-width: 1280px;
         width: 100%;
         padding: 24px;
+        @include m.until-tablet {
+            grid-template-columns: 1fr;
+            gap: 24px;
+        }
+        @include m.mobile {
+            padding: 0 16px;
+        }
     }
 
     &__content {

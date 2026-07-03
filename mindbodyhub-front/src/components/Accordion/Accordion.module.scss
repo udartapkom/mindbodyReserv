@@ -6,21 +6,28 @@
     flex-direction: column;
     gap: 16px;
     width: 100%;
+    margin: 0;
+    padding: 0;
+    list-style: none;
 
     &__item {
         width: 100%;
         background: v.$white-color;
         border-radius: 12px;
         box-shadow: v.$block-shadow;
-        cursor: pointer;
-        transition: box-shadow 0.3s ease-in-out;
         overflow: hidden;
+        cursor: pointer;
+        touch-action: manipulation;
+        -webkit-tap-highlight-color: transparent;
     }
 
     &__header {
         display: flex;
         justify-content: space-between;
         align-items: center;
+        gap: 16px;
+        width: 100%;
+        min-height: 48px;
         padding: 16px 24px;
     }
 
@@ -28,32 +35,69 @@
         @include m.text22-600;
         color: v.$text-dark-color;
         margin: 0;
+        flex: 1;
+        padding-right: 16px;
+        pointer-events: none;
     }
 
     &__icon {
-        font-size: 24px;
-        color: v.$accent-color;
-        transition: transform 0.3s ease-in-out;
+        position: relative;
+        flex-shrink: 0;
+        width: 24px;
+        height: 24px;
+        transition: transform 0.3s ease;
+        pointer-events: none;
 
-        &_active {
-            transform: rotate(180deg);
+        &::before,
+        &::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            background: v.$accent-color;
+            transform: translate(-50%, -50%);
         }
+
+        &::before {
+            width: 12px;
+            height: 2px;
+        }
+
+        &::after {
+            width: 2px;
+            height: 12px;
+        }
+    }
+
+    &__item_active &__icon {
+        transform: rotate(45deg);
     }
 
     &__answer {
         @include m.text16-400;
         color: v.$text-dark-color;
         margin: 0;
-        padding: 0 24px;
         max-height: 0;
-        overflow: hidden;
         opacity: 0;
-        transition: max-height 0.3s ease-in-out, padding 0.3s ease-in-out, opacity 0.3s ease-in-out;
+        overflow: hidden;
+        transition:
+            max-height 0.3s ease,
+            opacity 0.3s ease,
+            padding 0.3s ease;
+    }
 
-        &_active {
-            max-height: 400px;
-            padding: 24px;
-            opacity: 1;
+    &__item_active &__answer {
+        max-height: 400px;
+        opacity: 1;
+        padding: 0 24px 24px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .accordion {
+        &__icon,
+        &__answer {
+            transition: none;
         }
     }
 }

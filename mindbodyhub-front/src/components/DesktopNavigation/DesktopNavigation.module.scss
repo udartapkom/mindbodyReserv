@@ -4,7 +4,7 @@
 .desktopNavigation {
     display: flex;
     align-items: center;
-
+    justify-content: center;
     &__list {
         display: flex;
         align-items: center;
@@ -12,6 +12,9 @@
         padding: 0;
         list-style: none;
         gap: 32px;
+        @media (max-width: 1210px) {
+            gap: 12px;
+        }
     }
     &__item {
         display: flex;

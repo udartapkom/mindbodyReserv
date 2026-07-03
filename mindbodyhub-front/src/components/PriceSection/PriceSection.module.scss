@@ -25,5 +25,12 @@
         gap: 30px;
         margin-top: 18px;
         padding-bottom: 40px;
+        @include m.until-desktop {
+            grid-template-columns: repeat(2, 1fr);
+        }
+        @include m.mobile {
+            grid-template-columns: 1fr;
+            padding: 0 16px;
+        }
     }
 }

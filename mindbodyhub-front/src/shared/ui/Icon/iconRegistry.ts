@@ -1,6 +1,7 @@
 import type { IconDefinition } from "@fortawesome/fontawesome-svg-core";
 import {
   faArrowRight,
+  faBars,
   faBrain,
   faBug,
   faCheck,
@@ -26,6 +27,7 @@ import {
   faUserPlus,
   faUsers,
   faUsersViewfinder,
+  faXmark,
 } from "@fortawesome/free-solid-svg-icons";
 import {
   faCircle,
@@ -44,6 +46,7 @@ export const iconRegistry: Record<
 > = {
   solid: {
     "arrow-right": faArrowRight,
+    bars: faBars,
     brain: faBrain,
     bug: faBug,
     check: faCheck,
@@ -70,6 +73,7 @@ export const iconRegistry: Record<
     "user-plus": faUserPlus,
     users: faUsers,
     "users-viewfinder": faUsersViewfinder,
+    xmark: faXmark,
   },
   regular: {
     circle: faCircle,

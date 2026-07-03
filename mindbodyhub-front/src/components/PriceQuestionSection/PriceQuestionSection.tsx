@@ -16,7 +16,6 @@ function PriceQuestionSection() {
                         title={card.title}
                         description={card.description}
                         icon={card.icon}
-                        buttonText={card.buttonText}
                         link={card.link}
                     />
                 ))}
