@@ -1,3 +1,4 @@
+import { AuthProvider } from "@/context/AuthContext";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "@/shared/config/fontawesome";
@@ -59,7 +60,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ru" className={inter.variable}>
-      <body className={styles.body}>{children}</body>
+      <body className={styles.body}>
+        <AuthProvider>
+          {children}
+        </AuthProvider>
+      </body>
     </html>
   );
 }

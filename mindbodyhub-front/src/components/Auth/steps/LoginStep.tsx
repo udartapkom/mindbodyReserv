@@ -3,6 +3,7 @@
 import { FormEvent, useState } from 'react';
 import { PatternFormat } from 'react-number-format';
 import { authCopy } from '@/content/authCopy';
+import { useAuth } from '@/context/AuthContext';
 import styles from '../AuthFlow.module.scss';
 
 type LoginStepProps = {
@@ -21,10 +22,10 @@ function LoginStep({
     onRecoverClick,
 }: LoginStepProps) {
     const [password, setPassword] = useState('');
-
+    const { login } = useAuth();
     const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        onSubmit(phone, password);
+        login(phone, password);
     };
 
     return (
