@@ -1,10 +1,12 @@
 @use '../../styles/mixins' as m;
 
 .main {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    display: grid;
+    grid-template-columns: 1fr 3fr;
+    max-width: 1280px;
     width: 100%;
+    width: 100%;
+    padding: 0 24px;
     min-height: calc(100vh - 300px);
     @include m.mobile {
         width: auto;

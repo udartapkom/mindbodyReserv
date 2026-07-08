@@ -13,13 +13,18 @@ async function bootstrap() {
     }),
   );
 
+  const isDev = process.env.NODE_ENV !== 'production';
   const corsOrigin = process.env.CORS_ORIGIN ?? 'http://localhost:3000';
+  const allowedOrigins = corsOrigin.split(',').map((origin) => origin.trim());
+
   app.enableCors({
-    origin: corsOrigin.split(',').map((origin) => origin.trim()),
+    origin: isDev
+      ? true
+      : allowedOrigins,
     credentials: true,
   });
 
   const port = process.env.PORT ?? 4000;
-  await app.listen(port);
+  await app.listen(port, '0.0.0.0');
 }
 bootstrap();

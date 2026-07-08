@@ -19,6 +19,7 @@ type AuthContextValue = {
   isAuthenticated: boolean;
   isLoading: boolean;
   login: (phone: string, password: string) => Promise<void>;
+  register: (phone: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
 };
 
@@ -49,6 +50,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     router.push("/cabinet");
   }, [router]);
 
+  const register = useCallback(async (phone: string, password: string) => {
+    await authApi.register(phone, password);
+    setUser(authStorage.getUser());
+    router.push("/cabinet");
+  }, [router]);
+
   const logout = useCallback(async () => {
     await authApi.logout();
     setUser(null);
@@ -61,9 +68,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       isAuthenticated: !!user,
       isLoading,
       login,
+      register,
       logout,
     }),
-    [user, isLoading, login, logout]
+    [user, isLoading, login, register, logout]
   );
 
   return (

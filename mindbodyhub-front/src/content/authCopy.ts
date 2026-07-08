@@ -15,9 +15,11 @@ export const authSmsDescriptions: Record<SmsPurpose, string> = {
 export const authCopy = {
     phoneLabel: 'Телефон',
     passwordLabel: 'Пароль',
+    passwordConfirmLabel: 'Подтверждение пароля',
     codeLabel: 'Код из SMS',
     phonePlaceholder: '+7 (___) ___-__-__',
     passwordPlaceholder: 'Пароль',
+    passwordConfirmPlaceholder: 'Повторите пароль',
     codePlaceholder: '0000',
     loginSubmit: 'Войти',
     registerSubmit: 'Зарегистрироваться',
@@ -27,4 +29,6 @@ export const authCopy = {
     hasAccount: 'Уже есть аккаунт? Войти',
     forgotPassword: 'Не удаётся войти',
     back: 'Назад',
+    recoverDisabledHint:
+        'Восстановление пароля через SMS временно недоступно',
 };

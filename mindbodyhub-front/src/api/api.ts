@@ -1,20 +1,27 @@
 import { auth as authStorage } from "./auth";
 import type { User } from "@/types/user";
 
-const getApiBaseUrl = () => {
+const isLocalDevHost = (hostname: string) =>
+  hostname === "localhost" ||
+  hostname === "127.0.0.1" ||
+  /^192\.168\.\d{1,3}\.\d{1,3}$/.test(hostname) ||
+  /^10\.\d{1,3}\.\d{1,3}\.\d{1,3}$/.test(hostname) ||
+  /^172\.(1[6-9]|2\d|3[01])\.\d{1,3}\.\d{1,3}$/.test(hostname);
+
+export const getApiBaseUrl = () => {
   if (process.env.NEXT_PUBLIC_API_BASE_URL) {
     return process.env.NEXT_PUBLIC_API_BASE_URL;
   }
-  if (typeof window !== "undefined") {
-    const hostname = window.location.hostname;
-    if (hostname === "localhost" || hostname === "127.0.0.1") {
-      return "http://localhost:4000";
+
+  if (process.env.NODE_ENV === "development") {
+    if (typeof window !== "undefined" && isLocalDevHost(window.location.hostname)) {
+      return `http://${window.location.hostname}:4000`;
     }
+    return "http://localhost:4000";
   }
+
   return "https://api.mindbodyhub.pro";
 };
-
-export const API_BASE_URL = getApiBaseUrl();
 
 type AuthTokensResponse = {
   accessToken: string;
@@ -38,11 +45,11 @@ const saveAuthSession = (data: AuthTokensResponse) => {
 
 export type HealthResponse = { status: string };
 export const getHealth = (): Promise<HealthResponse> =>
-  fetch(`${API_BASE_URL}/health`).then((res) => checkResponse(res));
+  fetch(`${getApiBaseUrl()}/health`).then((res) => checkResponse(res));
 
 export const auth = {
   login: async (phone: string, password: string) => {
-    const data = await fetch(`${API_BASE_URL}/auth/login`, {
+    const data = await fetch(`${getApiBaseUrl()}/auth/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ phone, password }),
@@ -54,7 +61,7 @@ export const auth = {
     const refreshToken = authStorage.getRefreshToken();
 
     if (refreshToken) {
-      await fetch(`${API_BASE_URL}/auth/logout`, {
+      await fetch(`${getApiBaseUrl()}/auth/logout`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ refreshToken }),
@@ -69,14 +76,14 @@ export const auth = {
       throw new Error("Unauthorized");
     }
 
-    return fetch(`${API_BASE_URL}/auth/me`, {
+    return fetch(`${getApiBaseUrl()}/auth/me`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
     }).then((res) => checkResponse<User>(res));
   },
   register: async (phone: string, password: string) => {
-    const data = await fetch(`${API_BASE_URL}/auth/register`, {
+    const data = await fetch(`${getApiBaseUrl()}/auth/register`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ phone, password }),

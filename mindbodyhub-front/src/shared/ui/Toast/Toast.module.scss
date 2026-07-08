@@ -1,0 +1,52 @@
+@use '../../../styles/variables' as v;
+@use '../../../styles/mixins' as m;
+
+.toast {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: calc(100% + 8px);
+    z-index: 5;
+    padding: 10px 12px;
+    border-radius: 10px;
+    background-color: v.$white-color;
+    border: 1px solid v.$color-border;
+    box-shadow: v.$block-shadow;
+    @include m.text14-400;
+    color: v.$text-dark-color;
+    animation: toastFadeIn 0.2s ease;
+
+    &::after {
+        content: '';
+        position: absolute;
+        left: 20px;
+        bottom: -6px;
+        width: 12px;
+        height: 12px;
+        background-color: v.$white-color;
+        border-right: 1px solid v.$color-border;
+        border-bottom: 1px solid v.$color-border;
+        transform: rotate(45deg);
+    }
+
+    &_error {
+        border-color: v.$color-error;
+        color: v.$color-error;
+
+        &::after {
+            border-color: v.$color-error;
+        }
+    }
+}
+
+@keyframes toastFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(4px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

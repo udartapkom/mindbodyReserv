@@ -1,18 +1,24 @@
 "use client";
-
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { problems } from "@/content/problems";
 import { Icon } from "@/shared/ui/Icon";
 import styles from "./MobileNavigation.module.scss";
+import { useAuth } from "@/context/AuthContext";
 
 function MobileNavigation() {
+    const { isAuthenticated, logout } = useAuth();
     const [isOpen, setIsOpen] = useState(false);
     const [isProblemsOpen, setIsProblemsOpen] = useState(false);
 
     const closeMenu = () => {
         setIsOpen(false);
         setIsProblemsOpen(false);
+    };
+
+    const handleLogout = () => {
+        logout();
+        closeMenu();
     };
 
     const toggleMenu = () => {
@@ -82,6 +88,7 @@ function MobileNavigation() {
             <aside
                 id="mobile-navigation-panel"
                 className={`${styles.mobileNavigation__panel} ${isOpen ? styles.mobileNavigation__panel_open : ""}`}
+                data-open={isOpen ? "true" : "false"}
                 aria-hidden={!isOpen}
                 inert={!isOpen ? true : undefined}
             >
@@ -102,7 +109,7 @@ function MobileNavigation() {
                             href="/instructions"
                             onClick={closeMenu}
                         >
-                            Как это работает
+                            База знаний
                         </Link>
                     </li>
                     <li className={styles.mobileNavigation__item}>
@@ -161,18 +168,39 @@ function MobileNavigation() {
                             Поддержка
                         </Link>
                     </li>
+                    {isAuthenticated && (
+                        <li className={styles.mobileNavigation__item}>
+                            <Link
+                                href="/cabinet"
+                                className={styles.mobileNavigation__link}
+                                onClick={closeMenu}
+                            >
+                                Кабинет
+                            </Link>
+                        </li>
+                    )}
                     </ul>
                 </div>
 
                 <div className={styles.mobileNavigation__footer}>
-                    <Link
-                        href="/login"
-                        className={styles.mobileNavigation__loginButton}
-                        onClick={closeMenu}
-                    >
-                        <Icon name="lock" variant="solid" />
-                        Личный кабинет
-                    </Link>
+                    {isAuthenticated ? (
+                        <button
+                            className={styles.mobileNavigation__loginButton}
+                            onClick={handleLogout}
+                        >
+                            <Icon name="lock" variant="solid" />
+                            Выйти
+                        </button>
+                    ) : (
+                        <Link
+                            href="/login"
+                            className={styles.mobileNavigation__loginButton}
+                            onClick={closeMenu}
+                        >
+                            <Icon name="lock" variant="solid" />
+                            Личный кабинет
+                        </Link>
+                    )}
                 </div>
             </aside>
         </nav>

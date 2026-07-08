@@ -1,5 +1,9 @@
 import { Transform } from 'class-transformer';
-import { IsString, Matches, MinLength } from 'class-validator';
+import { IsString, Matches } from 'class-validator';
+import {
+  PASSWORD_POLICY_MESSAGE,
+  PASSWORD_POLICY_REGEX,
+} from '../../common/utils/password.util';
 import { normalizePhone } from '../../common/utils/phone.util';
 
 export class RegisterDto {
@@ -16,6 +20,8 @@ export class RegisterDto {
   phone: string;
 
   @IsString()
-  @MinLength(8, { message: 'Password must be at least 8 characters' })
+  @Matches(PASSWORD_POLICY_REGEX, {
+    message: PASSWORD_POLICY_MESSAGE,
+  })
   password: string;
 }

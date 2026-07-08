@@ -143,12 +143,12 @@
         transform: translateX(20px);
         transition: opacity 0.3s ease, transform 0.3s ease;
 
-        .mobileNavigation__panel_open & {
+        .mobileNavigation__panel[data-open='true'] & {
             opacity: 1;
             transform: translateX(0);
         }
 
-        @for $i from 1 through 6 {
+        @for $i from 1 through 12 {
             &:nth-child(#{$i}) {
                 transition-delay: #{$i * 0.1}s;
             }
@@ -243,7 +243,7 @@
         transform: translateX(20px);
         transition: opacity 0.3s ease, transform 0.3s ease;
 
-        .mobileNavigation__panel_open & {
+        .mobileNavigation__panel[data-open='true'] & {
             opacity: 1;
             transform: translateX(0);
             transition-delay: 0.55s;

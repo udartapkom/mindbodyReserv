@@ -1,51 +1,60 @@
 'use client';
 
-import { authStepTitles } from '@/content/authCopy';
+import { authStepTitles, authCopy } from '@/content/authCopy';
+import { useAuth } from '@/context/AuthContext';
 import { useAuthFlow } from './hooks/useAuthFlow';
 import LoginStep from './steps/LoginStep';
 import RegisterStep from './steps/RegisterStep';
 import RecoverPasswordStep from './steps/RecoverPasswordStep';
-import SmsCodeStep from './steps/SmsCodeStep';
+import Popup from '@/components/Popup/Popup';
+import ErrorPopup from '@/components/ErrorPopup/ErrorPopup';
 import styles from './AuthFlow.module.scss';
+import { useState } from 'react';
 
 function AuthFlow() {
+    const { login, register } = useAuth();
+    const [isAuthErrorOpen, setIsAuthErrorOpen] = useState(false);
+    const [authErrorDescription, setAuthErrorDescription] = useState(
+        'Ошибка авторизации. Проверьте телефон и пароль.'
+    );
+
     const {
         step,
         phone,
-        smsPurpose,
         setPhone,
         goToLogin,
         goToRegister,
         goToRecover,
-        goToSms,
     } = useAuthFlow();
 
-    const handleLoginSubmit = (loginPhone: string, password: string) => {
-        console.log('login', { phone: loginPhone, password });
-    };
-
-    const handleRegisterSubmit = (registerPhone: string, password: string) => {
-        console.log('register', { phone: registerPhone, password });
-        goToSms(registerPhone, 'register');
-    };
-
-    const handleRecoverSubmit = (recoverPhone: string) => {
-        console.log('recover', { phone: recoverPhone });
-        goToSms(recoverPhone, 'recover');
-    };
-
-    const handleSmsSubmit = (code: string) => {
-        console.log('sms verify', { phone, purpose: smsPurpose, code });
-    };
-
-    const handleSmsBack = () => {
-        if (smsPurpose === 'register') {
-            goToRegister();
-            return;
+    const handleLoginSubmit = async (loginPhone: string, password: string) => {
+        try {
+            await login(loginPhone, password);
+        } catch (e: any) {
+            setAuthErrorDescription(
+                'Ошибка авторизации. Проверьте телефон и пароль.'
+            );
+            setIsAuthErrorOpen(true);
         }
-
-        goToRecover();
     };
+
+    const handleRegisterSubmit = async (registerPhone: string, password: string) => {
+        try {
+            await register(registerPhone, password);
+        } catch (e: any) {
+            setAuthErrorDescription(
+                e?.message ||
+                    'Не удалось зарегистрироваться. Проверьте введённые данные.'
+            );
+            setIsAuthErrorOpen(true);
+        }
+    };
+
+    const handleRecoverSubmit = () => {
+        window.alert(authCopy.recoverDisabledHint);
+    };
+
+    const handleAuthErrorClose = () => setIsAuthErrorOpen(false);
 
     return (
         <div className={styles.authFlow}>
@@ -72,22 +81,32 @@ function AuthFlow() {
             )}
 
             {step === 'recover' && (
-                <RecoverPasswordStep
-                    phone={phone}
-                    onPhoneChange={setPhone}
-                    onSubmit={handleRecoverSubmit}
-                    onBackClick={goToLogin}
-                />
+                <>
+                    <p className={styles.authFlow__description}>
+                        {authCopy.recoverDisabledHint}
+                    </p>
+                    <RecoverPasswordStep
+                        phone={phone}
+                        onPhoneChange={setPhone}
+                        onSubmit={handleRecoverSubmit}
+                        onBackClick={goToLogin}
+                    />
+                </>
             )}
 
-            {step === 'sms' && smsPurpose && (
-                <SmsCodeStep
-                    phone={phone}
-                    purpose={smsPurpose}
-                    onSubmit={handleSmsSubmit}
-                    onBackClick={handleSmsBack}
+            <Popup
+                title="Ошибка"
+                isOpen={isAuthErrorOpen}
+                onClose={handleAuthErrorClose}
+            >
+                <ErrorPopup
+                    title="Ошибка"
+                    description={authErrorDescription}
+                    icon="times-circle-o"
+                    variant="regular"
+                    submit={handleAuthErrorClose}
                 />
-            )}
+            </Popup>
         </div>
     );
 }

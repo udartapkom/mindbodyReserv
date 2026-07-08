@@ -1,5 +1,8 @@
-export default function CabinetPage() {
-  return (
-    <div>Личный кабинет</div>
-  );
+export default function CabinetDashboardPage() {
+    return (
+        <section>
+            <h1>Кабинет</h1>
+            <p>Главная страница личного кабинета</p>
+        </section>
+    );
 }
