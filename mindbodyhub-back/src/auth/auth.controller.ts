@@ -1,4 +1,6 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, Patch, Post } from '@nestjs/common';
+import { ChangePasswordDto } from '../users/dto/change-password.dto';
+import { UpdateProfileDto } from '../users/dto/update-profile.dto';
 import type { AuthUser } from './decorators/current-user.decorator';
 import { CurrentUser } from './decorators/current-user.decorator';
 import { Public } from './decorators/public.decorator';
@@ -41,5 +43,21 @@ export class AuthController {
   @Get('me')
   me(@CurrentUser() user: AuthUser): Promise<UserProfileResponse> {
     return this.authService.getProfile(user.id);
+  }
+
+  @Patch('me')
+  updateMe(
+    @CurrentUser() user: AuthUser,
+    @Body() dto: UpdateProfileDto,
+  ): Promise<UserProfileResponse> {
+    return this.authService.updateProfile(user.id, dto);
+  }
+
+  @Patch('me/password')
+  changePassword(
+    @CurrentUser() user: AuthUser,
+    @Body() dto: ChangePasswordDto,
+  ): Promise<{ success: true }> {
+    return this.authService.changePassword(user.id, dto);
   }
 }

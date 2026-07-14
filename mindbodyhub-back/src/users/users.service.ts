@@ -2,7 +2,24 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UserRole } from './user-role.enum';
+import { UserTariff } from './user-tariff.enum';
 import { User } from './entities/user.entity';
+
+export type CreateUserData = {
+  phone: string;
+  passwordHash: string;
+  role?: UserRole;
+  tariff?: UserTariff;
+  firstName?: string | null;
+  lastName?: string | null;
+  avatarUrl?: string | null;
+};
+
+export type UpdateUserProfileData = {
+  firstName?: string | null;
+  lastName?: string | null;
+  avatarUrl?: string | null;
+};
 
 @Injectable()
 export class UsersService {
@@ -23,16 +40,53 @@ export class UsersService {
     return this.usersRepository.count({ where: { role } });
   }
 
-  async createUser(data: {
-    phone: string;
-    passwordHash: string;
-    role?: UserRole;
-  }): Promise<User> {
+  async createUser(data: CreateUserData): Promise<User> {
     const user = this.usersRepository.create({
       phone: data.phone,
       passwordHash: data.passwordHash,
       role: data.role ?? UserRole.USER,
+      tariff: data.tariff ?? UserTariff.FREE,
+      firstName: data.firstName ?? null,
+      lastName: data.lastName ?? null,
+      avatarUrl: data.avatarUrl ?? null,
     });
+
+    return this.usersRepository.save(user);
+  }
+
+  async updateProfile(
+    id: string,
+    data: UpdateUserProfileData,
+  ): Promise<User> {
+    const user = await this.findById(id);
+
+    if (!user) {
+      throw new Error(`User ${id} not found`);
+    }
+
+    if (data.firstName !== undefined) {
+      user.firstName = data.firstName;
+    }
+
+    if (data.lastName !== undefined) {
+      user.lastName = data.lastName;
+    }
+
+    if (data.avatarUrl !== undefined) {
+      user.avatarUrl = data.avatarUrl;
+    }
+
+    return this.usersRepository.save(user);
+  }
+
+  async updatePassword(id: string, passwordHash: string): Promise<User> {
+    const user = await this.findById(id);
+
+    if (!user) {
+      throw new Error(`User ${id} not found`);
+    }
+
+    user.passwordHash = passwordHash;
 
     return this.usersRepository.save(user);
   }

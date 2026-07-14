@@ -9,7 +9,10 @@ import { InjectRepository } from '@nestjs/typeorm';
 import * as argon2 from 'argon2';
 import { createHash, randomBytes } from 'crypto';
 import { Repository } from 'typeorm';
+import { ChangePasswordDto } from '../users/dto/change-password.dto';
+import { UpdateProfileDto } from '../users/dto/update-profile.dto';
 import { User } from '../users/entities/user.entity';
+import { toAuthUserSummary, toPublicProfile } from '../users/user.mapper';
 import { UserRole } from '../users/user-role.enum';
 import { UsersService } from '../users/users.service';
 import { AuthTokensResponse, UserProfileResponse } from './auth.types';
@@ -45,6 +48,8 @@ export class AuthService {
     const user = await this.usersService.createUser({
       phone: dto.phone,
       passwordHash,
+      firstName: dto.firstName ?? null,
+      lastName: dto.lastName ?? null,
     });
 
     return this.issueTokens(user);
@@ -112,7 +117,45 @@ export class AuthService {
       throw new UnauthorizedException();
     }
 
-    return this.toProfile(user);
+    return toPublicProfile(user);
+  }
+
+  async updateProfile(
+    userId: string,
+    dto: UpdateProfileDto,
+  ): Promise<UserProfileResponse> {
+    const user = await this.usersService.updateProfile(userId, {
+      firstName: dto.firstName,
+      lastName: dto.lastName,
+      avatarUrl: dto.avatarUrl,
+    });
+
+    return toPublicProfile(user);
+  }
+
+  async changePassword(
+    userId: string,
+    dto: ChangePasswordDto,
+  ): Promise<{ success: true }> {
+    const user = await this.usersService.findById(userId);
+
+    if (!user) {
+      throw new UnauthorizedException();
+    }
+
+    const isCurrentPasswordValid = await argon2.verify(
+      user.passwordHash,
+      dto.currentPassword,
+    );
+
+    if (!isCurrentPasswordValid) {
+      throw new UnauthorizedException('Current password is incorrect');
+    }
+
+    const passwordHash = await argon2.hash(dto.newPassword);
+    await this.usersService.updatePassword(userId, passwordHash);
+
+    return { success: true };
   }
 
   private async issueTokens(user: User): Promise<AuthTokensResponse> {
@@ -145,26 +188,12 @@ export class AuthService {
     return {
       accessToken,
       refreshToken,
-      user: {
-        id: user.id,
-        phone: user.phone,
-        role: user.role,
-      },
+      user: toAuthUserSummary(user),
     };
   }
 
   private hashToken(token: string): string {
     return createHash('sha256').update(token).digest('hex');
-  }
-
-  private toProfile(user: User): UserProfileResponse {
-    return {
-      id: user.id,
-      phone: user.phone,
-      role: user.role,
-      phoneVerifiedAt: user.phoneVerifiedAt?.toISOString() ?? null,
-      createdAt: user.createdAt.toISOString(),
-    };
   }
 
   private parseDurationMs(value: string): number {

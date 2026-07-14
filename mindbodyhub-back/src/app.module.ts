@@ -4,6 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './auth/auth.module';
 import { HealthModule } from './health/health.module';
 import { SeedModule } from './seed/seed.module';
+import { StorageModule } from './storage/storage.module';
 import { UsersModule } from './users/users.module';
 
 @Module({
@@ -24,6 +25,7 @@ import { UsersModule } from './users/users.module';
       inject: [ConfigService],
     }),
     HealthModule,
+    StorageModule,
     UsersModule,
     AuthModule,
     SeedModule,

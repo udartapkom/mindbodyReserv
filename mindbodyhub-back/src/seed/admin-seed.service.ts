@@ -54,6 +54,8 @@ export class AdminSeedService implements OnModuleInit {
       phone,
       passwordHash,
       role: UserRole.ADMIN,
+      firstName: 'Admin',
+      lastName: null,
     });
 
     this.logger.log(`Admin user created: ${admin.phone}`);

@@ -1,19 +1,14 @@
-import { UserRole } from '../users/user-role.enum';
+import { UserPublicProfile } from '../users/user.types';
+
+export type AuthUserSummary = Pick<
+  UserPublicProfile,
+  'id' | 'firstName' | 'lastName' | 'phone' | 'role' | 'tariff' | 'avatarUrl'
+>;
 
 export type AuthTokensResponse = {
   accessToken: string;
   refreshToken: string;
-  user: {
-    id: string;
-    phone: string;
-    role: UserRole;
-  };
+  user: AuthUserSummary;
 };
 
-export type UserProfileResponse = {
-  id: string;
-  phone: string;
-  role: UserRole;
-  phoneVerifiedAt: string | null;
-  createdAt: string;
-};
+export type UserProfileResponse = UserPublicProfile;

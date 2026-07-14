@@ -6,11 +6,18 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { UserRole } from '../user-role.enum';
+import { UserTariff } from '../user-tariff.enum';
 
 @Entity('users')
 export class User {
   @PrimaryGeneratedColumn('uuid')
   id: string;
+
+  @Column({ name: 'first_name', type: 'varchar', length: 100, nullable: true })
+  firstName: string | null;
+
+  @Column({ name: 'last_name', type: 'varchar', length: 100, nullable: true })
+  lastName: string | null;
 
   @Column({ unique: true })
   phone: string;
@@ -20,6 +27,12 @@ export class User {
 
   @Column({ type: 'enum', enum: UserRole, default: UserRole.USER })
   role: UserRole;
+
+  @Column({ type: 'enum', enum: UserTariff, default: UserTariff.FREE })
+  tariff: UserTariff;
+
+  @Column({ name: 'avatar_url', type: 'varchar', length: 2048, nullable: true })
+  avatarUrl: string | null;
 
   @Column({ name: 'phone_verified_at', type: 'timestamptz', nullable: true })
   phoneVerifiedAt: Date | null;

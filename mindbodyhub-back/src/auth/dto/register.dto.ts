@@ -1,5 +1,5 @@
 import { Transform } from 'class-transformer';
-import { IsString, Matches } from 'class-validator';
+import { IsOptional, IsString, Matches, MaxLength } from 'class-validator';
 import {
   PASSWORD_POLICY_MESSAGE,
   PASSWORD_POLICY_REGEX,
@@ -24,4 +24,14 @@ export class RegisterDto {
     message: PASSWORD_POLICY_MESSAGE,
   })
   password: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(100)
+  firstName?: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(100)
+  lastName?: string;
 }
