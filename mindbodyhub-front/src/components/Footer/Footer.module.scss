@@ -16,6 +16,11 @@
         width: 100%;
         max-width: 1280px;
         padding: 0 24px;
+        @include m.mobile {
+            flex-direction: column;
+            align-items: center;
+            gap: 24px;
+        }
     }
     &__logo {
         display: flex;
@@ -43,6 +48,14 @@
     &__links {
         display: flex;
         gap: 8px;
+        @include m.mobile {
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+            span {
+                display: none;
+            }
+        }
     }
     &__link {
         @include m.text14-400;

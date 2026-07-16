@@ -1,11 +1,12 @@
-import LoginForm from "@/components/LoginForm/LoginForm";
+import styles from './page.module.scss';
+import AuthFlow from '@/components/Auth/AuthFlow';
 
 function LoginPage() {
     return (
-        <div>
-            <h1>Представьтесь, пожалуйста</h1>
-            <LoginForm />
-        </div>
+        <section className={styles.loginPage}>
+            <h1 className={styles.loginPage__title}>MindBodyHub</h1>
+            <AuthFlow />
+        </section>
     );
 }
 

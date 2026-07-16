@@ -1,0 +1,62 @@
+@use '../../../styles/variables' as v;
+@use '../../../styles/mixins' as m;
+
+.cabinetNav {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding-top: 20px;
+    padding-left: 24px;
+    background: v.$section-gradient;
+    height: 100%;
+    &__list {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        padding-left: 0;
+    }
+    &__item {
+        list-style: none;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        cursor: pointer;
+    }
+
+    &__item:hover &__icon {
+        color: v.$accent-color;
+    }
+
+    &__item:hover &__link {
+        color: v.$accent-color;
+    }
+
+    &__item:active &__icon {
+        color: v.$accent-color;
+    }
+
+    &__item:active &__link {
+        color: v.$accent-color;
+    }
+
+    &__item:focus-within &__icon {
+        color: v.$accent-color;
+    }
+
+    &__item:focus-within &__link {
+        color: v.$accent-color;
+    }
+    &__link {
+        text-decoration: none;
+        color: v.$text-light-color;
+        @include m.text16-400;
+        transition: color 0.3s ease;
+    }
+    &__icon {
+        width: 20px;
+        height: 20px;
+        color: v.$text-light-color;
+        transition: color 0.3s ease;
+        cursor: pointer;
+    }
+}

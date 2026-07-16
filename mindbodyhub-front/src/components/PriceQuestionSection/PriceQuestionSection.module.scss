@@ -1,0 +1,35 @@
+@use '../../styles/variables.scss' as *;
+@use '../../styles/mixins.scss' as m;
+
+.priceQuestionSection {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+
+    &__title {
+        @include m.text32-600;
+        color: $white-color;
+        text-align: center;
+        margin: 0 0 12px;
+    }
+
+    &__description {
+        @include m.text18-400;
+        color: $color-grey;
+        text-align: center;
+        margin: 0 0 32px;
+        max-width: 520px;
+    }
+
+    &__cards {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: stretch;
+        justify-content: center;
+        gap: 16px;
+        width: 100%;
+        margin-bottom: 24px;
+    }
+}

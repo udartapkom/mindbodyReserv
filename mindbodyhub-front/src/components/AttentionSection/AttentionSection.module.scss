@@ -32,6 +32,14 @@
         gap: 20px;
         margin-top: 32px;
         width: 100%;
+
+        @include m.until-desktop {
+            grid-template-columns: 1fr;
+        }
+
+        @include m.mobile {
+            padding: 0 16px;
+        }
     }
 
     &__card {
@@ -46,6 +54,12 @@
         box-shadow: v.$block-shadow;
         cursor: pointer;
         transition: all 0.3s ease;
+
+        @include m.mobile {
+            flex-direction: column;
+            gap: 16px;
+            text-align: center;
+        }
 
         &:hover {
             transform: translateY(-10px);

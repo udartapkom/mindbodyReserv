@@ -1,0 +1,115 @@
+@use '../../styles/variables.scss' as v;
+@use '../../styles/mixins.scss' as m;
+
+.authFlow {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: 24px 10px 32px;
+
+    &__title {
+        @include m.text22-600;
+        color: v.$white-color;
+        margin: 0 0 12px;
+        text-align: center;
+    }
+
+    &__description {
+        @include m.text14-400;
+        color: v.$white-color;
+        margin: 0 0 20px;
+        text-align: center;
+        max-width: 320px;
+        opacity: 0.9;
+    }
+
+    &__phoneHint {
+        @include m.text14-400;
+        color: v.$white-color;
+        margin: 0 0 16px;
+        text-align: center;
+        opacity: 0.85;
+    }
+
+    &__form {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        max-width: 380px;
+        padding: 0 10px;
+    }
+
+    &__label {
+        @include m.text14-400;
+        color: v.$text-light-color;
+        margin-bottom: 4px;
+        margin-left: 10px;
+    }
+
+    &__label_error {
+        color: v.$color-error;
+    }
+
+    &__input {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 10px;
+        margin-bottom: 10px;
+        &:focus-visible {
+            outline: none;
+        }
+    }
+
+    &__input_error {
+        border-color: v.$color-error;
+    }
+
+    &__field {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+    }
+
+    &__button {
+        width: 100%;
+        padding: 10px;
+        border: none;
+        border-radius: 10px;
+        margin-top: 24px;
+        background: v.$accent-color;
+        @include m.text16-400;
+        cursor: pointer;
+        color: v.$white-color;
+        transition: transform 0.3s ease;
+
+        &:hover {
+            transform: translateY(-4px);
+        }
+    }
+
+    &__link {
+        @include m.text14-400;
+        margin-top: 16px;
+        padding: 0;
+        border: none;
+        background: none;
+        cursor: pointer;
+        color: v.$white-color;
+        text-align: center;
+        transition: color 0.3s ease;
+
+        &:hover {
+            color: v.$accent-color;
+        }
+    }
+
+    &__footer {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-top: 8px;
+    }
+}

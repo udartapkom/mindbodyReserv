@@ -9,7 +9,7 @@ function PriceSection() {
             <h2 className={styles.priceSection__title}>Выбери свой путь</h2>
             <div className={styles.priceSection__cardWrapper}>
                 {cardData.map((card) => (
-                    <PriceCard key={card.title} {...card} />
+                    <PriceCard key={card.type} {...card} />
                 ))}
             </div>
         </section>

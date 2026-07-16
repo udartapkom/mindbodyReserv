@@ -1,0 +1,21 @@
+@use '../../../styles/variables.scss' as v;
+@use '../../../styles/mixins.scss' as m;
+
+.loginPage {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    max-width: 480px;
+    width: 100%;
+    background: v.$dark-gradient;
+    border-radius: 16px;
+    margin: 60px 12px;
+
+    &__title {
+        @include m.text46-900;
+        color: v.$accent-color;
+        text-align: center;
+        margin-bottom: 0;
+    }
+}

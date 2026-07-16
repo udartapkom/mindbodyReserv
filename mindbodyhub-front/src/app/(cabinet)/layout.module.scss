@@ -1,0 +1,30 @@
+@use '../../styles/mixins' as m;
+@use '../../styles/variables' as v;
+
+.main {
+    display: grid;
+    grid-template-rows: 130px 1fr 3fr;
+    grid-template-columns: 1fr 3fr;
+    grid-template-areas:
+        "userBar userBar"
+        "cabinetNav content"
+        "cabinetNav content";
+    max-width: 1280px;
+    width: 100%;
+    width: 100%;
+    min-height: calc(100vh - 300px);
+    background: v.$white-color;
+    @include m.mobile {
+        width: auto;
+    }
+  }
+  .cabinetNav {
+    grid-area: cabinetNav;
+  }
+  .userBar {
+    grid-area: userBar;
+  }
+  .content {
+    grid-area: content;
+    padding: 24px;
+  }

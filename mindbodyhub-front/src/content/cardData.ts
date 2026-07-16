@@ -2,6 +2,7 @@ import { CardData } from "@/types/cardData";
 
 export const cardData: CardData[] = [
     {
+        type: 'trial',
         image: '/images/brain.png',
         imageAlt: 'Философия и самопознание',
         title: 'Пробный',
@@ -12,6 +13,7 @@ export const cardData: CardData[] = [
         description: ['Доступ к мыслям и заметкам', 'Еженедельные инсайты', 'Цитаты']
     },
     {
+        type: 'popular',
         image: '/images/love.png',
         imageAlt: 'Отношения и сексуальная психология',
         title: 'Популярный',
@@ -22,6 +24,7 @@ export const cardData: CardData[] = [
         description: ['Решение проблем в отношениях', 'Сексуальная психология', 'Преодоление стеснения', 'Личные границы']
     },
     {
+        type: 'vip',
         image: '/images/business.png',
         imageAlt: 'Ментальное здоровье и психология бизнеса',
         title: 'VIP',

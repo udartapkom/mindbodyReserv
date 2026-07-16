@@ -15,6 +15,10 @@
     width: 100%;
     box-shadow: v.$block-shadow;
     cursor: pointer;
+    text-decoration: none;
+    color: inherit;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
     transition: all 0.3s ease;
     &:hover {
         transform: scale(1.05);

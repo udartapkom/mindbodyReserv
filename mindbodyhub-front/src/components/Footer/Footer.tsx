@@ -18,11 +18,7 @@ function Footer() {
                 <span>|</span>
                 <Link className={styles.footer__link} href="/terms">Пользовательское соглашение</Link>
                 <span>|</span>
-                <Link className={styles.footer__link} href="https://t.me/mbh_support">Поддержка в Telegram</Link>
-                <span>|</span>
-                <Link className={styles.footer__link} href="/">Поддержка в MAX</Link>
-                <span>|</span>
-                <Link className={styles.footer__link} href="https://vk.com/mindbodyhubpro">Поддержка в VK</Link>
+                <Link className={styles.footer__link} href="/support">Техподдержка</Link>
             </div>
         </footer>
     );

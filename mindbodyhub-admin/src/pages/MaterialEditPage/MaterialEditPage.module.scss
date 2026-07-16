@@ -1,0 +1,314 @@
+@use '../../styles/variables' as v;
+@use '../../styles/mixins' as m;
+
+.materialEditPage {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  max-width: 880px;
+
+  &__top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  &__back {
+    @include m.text14-400;
+    border: none;
+    background: transparent;
+    color: v.$accent-color;
+    cursor: pointer;
+    padding: 0;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  &__actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  &__title {
+    @include m.text32-600;
+    margin: 0 0 6px;
+  }
+
+  &__subtitle {
+    @include m.text16-500;
+    margin: 0;
+  }
+
+  &__error {
+    @include m.text14-400;
+    color: v.$color-error;
+    margin: 0;
+  }
+
+  &__success {
+    @include m.text14-400;
+    color: #047857;
+    margin: 0;
+  }
+
+  &__card {
+    background: v.$white-color;
+    border: 1px solid v.$color-border;
+    border-radius: 16px;
+    box-shadow: v.$block-shadow;
+    padding: 24px;
+  }
+
+  &__sectionTitle {
+    @include m.text22-600;
+    margin: 0 0 16px;
+  }
+
+  &__fieldLabel {
+    @include m.text14-400;
+    display: block;
+    margin-bottom: 4px;
+  }
+
+  &__hint {
+    @include m.text14-400;
+    margin: -8px 0 14px;
+    color: v.$text-light-color;
+  }
+
+  &__input,
+  &__textarea {
+    @include m.text16-400;
+    width: 100%;
+    margin-bottom: 14px;
+    padding: 10px 12px;
+    border: 1px solid v.$color-border;
+    border-radius: 8px;
+    background: v.$white-color;
+    font-family: inherit;
+
+    &:focus {
+      outline: none;
+      border-color: v.$accent-color;
+      box-shadow: 0 0 0 2px rgba(v.$accent-color, 0.15);
+    }
+  }
+
+  &__textarea {
+    min-height: 88px;
+    resize: vertical;
+  }
+
+  &__toolbar {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+  }
+
+  &__btn {
+    @include m.text14-400;
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: 1px solid v.$color-border;
+    background: v.$white-color;
+    color: v.$text-light-color;
+    cursor: pointer;
+    transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+
+    &:hover:not(:disabled) {
+      border-color: v.$accent-color;
+      color: v.$accent-color;
+    }
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    &_primary {
+      background: v.$accent-color;
+      border-color: v.$accent-color;
+      color: v.$white-color;
+
+      &:hover:not(:disabled) {
+        color: v.$white-color;
+        opacity: 0.92;
+      }
+    }
+
+    &_warning {
+      border-color: #f59e0b;
+      color: #b45309;
+    }
+
+    &_danger {
+      border-color: v.$color-error;
+      color: v.$color-error;
+    }
+  }
+
+  &__blocks {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  &__empty {
+    @include m.text14-400;
+    color: v.$text-light-color;
+    margin: 0;
+    padding: 24px;
+    text-align: center;
+    border: 1px dashed v.$color-border;
+    border-radius: 12px;
+  }
+
+  &__block {
+    border: 1px solid v.$color-border;
+    border-radius: 12px;
+    padding: 14px;
+    background: v.$light-accent-color;
+  }
+
+  &__blockHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+
+  &__blockType {
+    @include m.text14-400;
+    font-weight: 600;
+    color: v.$text-dark-color;
+  }
+
+  &__blockActions {
+    display: flex;
+    gap: 6px;
+  }
+
+  &__blockBtn {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    border: 1px solid v.$color-border;
+    background: v.$white-color;
+    color: v.$text-light-color;
+    cursor: pointer;
+    line-height: 1;
+
+    &:hover:not(:disabled) {
+      border-color: v.$accent-color;
+      color: v.$accent-color;
+    }
+
+    &:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    &_danger:hover:not(:disabled) {
+      border-color: v.$color-error;
+      color: v.$color-error;
+    }
+  }
+
+  &__headingInput {
+    @include m.text22-600;
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid v.$color-border;
+    border-radius: 8px;
+    background: v.$white-color;
+
+    &:focus {
+      outline: none;
+      border-color: v.$accent-color;
+    }
+  }
+
+  &__subheadingInput {
+    @include m.text16-500;
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid v.$color-border;
+    border-radius: 8px;
+    background: v.$white-color;
+
+    &:focus {
+      outline: none;
+      border-color: v.$accent-color;
+    }
+  }
+
+  &__paragraphInput {
+    @include m.text16-400;
+    width: 100%;
+    min-height: 120px;
+    padding: 10px 12px;
+    border: 1px solid v.$color-border;
+    border-radius: 8px;
+    background: v.$white-color;
+    resize: vertical;
+    font-family: inherit;
+
+    &:focus {
+      outline: none;
+      border-color: v.$accent-color;
+    }
+  }
+
+  &__imagePreview {
+    width: 100%;
+    max-height: 320px;
+    object-fit: contain;
+    border-radius: 8px;
+    background: v.$color-grey;
+    margin-bottom: 10px;
+  }
+
+  &__imageEmpty {
+    @include m.text14-400;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 140px;
+    margin-bottom: 10px;
+    border: 1px dashed v.$color-border;
+    border-radius: 8px;
+    color: v.$text-light-color;
+    background: v.$white-color;
+  }
+
+  &__fileInput {
+    display: none;
+  }
+
+  &__badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 500;
+    margin-left: 10px;
+
+    &_published {
+      background: #ecfdf5;
+      color: #047857;
+    }
+
+    &_draft {
+      background: #fef2f2;
+      color: v.$color-error;
+    }
+  }
+}

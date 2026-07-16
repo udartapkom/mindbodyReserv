@@ -3,9 +3,22 @@
     display: flex;
     align-items: center;
     gap: 10px;
+    flex-shrink: 0;
+    text-decoration: none;
+    cursor: pointer;
+    transition: opacity 0.3s ease;
+    &:hover {
+        opacity: 0.8;
+    }
     &__text {
         font-size: 24px;
         font-weight: 700;
         color: v.$text-light-color;
+        @media (max-width: 1200px) {
+            font-size: 20px;
+        }
+        @media (max-width: 480px) {
+            display: none;
+        }
     }
 }

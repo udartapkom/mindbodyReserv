@@ -1,0 +1,36 @@
+@use '../../styles/variables' as v;
+@use '../../styles/mixins' as m;
+.errorPopup {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    &__icon {
+        font-size: 64px;
+        color: v.$color-error;
+    }
+    &__title {
+        @include m.text22-600;
+        margin: 0
+    }
+    &__description {
+        @include m.text16-400;
+        margin: 0;
+    }
+    &__button {
+        @include m.text16-400;
+        color: v.$white-color;
+        background-color: v.$accent-color;
+        border: none;
+        border-radius: 4px;
+        padding: 10px 20px;
+        margin-top: 20px;
+        width: 80%;
+        cursor: pointer;
+        transition: opacity 0.3s ease;
+        &:hover {
+            opacity: 0.8;
+        }
+    }
+}

@@ -1,6 +1,9 @@
+@use '../../styles/mixins' as m;
+
 .supportCardSection {
     display: flex;
     flex-direction: row;
+    flex-wrap: wrap;
     align-items: center;
     justify-content: center;
     gap: 16px;
@@ -8,4 +11,7 @@
     padding-bottom: 60px;
     max-width: 1280px;
     width: 100%;
-}  
+    margin: 0 auto;
+    padding-left: 24px;
+    padding-right: 24px;
+}

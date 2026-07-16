@@ -1,0 +1,85 @@
+@use '../../styles/variables.scss' as *;
+@use '../../styles/mixins.scss' as m;
+
+.freePriceSection {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    width: 100%;
+    background: $green-light-gradient;
+    padding: 40px;
+    border-radius: 16px;
+    border: 2px solid $color-light-green;
+    position: relative;
+    overflow: hidden;
+    &__brainToForm {
+        color: transparent;
+        position: absolute;
+        top: -20px;
+        right: 0;
+        width: 520px;
+        height: 130%;
+      }
+    
+    &__card {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: flex-start;
+        height: 100%;
+        width: 100%;
+        z-index: 1;
+    }
+    &__cardContent {
+        display: flex;
+        flex-direction: column;
+        align-items: start;
+        justify-content: center;
+        padding: 24px;
+        gap: 12px;
+    }
+    &__cardTitle {
+        @include m.text32-600;
+        color: $text-dark-color;
+        margin: 0;
+        margin-bottom: 24px
+    }
+    &__cardDescription {
+        @include m.text16-400;
+        color: $text-light-color;
+        margin: 0;
+        max-width: 480px;
+        margin-bottom: 12px;
+        &:last-of-type {
+            margin-bottom: 0;
+        }
+    }
+    &__cardDescriptionSpan {
+        font-weight: 600;
+        color: $color-light-green;
+    }
+    &__cardPrice {
+        @include m.text16-400;
+        color: $text-light-color;
+        margin: 0;
+    }
+    &__cardButton {
+        @include m.text16-400;
+        background: $color-light-green;
+        color: $white-color;
+        margin: 0;
+        padding: 12px 24px;
+        border-radius: 8px;
+        border: 1px solid $color-light-green;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin-top: 24px;
+        max-width: 280px;
+        width: 100%;
+        &:hover {
+            background: $color-dark-green;
+        }
+    }
+}

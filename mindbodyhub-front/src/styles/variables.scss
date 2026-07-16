@@ -1,0 +1,32 @@
+$white-color: #ffffff;
+$text-light-color: #4a5a7a;
+$text-dark-color: #1a2a4a;
+$color-text-muted: #52525b;
+$color-text-dark: #ededed;
+$color-border: #e2e8f8;
+$color-card: #B1AEAF;
+$accent-color: #3b82f6;
+$light-accent-color: #eff6ff;
+$color-grey: #e2e8f0;
+$color-error: #dc2626;
+$color-light-green: #10B981;
+$color-dark-green: #047857;
+
+$color-bg-dark: #0a0a0a;
+$color-text-muted-dark: #a1a1aa;
+
+$header-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.02);
+$block-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);
+
+$section-gradient: linear-gradient(135deg, #eff6ff 0%, #ffffff 100%);
+$mission-card-gradient: linear-gradient(to right, #ffffff 0%, #f5f9ff 45%, #e8f0fe 100%);
+$green-light-gradient: linear-gradient(135deg, #ffffff 0%, #F0FDF4 100%);
+$dark-gradient: linear-gradient(135deg, #1a2a4a 0%, #2a3a5a 100%);
+
+$font-sans: var(--font-inter), -apple-system, BlinkMacSystemFont, sans-serif;
+
+$container-max: 1280px;
+$container-min-desktop: 1024px;
+$container-max-tablet: 992px;
+$container-max-mobile: 768px;
+$margin-page-x: 24px;

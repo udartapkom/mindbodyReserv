@@ -1,0 +1,87 @@
+@use '../../styles/variables' as v;
+@use '../../styles/mixins' as m;
+
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  width: v.$sidebar-width;
+  min-height: 100vh;
+  padding: 24px 16px;
+  background: v.$white-color;
+  border-right: 1px solid v.$color-border;
+  box-shadow: v.$header-shadow;
+
+  &__brand {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 0 12px 24px;
+    border-bottom: 1px solid v.$color-border;
+    margin-bottom: 16px;
+  }
+
+  &__logo {
+    @include m.text22-600;
+    color: v.$accent-color;
+  }
+
+  &__subtitle {
+    @include m.text14-400;
+  }
+
+  &__nav {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex: 1;
+  }
+
+  &__link {
+    @include m.text16-500;
+    display: block;
+    padding: 12px 14px;
+    border-radius: 10px;
+    color: v.$text-light-color;
+    transition: background 0.2s ease, color 0.2s ease;
+
+    &:hover {
+      background: v.$light-accent-color;
+      color: v.$accent-color;
+    }
+
+    &_active {
+      background: v.$light-accent-color;
+      color: v.$accent-color;
+      font-weight: 600;
+    }
+  }
+
+  &__footer {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding-top: 16px;
+    border-top: 1px solid v.$color-border;
+  }
+
+  &__user {
+    @include m.text14-400;
+    margin: 0;
+    padding: 0 12px;
+  }
+
+  &__logout {
+    @include m.text16-500;
+    padding: 10px 14px;
+    border: none;
+    border-radius: 10px;
+    background: transparent;
+    color: v.$color-error;
+    cursor: pointer;
+    text-align: left;
+
+    &:hover {
+      background: rgba(v.$color-error, 0.08);
+    }
+  }
+}
