@@ -1,0 +1,328 @@
+@use '../../styles/variables' as v;
+@use '../../styles/mixins' as m;
+
+.usersPage {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+
+  &__header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+  }
+
+  &__title {
+    @include m.text32-600;
+    margin: 0 0 6px;
+  }
+
+  &__subtitle {
+    @include m.text16-500;
+    margin: 0;
+  }
+
+  &__error {
+    @include m.text14-400;
+    color: v.$color-error;
+    margin: 0;
+  }
+
+  &__tableCard {
+    background: v.$white-color;
+    border: 1px solid v.$color-border;
+    border-radius: 16px;
+    box-shadow: v.$block-shadow;
+    overflow: auto;
+  }
+
+  &__table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 900px;
+
+    th,
+    td {
+      @include m.text14-400;
+      padding: 14px 16px;
+      text-align: left;
+      border-bottom: 1px solid v.$color-border;
+      vertical-align: middle;
+    }
+
+    th {
+      @include m.text14-400;
+      font-weight: 600;
+      color: v.$text-dark-color;
+      background: v.$light-accent-color;
+    }
+
+    tbody tr:hover {
+      background: rgba(v.$accent-color, 0.04);
+    }
+  }
+
+  &__empty {
+    text-align: center !important;
+    color: v.$text-light-color;
+  }
+
+  &__userCell {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  &__avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    overflow: hidden;
+    background: v.$color-grey;
+    flex-shrink: 0;
+
+    img,
+    span {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  }
+
+  &__badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 1.2;
+
+    &_admin {
+      background: v.$light-accent-color;
+      color: v.$accent-color;
+    }
+
+    &_user {
+      background: v.$color-grey;
+      color: v.$text-light-color;
+    }
+
+    &_active {
+      background: #ecfdf5;
+      color: #047857;
+    }
+
+    &_inactive {
+      background: #fef2f2;
+      color: v.$color-error;
+    }
+  }
+
+  &__actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  &__actionBtn {
+    @include m.text14-400;
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: 1px solid v.$color-border;
+    background: v.$white-color;
+    color: v.$text-light-color;
+    cursor: pointer;
+    transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+
+    &:hover:not(:disabled) {
+      border-color: v.$accent-color;
+      color: v.$accent-color;
+    }
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    &_primary {
+      background: v.$accent-color;
+      border-color: v.$accent-color;
+      color: v.$white-color;
+
+      &:hover:not(:disabled) {
+        color: v.$white-color;
+        opacity: 0.92;
+      }
+    }
+
+    &_warning {
+      border-color: #f59e0b;
+      color: #b45309;
+
+      &:hover:not(:disabled) {
+        background: #fffbeb;
+        border-color: #f59e0b;
+        color: #b45309;
+      }
+    }
+
+    &_danger {
+      border-color: v.$color-error;
+      color: v.$color-error;
+
+      &:hover:not(:disabled) {
+        background: #fef2f2;
+        border-color: v.$color-error;
+        color: v.$color-error;
+      }
+    }
+  }
+
+  &__overlay {
+    position: fixed;
+    inset: 0;
+    border: none;
+    background: rgba(26, 42, 74, 0.35);
+    cursor: pointer;
+    z-index: 40;
+  }
+
+  &__drawer {
+    position: fixed;
+    top: 0;
+    right: 0;
+    z-index: 50;
+    display: flex;
+    flex-direction: column;
+    width: min(420px, 100vw);
+    height: 100vh;
+    background: v.$white-color;
+    border-left: 1px solid v.$color-border;
+    box-shadow: v.$header-shadow;
+  }
+
+  &__drawerHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 20px 24px;
+    border-bottom: 1px solid v.$color-border;
+  }
+
+  &__drawerTitle {
+    @include m.text22-600;
+    margin: 0;
+  }
+
+  &__close {
+    width: 36px;
+    height: 36px;
+    border: none;
+    border-radius: 8px;
+    background: transparent;
+    color: v.$text-light-color;
+    font-size: 28px;
+    line-height: 1;
+    cursor: pointer;
+
+    &:hover {
+      background: v.$light-accent-color;
+      color: v.$accent-color;
+    }
+  }
+
+  &__drawerBody {
+    flex: 1;
+    overflow: auto;
+    padding: 24px;
+  }
+
+  &__drawerAvatar {
+    width: 88px;
+    height: 88px;
+    margin: 0 auto 24px;
+    border-radius: 50%;
+    overflow: hidden;
+    background: v.$color-grey;
+
+    img,
+    span {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  }
+
+  &__fields {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  &__field {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  &__fieldLabel {
+    @include m.text14-400;
+    margin-bottom: 4px;
+  }
+
+  &__fieldValue {
+    @include m.text16-400;
+    margin: 0;
+    padding: 10px 12px;
+    background: v.$light-accent-color;
+    border-radius: 8px;
+  }
+
+  &__form {
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__input {
+    @include m.text16-400;
+    width: 100%;
+    margin-bottom: 14px;
+    padding: 10px 12px;
+    border: 1px solid v.$color-border;
+    border-radius: 8px;
+    background: v.$white-color;
+
+    &:focus {
+      outline: none;
+      border-color: v.$accent-color;
+      box-shadow: 0 0 0 2px rgba(v.$accent-color, 0.15);
+    }
+  }
+
+  &__checkbox {
+    @include m.text16-400;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 14px;
+    cursor: pointer;
+  }
+
+  &__formActions,
+  &__drawerFooter {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-top: 8px;
+  }
+
+  &__drawerFooter {
+    padding: 16px 24px 24px;
+    border-top: 1px solid v.$color-border;
+    margin-top: 0;
+  }
+}

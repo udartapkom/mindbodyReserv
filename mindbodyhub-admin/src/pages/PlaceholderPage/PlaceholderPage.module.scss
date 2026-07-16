@@ -1,0 +1,21 @@
+@use '../../styles/mixins' as m;
+@use '../../styles/variables' as v;
+
+.placeholderPage {
+  max-width: 720px;
+  padding: 32px;
+  background: v.$white-color;
+  border-radius: 16px;
+  border: 1px solid v.$color-border;
+  box-shadow: v.$block-shadow;
+
+  &__title {
+    @include m.text32-600;
+    margin: 0 0 12px;
+  }
+
+  &__text {
+    @include m.text18-400;
+    margin: 0;
+  }
+}

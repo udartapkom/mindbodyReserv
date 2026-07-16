@@ -1,4 +1,5 @@
 export type CardData = {
+    type: string;
     image: string;
     imageAlt: string;
     title: string;

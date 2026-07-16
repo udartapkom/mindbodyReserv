@@ -16,7 +16,7 @@ function PriceComparison() {
                             Возможности
                         </div>
                         {cardData.map((plan) => (
-                            <div key={plan.subTitle} className={styles.priceComparison__cell} role="columnheader">
+                            <div key={plan.type} className={styles.priceComparison__cell} role="columnheader">
                                 <span className={styles.priceComparison__planName}>{plan.subTitle}</span>
                                 <span className={styles.priceComparison__planPrice}>
                                     {plan.price}

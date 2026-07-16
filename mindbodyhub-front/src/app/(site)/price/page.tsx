@@ -18,7 +18,7 @@ function PricePage() {
 
             <div className={styles.pricePage__cardWrapper}>
                 {cardData.map((card) => (
-                    <PriceCard key={card.title} {...card} />
+                    <PriceCard key={card.type} {...card} />
                 ))}
             </div>
                 <PriceComparison />

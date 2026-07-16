@@ -1,0 +1,76 @@
+@use '../../../styles/variables' as v;
+@use '../../../styles/mixins' as m;
+
+.avatarField {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 16px;
+    border-radius: 8px;
+
+    &__label {
+        @include m.text16-500;
+        margin: 0;
+        color: v.$text-light-color;
+    }
+
+    &__content {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+    }
+
+    &__preview {
+        width: 72px;
+        height: 72px;
+        border-radius: 50%;
+        overflow: hidden;
+        flex-shrink: 0;
+        background: v.$white-color;
+    }
+
+    &__image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    &__placeholder {
+        width: 100%;
+        height: 100%;
+        background: v.$color-grey;
+        border-radius: 50%;
+    }
+
+    &__actions {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    &__input {
+        display: none;
+    }
+
+    &__button {
+        @include m.text16-500;
+        width: fit-content;
+        padding: 10px 16px;
+        border: none;
+        border-radius: 8px;
+        background: v.$accent-color;
+        color: v.$white-color;
+        cursor: pointer;
+        transition: opacity 0.2s ease;
+
+        &:hover {
+            opacity: 0.9;
+        }
+    }
+
+    &__hint {
+        @include m.text14-400;
+        margin: 0;
+        color: v.$text-light-color;
+    }
+}

@@ -10,6 +10,7 @@ export function toPublicProfile(user: User): UserPublicProfile {
     role: user.role,
     tariff: user.tariff,
     avatarUrl: user.avatarUrl,
+    isActive: user.isActive,
     phoneVerifiedAt: user.phoneVerifiedAt?.toISOString() ?? null,
     createdAt: user.createdAt.toISOString(),
     updatedAt: user.updatedAt.toISOString(),
