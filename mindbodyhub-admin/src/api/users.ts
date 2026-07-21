@@ -1,26 +1,6 @@
-import { auth as authStorage } from './auth';
 import { getApiBaseUrl } from './api';
+import { authHeaders, checkResponse, fetchWithAuth } from './http';
 import type { AdminUpdateUserPayload, User } from '@/types/user';
-
-const checkResponse = async <T>(res: Response): Promise<T> => {
-  if (!res.ok) {
-    const json = await res.json().catch(() => ({}));
-    throw json;
-  }
-  return res.json() as Promise<T>;
-};
-
-const authHeaders = (): HeadersInit => {
-  const token = authStorage.getToken();
-  if (!token) {
-    throw new Error('Unauthorized');
-  }
-
-  return {
-    Authorization: `Bearer ${token}`,
-    'Content-Type': 'application/json',
-  };
-};
 
 const normalizeUser = (user: User): User => ({
   ...user,
@@ -33,7 +13,7 @@ const normalizeUser = (user: User): User => ({
 
 export const usersApi = {
   getAll: async (): Promise<User[]> => {
-    const users = await fetch(`${getApiBaseUrl()}/users`, {
+    const users = await fetchWithAuth(`${getApiBaseUrl()}/users`, {
       headers: authHeaders(),
     }).then((res) => checkResponse<User[]>(res));
 
@@ -41,7 +21,7 @@ export const usersApi = {
   },
 
   getById: async (id: string): Promise<User> => {
-    const user = await fetch(`${getApiBaseUrl()}/users/${id}`, {
+    const user = await fetchWithAuth(`${getApiBaseUrl()}/users/${id}`, {
       headers: authHeaders(),
     }).then((res) => checkResponse<User>(res));
 
@@ -49,7 +29,7 @@ export const usersApi = {
   },
 
   update: async (id: string, payload: AdminUpdateUserPayload): Promise<User> => {
-    const user = await fetch(`${getApiBaseUrl()}/users/${id}`, {
+    const user = await fetchWithAuth(`${getApiBaseUrl()}/users/${id}`, {
       method: 'PATCH',
       headers: authHeaders(),
       body: JSON.stringify(payload),
@@ -59,7 +39,7 @@ export const usersApi = {
   },
 
   block: async (id: string): Promise<User> => {
-    const user = await fetch(`${getApiBaseUrl()}/users/${id}/block`, {
+    const user = await fetchWithAuth(`${getApiBaseUrl()}/users/${id}/block`, {
       method: 'PATCH',
       headers: authHeaders(),
     }).then((res) => checkResponse<User>(res));
@@ -68,7 +48,7 @@ export const usersApi = {
   },
 
   unblock: async (id: string): Promise<User> => {
-    const user = await fetch(`${getApiBaseUrl()}/users/${id}/unblock`, {
+    const user = await fetchWithAuth(`${getApiBaseUrl()}/users/${id}/unblock`, {
       method: 'PATCH',
       headers: authHeaders(),
     }).then((res) => checkResponse<User>(res));
@@ -77,7 +57,7 @@ export const usersApi = {
   },
 
   remove: async (id: string): Promise<void> => {
-    await fetch(`${getApiBaseUrl()}/users/${id}`, {
+    await fetchWithAuth(`${getApiBaseUrl()}/users/${id}`, {
       method: 'DELETE',
       headers: authHeaders(),
     }).then((res) => checkResponse<{ success: true }>(res));

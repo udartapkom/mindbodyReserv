@@ -20,7 +20,10 @@ export type UploadFileOptions = {
 @Injectable()
 export class StorageService implements OnModuleInit {
   private readonly logger = new Logger(StorageService.name);
+  /** Internal endpoint (e.g. minio:9000 inside Docker) */
   private client!: S3Client;
+  /** Public endpoint for browser-facing presigned URLs (e.g. localhost:9000) */
+  private publicClient!: S3Client;
   private publicBaseUrl!: string;
 
   constructor(private readonly config: ConfigService) {}
@@ -35,22 +38,29 @@ export class StorageService implements OnModuleInit {
       'MINIO_SECRET_KEY',
       'minioadmin',
     );
+    const region = this.config.get<string>('MINIO_REGION', 'us-east-1');
+    const credentials = { accessKeyId, secretAccessKey };
 
     this.publicBaseUrl = this.config
       .get<string>('MINIO_PUBLIC_URL', `${protocol}://${endpoint}:${port}`)
       .replace(/\/$/, '');
 
     this.client = new S3Client({
-      region: this.config.get<string>('MINIO_REGION', 'us-east-1'),
+      region,
       endpoint: `${protocol}://${endpoint}:${port}`,
       forcePathStyle: true,
-      credentials: {
-        accessKeyId,
-        secretAccessKey,
-      },
+      credentials,
+    });
+
+    this.publicClient = new S3Client({
+      region,
+      endpoint: this.publicBaseUrl,
+      forcePathStyle: true,
+      credentials,
     });
 
     this.logger.log(`Storage endpoint: ${protocol}://${endpoint}:${port}`);
+    this.logger.log(`Storage public URL: ${this.publicBaseUrl}`);
   }
 
   getBucketName(configKey: string, fallback: string): string {
@@ -96,7 +106,7 @@ export class StorageService implements OnModuleInit {
       Key: key,
     });
 
-    return getSignedUrl(this.client, command, {
+    return getSignedUrl(this.publicClient, command, {
       expiresIn: expiresInSeconds,
     });
   }

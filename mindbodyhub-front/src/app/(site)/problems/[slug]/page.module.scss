@@ -1,0 +1,48 @@
+@use "../../../../styles/variables" as v;
+@use "../../../../styles/mixins" as m;
+
+.page {
+  width: 100%;
+  max-width: v.$container-max;
+  margin: 0 auto;
+  padding: 48px v.$margin-page-x 80px;
+
+  @include m.mobile {
+    padding-top: 32px;
+    padding-bottom: 48px;
+  }
+
+  &__cover {
+    display: block;
+    width: 100%;
+    max-height: 420px;
+    object-fit: cover;
+    border-radius: 16px;
+    border: 1px solid v.$color-border;
+    margin-bottom: 32px;
+  }
+
+  &__title {
+    font-family: v.$font-sans;
+    font-weight: 700;
+    font-size: 40px;
+    line-height: 120%;
+    color: v.$text-dark-color;
+    margin: 0 0 16px;
+
+    @include m.mobile {
+      font-size: 28px;
+    }
+  }
+
+  &__summary {
+    @include m.text18-400;
+    margin: 0 0 32px;
+    color: v.$color-text-muted;
+  }
+
+  &__content {
+    padding-top: 8px;
+    border-top: 1px solid v.$color-border;
+  }
+}

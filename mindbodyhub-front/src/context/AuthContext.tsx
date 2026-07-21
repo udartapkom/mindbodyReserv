@@ -1,4 +1,3 @@
-// src/context/AuthContext.tsx
 "use client";
 
 import {
@@ -12,7 +11,7 @@ import {
 import { useRouter } from "next/navigation";
 import { auth as authStorage } from "@/api/auth";
 import { auth as authApi } from "@/api/api";
-import type { User } from "@/types/user";
+import type { ChangePasswordPayload, UpdateProfilePayload, User } from "@/types/user";
 
 type AuthContextValue = {
   user: User | null;
@@ -21,6 +20,10 @@ type AuthContextValue = {
   login: (phone: string, password: string) => Promise<void>;
   register: (phone: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
+  refreshUser: () => Promise<User | null>;
+  updateProfile: (payload: UpdateProfilePayload) => Promise<User>;
+  changePassword: (payload: ChangePasswordPayload) => Promise<void>;
+  uploadAvatar: (file: File) => Promise<User>;
 };
 
 const AuthContext = createContext<AuthContextValue | null>(null);
@@ -30,18 +33,28 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  // При загрузке — восстановить сессию из localStorage
   useEffect(() => {
-    const storedUser = authStorage.getUser();
-    const token = authStorage.getToken();
+    const restoreSession = async () => {
+      const token = authStorage.getToken();
+      const refreshToken = authStorage.getRefreshToken();
 
-    if (token && storedUser) {
-      setUser(storedUser);
-    } else if (token && !storedUser) {
-      authStorage.removeToken();
-    }
+      if (!token && !refreshToken) {
+        setIsLoading(false);
+        return;
+      }
 
-    setIsLoading(false);
+      try {
+        const profile = await authApi.getProfile();
+        setUser(profile);
+      } catch {
+        authStorage.removeToken();
+        setUser(null);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    void restoreSession();
   }, []);
 
   const login = useCallback(async (phone: string, password: string) => {
@@ -62,6 +75,28 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     router.push("/login");
   }, [router]);
 
+  const refreshUser = useCallback(async () => {
+    const profile = await authApi.getProfile();
+    setUser(profile);
+    return profile;
+  }, []);
+
+  const updateProfile = useCallback(async (payload: UpdateProfilePayload) => {
+    const profile = await authApi.updateProfile(payload);
+    setUser(profile);
+    return profile;
+  }, []);
+
+  const changePassword = useCallback(async (payload: ChangePasswordPayload) => {
+    await authApi.changePassword(payload);
+  }, []);
+
+  const uploadAvatar = useCallback(async (file: File) => {
+    const profile = await authApi.uploadAvatar(file);
+    setUser(profile);
+    return profile;
+  }, []);
+
   const value = useMemo(
     () => ({
       user,
@@ -70,15 +105,25 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       login,
       register,
       logout,
+      refreshUser,
+      updateProfile,
+      changePassword,
+      uploadAvatar,
     }),
-    [user, isLoading, login, register, logout]
+    [
+      user,
+      isLoading,
+      login,
+      register,
+      logout,
+      refreshUser,
+      updateProfile,
+      changePassword,
+      uploadAvatar,
+    ],
   );
 
-  return (
-    <AuthContext.Provider value={value}>
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
 export function useAuth() {

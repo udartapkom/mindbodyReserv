@@ -1,0 +1,62 @@
+@use "../../styles/variables" as v;
+@use "../../styles/mixins" as m;
+
+.materialContent {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+
+  &__empty {
+    @include m.text16-400;
+    color: v.$color-text-muted;
+  }
+
+  &__heading {
+    @include m.text22-600;
+    margin: 8px 0 0;
+  }
+
+  &__subheading {
+    font-family: v.$font-sans;
+    font-weight: 600;
+    font-size: 18px;
+    line-height: 130%;
+    color: v.$text-dark-color;
+    margin: 4px 0 0;
+  }
+
+  &__paragraph {
+    @include m.text18-400;
+    margin: 0;
+    white-space: pre-wrap;
+  }
+
+  &__figure {
+    margin: 8px 0 0;
+  }
+
+  &__image {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+    border-radius: 12px;
+    border: 1px solid v.$color-border;
+  }
+
+  &__caption {
+    @include m.text14-400;
+    margin-top: 8px;
+    color: v.$color-text-muted;
+  }
+
+  &__link {
+    color: v.$accent-color;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+
+    &:hover {
+      color: v.$text-dark-color;
+    }
+  }
+}
