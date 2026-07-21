@@ -29,16 +29,34 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const storedUser = authStorage.getUser();
-    const token = authStorage.getToken();
+    const restoreSession = async () => {
+      const token = authStorage.getToken();
+      const refreshToken = authStorage.getRefreshToken();
 
-    if (token && storedUser?.role === UserRole.ADMIN) {
-      setUser(storedUser);
-    } else if (token) {
-      authStorage.removeToken();
-    }
+      if (!token && !refreshToken) {
+        setIsLoading(false);
+        return;
+      }
 
-    setIsLoading(false);
+      try {
+        const profile = await authApi.getProfile();
+
+        if (profile.role !== UserRole.ADMIN) {
+          authStorage.removeToken();
+          setUser(null);
+          return;
+        }
+
+        setUser(profile);
+      } catch {
+        authStorage.removeToken();
+        setUser(null);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    void restoreSession();
   }, []);
 
   const login = useCallback(

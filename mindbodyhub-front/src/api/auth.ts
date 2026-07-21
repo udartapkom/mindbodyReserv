@@ -1,4 +1,5 @@
 import type { User } from "@/types/user";
+import { normalizeUser } from "@/utils/user";
 
 const TOKEN_STORAGE_KEY = "user_token";
 const REFRESH_TOKEN_STORAGE_KEY = "refresh_token";
@@ -11,7 +12,7 @@ function safeParseUser(raw: string | null): User | null {
 
   try {
     const parsed = JSON.parse(raw) as User;
-    return parsed?.id ? parsed : null;
+    return parsed?.id ? normalizeUser(parsed) : null;
   } catch {
     return null;
   }

@@ -73,6 +73,12 @@
     }
   }
 
+  &__empty {
+    @include m.text14-400;
+    padding: 10px 16px;
+    color: v.$color-text-muted;
+  }
+
   &:hover &__menu,
   &.dropdownOpen &__menu {
     opacity: 1;

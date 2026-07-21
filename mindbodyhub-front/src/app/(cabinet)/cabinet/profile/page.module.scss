@@ -38,5 +38,32 @@
             outline: none;
             box-shadow: 0 0 0 2px rgba(v.$accent-color, 0.2);
         }
+
+        &_readonly {
+            background: v.$color-grey;
+            cursor: not-allowed;
+        }
+    }
+
+    &__submit {
+        @include m.text16-500;
+        align-self: flex-start;
+        padding: 12px 24px;
+        border: none;
+        border-radius: 8px;
+        background: v.$accent-color;
+        color: v.$white-color;
+        cursor: pointer;
+
+        &:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+    }
+
+    &__success {
+        @include m.text16-400;
+        margin: 0 0 16px;
+        color: v.$color-dark-green;
     }
 }

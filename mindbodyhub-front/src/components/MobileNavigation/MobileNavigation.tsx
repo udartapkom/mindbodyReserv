@@ -1,12 +1,13 @@
 "use client";
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { problems } from "@/content/problems";
+import { usePublicMaterials } from "@/hooks/usePublicMaterials";
 import { Icon } from "@/shared/ui/Icon";
 import styles from "./MobileNavigation.module.scss";
 import { useAuth } from "@/context/AuthContext";
 
 function MobileNavigation() {
+    const { materials, isLoading } = usePublicMaterials();
     const { isAuthenticated, logout } = useAuth();
     const [isOpen, setIsOpen] = useState(false);
     const [isProblemsOpen, setIsProblemsOpen] = useState(false);
@@ -128,14 +129,28 @@ function MobileNavigation() {
                         <ul
                             className={`${styles.mobileNavigation__subList} ${isProblemsOpen ? styles.mobileNavigation__subList_open : ""}`}
                         >
-                            {problems.map((problem) => (
-                                <li key={problem.id}>
+                            {isLoading && (
+                                <li>
+                                    <span className={styles.mobileNavigation__subLink}>
+                                        Загрузка…
+                                    </span>
+                                </li>
+                            )}
+                            {!isLoading && materials.length === 0 && (
+                                <li>
+                                    <span className={styles.mobileNavigation__subLink}>
+                                        Пока нет материалов
+                                    </span>
+                                </li>
+                            )}
+                            {materials.map((material) => (
+                                <li key={material.id}>
                                     <Link
                                         className={styles.mobileNavigation__subLink}
-                                        href={`/problems/${problem.slug}`}
+                                        href={`/problems/${material.slug}`}
                                         onClick={closeMenu}
                                     >
-                                        {problem.title}
+                                        {material.title}
                                     </Link>
                                 </li>
                             ))}

@@ -1,5 +1,9 @@
 import { auth as authStorage } from "./auth";
-import type { User } from "@/types/user";
+import type { AuthTokensResponse, Problem } from "./responsesTypes";
+import type { KnowledgeArticle } from "@/types/knowledge";
+import type { Material } from "@/types/material";
+import type { ChangePasswordPayload, UpdateProfilePayload, User } from "@/types/user";
+import { normalizeUser } from "@/utils/user";
 
 const isLocalDevHost = (hostname: string) =>
   hostname === "localhost" ||
@@ -23,12 +27,6 @@ export const getApiBaseUrl = () => {
   return "https://api.mindbodyhub.pro";
 };
 
-type AuthTokensResponse = {
-  accessToken: string;
-  refreshToken: string;
-  user: User;
-};
-
 const checkResponse = async <T>(res: Response): Promise<T> => {
   if (!res.ok) {
     const json = await res.json().catch(() => ({}));
@@ -37,10 +35,33 @@ const checkResponse = async <T>(res: Response): Promise<T> => {
   return res.json() as Promise<T>;
 };
 
+const authHeaders = (json = true): HeadersInit => {
+  const token = authStorage.getToken();
+  if (!token) {
+    throw new Error("Unauthorized");
+  }
+
+  const headers: Record<string, string> = {
+    Authorization: `Bearer ${token}`,
+  };
+
+  if (json) {
+    headers["Content-Type"] = "application/json";
+  }
+
+  return headers;
+};
+
 const saveAuthSession = (data: AuthTokensResponse) => {
   authStorage.setToken(data.accessToken);
   authStorage.setRefreshToken(data.refreshToken);
-  authStorage.setUser(data.user);
+  authStorage.setUser(normalizeUser(data.user));
+};
+
+const saveUserProfile = (user: User) => {
+  const normalized = normalizeUser(user);
+  authStorage.setUser(normalized);
+  return normalized;
 };
 
 export type HealthResponse = { status: string };
@@ -71,16 +92,39 @@ export const auth = {
     authStorage.removeToken();
   },
   getProfile: async () => {
-    const token = authStorage.getToken();
-    if (!token) {
-      throw new Error("Unauthorized");
-    }
-
-    return fetch(`${getApiBaseUrl()}/auth/me`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
+    const user = await fetch(`${getApiBaseUrl()}/auth/me`, {
+      headers: authHeaders(false),
     }).then((res) => checkResponse<User>(res));
+
+    return saveUserProfile(user);
+  },
+  updateProfile: async (payload: UpdateProfilePayload) => {
+    const user = await fetch(`${getApiBaseUrl()}/auth/me`, {
+      method: "PATCH",
+      headers: authHeaders(),
+      body: JSON.stringify(payload),
+    }).then((res) => checkResponse<User>(res));
+
+    return saveUserProfile(user);
+  },
+  changePassword: async (payload: ChangePasswordPayload) => {
+    await fetch(`${getApiBaseUrl()}/auth/me/password`, {
+      method: "PATCH",
+      headers: authHeaders(),
+      body: JSON.stringify(payload),
+    }).then((res) => checkResponse<{ success: true }>(res));
+  },
+  uploadAvatar: async (file: File) => {
+    const formData = new FormData();
+    formData.append("file", file);
+
+    const user = await fetch(`${getApiBaseUrl()}/auth/me/avatar`, {
+      method: "POST",
+      headers: authHeaders(false),
+      body: formData,
+    }).then((res) => checkResponse<User>(res));
+
+    return saveUserProfile(user);
   },
   register: async (phone: string, password: string) => {
     const data = await fetch(`${getApiBaseUrl()}/auth/register`, {
@@ -90,5 +134,35 @@ export const auth = {
     }).then((res) => checkResponse<AuthTokensResponse>(res));
 
     saveAuthSession(data);
+  },
+};
+
+export const problems = {
+  getProblems: async () => {
+    const data = await fetch(`${getApiBaseUrl()}/materials/public`).then((res) =>
+      checkResponse<Problem[]>(res),
+    );
+    return data;
+  },
+  getBySlug: async (slug: string) => {
+    const data = await fetch(
+      `${getApiBaseUrl()}/materials/public/${encodeURIComponent(slug)}`,
+    ).then((res) => checkResponse<Material>(res));
+    return data;
+  },
+};
+
+export const knowledge = {
+  getArticles: async () => {
+    const data = await fetch(`${getApiBaseUrl()}/knowledge/public`).then((res) =>
+      checkResponse<KnowledgeArticle[]>(res),
+    );
+    return data;
+  },
+  getBySlug: async (slug: string) => {
+    const data = await fetch(
+      `${getApiBaseUrl()}/knowledge/public/${encodeURIComponent(slug)}`,
+    ).then((res) => checkResponse<KnowledgeArticle>(res));
+    return data;
   },
 };

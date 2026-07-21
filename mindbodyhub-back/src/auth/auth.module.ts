@@ -4,6 +4,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsersModule } from '../users/users.module';
 import { AuthController } from './auth.controller';
+import { AuthUploadController } from './auth-upload.controller';
 import { AuthService } from './auth.service';
 import { RefreshToken } from './entities/refresh-token.entity';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
@@ -16,7 +17,7 @@ import { JwtStrategy } from './strategies/jwt.strategy';
     TypeOrmModule.forFeature([RefreshToken]),
     JwtModule.register({}),
   ],
-  controllers: [AuthController],
+  controllers: [AuthController, AuthUploadController],
   providers: [
     AuthService,
     JwtStrategy,

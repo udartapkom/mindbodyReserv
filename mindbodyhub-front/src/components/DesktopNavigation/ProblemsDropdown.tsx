@@ -2,11 +2,12 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { problems } from "@/content/problems";
+import { usePublicMaterials } from "@/hooks/usePublicMaterials";
 import { Icon } from "@/shared/ui/Icon";
 import styles from "./ProblemsDropdown.module.scss";
 
 function ProblemsDropdown() {
+  const { materials, isLoading } = usePublicMaterials();
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLLIElement>(null);
 
@@ -48,15 +49,25 @@ function ProblemsDropdown() {
       </button>
 
       <ul className={styles.dropdown__menu} role="menu">
-        {problems.map((problem) => (
-          <li key={problem.id} role="none">
+        {isLoading && (
+          <li className={styles.dropdown__empty} role="none">
+            Загрузка…
+          </li>
+        )}
+        {!isLoading && materials.length === 0 && (
+          <li className={styles.dropdown__empty} role="none">
+            Пока нет материалов
+          </li>
+        )}
+        {materials.map((material) => (
+          <li key={material.id} role="none">
             <Link
               role="menuitem"
               className={styles.dropdown__link}
-              href={`/problems/${problem.slug}`}
+              href={`/problems/${material.slug}`}
               onClick={() => setIsOpen(false)}
             >
-              {problem.title}
+              {material.title}
             </Link>
           </li>
         ))}
