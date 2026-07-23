@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Delete,
+  ForbiddenException,
   Get,
   NotFoundException,
   Param,
@@ -10,12 +11,17 @@ import {
   Post,
   Query,
 } from '@nestjs/common';
+import { CurrentUser, type AuthUser } from '../auth/decorators/current-user.decorator';
 import { Public } from '../auth/decorators/public.decorator';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { UserRole } from '../users/user-role.enum';
 import { CreateMaterialDto } from './dto/create-material.dto';
 import { UpdateMaterialDto } from './dto/update-material.dto';
-import { FREE_ACCESS_TYPE, MaterialStatus } from './material.types';
+import {
+  FREE_ACCESS_TYPE,
+  MaterialStatus,
+  REGISTERED_ACCESS_TYPE,
+} from './material.types';
 import { MaterialDto, toMaterialDto } from './material.mapper';
 import { MaterialsService } from './materials.service';
 
@@ -25,15 +31,22 @@ export class MaterialsController {
 
   /**
    * Public catalog.
-   * - without query: only free materials
-   * - ?forTariff=popular: free + materials for that tariff type
+   * - anonymous: only free
+   * - authenticated free: free + registered
+   * - authenticated with paid tariff: free + registered + ladder up to user.tariff
+   * - ?forTariff=... optional override (debug / explicit)
    */
   @Public()
   @Get('public')
   async findPublic(
     @Query('forTariff') forTariff?: string,
+    @CurrentUser() user?: AuthUser | null,
   ): Promise<MaterialDto[]> {
-    const materials = await this.materialsService.findPublishedForAccess(forTariff);
+    const materials = await this.materialsService.findPublishedForAccess({
+      forTariff,
+      userTariff: user?.tariff,
+      isAuthenticated: Boolean(user),
+    });
     return materials.map(toMaterialDto);
   }
 
@@ -42,21 +55,34 @@ export class MaterialsController {
   async findPublicBySlug(
     @Param('slug') slug: string,
     @Query('forTariff') forTariff?: string,
+    @CurrentUser() user?: AuthUser | null,
   ): Promise<MaterialDto> {
     const material = await this.materialsService.findBySlug(slug);
     if (!material || material.status !== MaterialStatus.PUBLISHED) {
       throw new NotFoundException('Материал не найден');
     }
 
-    const allowed =
-      material.tariffType === FREE_ACCESS_TYPE ||
-      (forTariff?.trim() && material.tariffType === forTariff.trim());
+    const access = {
+      forTariff,
+      userTariff: user?.tariff,
+      isAuthenticated: Boolean(user),
+    };
 
-    if (!allowed) {
-      throw new NotFoundException('Материал не найден');
+    if (this.materialsService.isAccessible(material, access)) {
+      return toMaterialDto(material);
     }
 
-    return toMaterialDto(material);
+    if (material.tariffType === REGISTERED_ACCESS_TYPE) {
+      throw new ForbiddenException(
+        'Материал доступен только зарегистрированным пользователям',
+      );
+    }
+
+    if (material.tariffType !== FREE_ACCESS_TYPE) {
+      throw new ForbiddenException('Материал доступен по тарифу');
+    }
+
+    throw new NotFoundException('Материал не найден');
   }
 
   @Get()

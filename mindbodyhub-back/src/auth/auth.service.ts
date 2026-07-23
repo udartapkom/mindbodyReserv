@@ -7,7 +7,7 @@ import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as argon2 from 'argon2';
-import { createHash, randomBytes, randomUUID } from 'crypto';
+import { createHash, randomBytes } from 'crypto';
 import { Repository } from 'typeorm';
 import { ChangePasswordDto } from '../users/dto/change-password.dto';
 import { UpdateProfileDto } from '../users/dto/update-profile.dto';
@@ -15,7 +15,6 @@ import { User } from '../users/entities/user.entity';
 import { toAuthUserSummary, toPublicProfile } from '../users/user.mapper';
 import { UserRole } from '../users/user-role.enum';
 import { UsersService } from '../users/users.service';
-import { StorageService } from '../storage/storage.service';
 import { AuthTokensResponse, UserProfileResponse } from './auth.types';
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
@@ -34,7 +33,6 @@ export class AuthService {
     private readonly usersService: UsersService,
     private readonly jwtService: JwtService,
     private readonly config: ConfigService,
-    private readonly storageService: StorageService,
     @InjectRepository(RefreshToken)
     private readonly refreshTokensRepository: Repository<RefreshToken>,
   ) {}
@@ -139,47 +137,15 @@ export class AuthService {
     userId: string,
     file: { buffer: Buffer; contentType: string; extension: string },
   ): Promise<UserProfileResponse> {
-    const key = `${userId}/${randomUUID()}${file.extension}`;
-    const bucket = this.storageService.getAvatarsBucket();
-
-    await this.storageService.uploadFile({
-      bucket,
-      key,
-      body: file.buffer,
-      contentType: file.contentType,
-      isPublic: false,
-    });
-
-    const user = await this.usersService.updateProfile(userId, {
-      avatarUrl: key,
-    });
-
+    const user = await this.usersService.uploadAvatar(userId, file);
     return this.enrichPublicProfile(user);
-  }
-
-  private async resolveAvatarUrl(
-    avatarUrl: string | null,
-  ): Promise<string | null> {
-    if (!avatarUrl) {
-      return null;
-    }
-
-    if (avatarUrl.startsWith('http://') || avatarUrl.startsWith('https://')) {
-      return avatarUrl;
-    }
-
-    return this.storageService.getPresignedUrl(
-      this.storageService.getAvatarsBucket(),
-      avatarUrl,
-      3600,
-    );
   }
 
   private async enrichPublicProfile(user: User): Promise<UserProfileResponse> {
     const profile = toPublicProfile(user);
     return {
       ...profile,
-      avatarUrl: await this.resolveAvatarUrl(user.avatarUrl),
+      avatarUrl: await this.usersService.resolveAvatarUrl(user.avatarUrl),
     };
   }
 
@@ -187,7 +153,7 @@ export class AuthService {
     const summary = toAuthUserSummary(user);
     return {
       ...summary,
-      avatarUrl: await this.resolveAvatarUrl(user.avatarUrl),
+      avatarUrl: await this.usersService.resolveAvatarUrl(user.avatarUrl),
     };
   }
 

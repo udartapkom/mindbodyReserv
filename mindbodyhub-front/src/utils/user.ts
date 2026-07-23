@@ -33,8 +33,12 @@ export function getDisplayName(user: User | null | undefined): string {
 
 export const TARIFF_LABELS: Record<string, string> = {
   free: 'Бесплатный',
-  basic: 'Базовый',
-  premium: 'Премиум',
+  trial: 'Пробный',
+  popular: 'Популярный',
+  vip: 'VIP',
+  // legacy labels (if old tokens still in storage)
+  basic: 'Пробный',
+  premium: 'Популярный',
 };
 
 export function getTariffLabel(tariff?: string | null): string {

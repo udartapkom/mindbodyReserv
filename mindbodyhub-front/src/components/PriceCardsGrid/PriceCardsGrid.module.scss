@@ -1,0 +1,6 @@
+@use '../../styles/variables' as v;
+
+// Layout is provided by parent wrappers (price page / home section).
+.priceCardsGrid {
+  display: contents;
+}

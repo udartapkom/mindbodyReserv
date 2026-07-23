@@ -1,9 +1,15 @@
 @use "../../styles/variables" as v;
-.header {
+@use "../../styles/mixins" as m;
+
+.headerStack {
     position: sticky;
     top: 0;
     left: 0;
     z-index: 100;
+    width: 100%;
+}
+
+.header {
     width: 100%;
     display: flex;
     align-items: center;
@@ -71,5 +77,31 @@
         color: v.$text-dark-color;
         margin: 0;
         white-space: nowrap;
+    }
+}
+
+.devBanner {
+    width: 100%;
+    padding: 10px v.$margin-page-x;
+    background: v.$light-accent-color;
+    border-bottom: 1px solid v.$color-border;
+    text-align: center;
+
+    &__text {
+        @include m.text14-400;
+        margin: 0 auto;
+        max-width: v.$container-max;
+        color: v.$text-light-color;
+    }
+
+    &__link {
+        color: v.$accent-color;
+        font-weight: 500;
+        text-decoration: underline;
+        text-underline-offset: 2px;
+
+        &:hover {
+            color: v.$text-dark-color;
+        }
     }
 }

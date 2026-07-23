@@ -28,6 +28,19 @@ type AuthContextValue = {
 
 const AuthContext = createContext<AuthContextValue | null>(null);
 
+function getSafeNextPath(): string | null {
+  if (typeof window === "undefined") {
+    return null;
+  }
+
+  const next = new URLSearchParams(window.location.search).get("next");
+  if (!next || !next.startsWith("/") || next.startsWith("//")) {
+    return null;
+  }
+
+  return next;
+}
+
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const [user, setUser] = useState<User | null>(null);
@@ -60,13 +73,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const login = useCallback(async (phone: string, password: string) => {
     await authApi.login(phone, password);
     setUser(authStorage.getUser());
-    router.push("/cabinet");
+    const next = getSafeNextPath();
+    router.push(next ?? "/cabinet");
   }, [router]);
 
   const register = useCallback(async (phone: string, password: string) => {
     await authApi.register(phone, password);
     setUser(authStorage.getUser());
-    router.push("/cabinet");
+    const next = getSafeNextPath();
+    router.push(next ?? "/cabinet");
   }, [router]);
 
   const logout = useCallback(async () => {

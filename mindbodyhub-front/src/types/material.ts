@@ -43,3 +43,6 @@ export type Material = {
   createdAt: string;
   updatedAt: string;
 };
+
+export const FREE_ACCESS_TYPE = "free";
+export const REGISTERED_ACCESS_TYPE = "registered";

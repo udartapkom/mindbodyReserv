@@ -2,54 +2,176 @@
 @use '../../../styles/mixins' as m;
 
 .userBar {
-    background: v.$section-gradient;
-    padding: 24px;
     display: flex;
     align-items: center;
+    justify-content: space-between;
+    gap: 24px;
     height: 100%;
-    gap: 16px;
-    &__name {
-        @include m.text22-600;
-        margin: 0;
+    padding: 20px 28px;
+    background: v.$section-gradient;
+    border-bottom: 1px solid v.$color-border;
+
+    &__identity {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        min-width: 0;
     }
+
     &__avatar {
-        width: 72px;
-        height: 72px;
+        width: 64px;
+        height: 64px;
         border-radius: 50%;
         overflow: hidden;
-        margin-left: 24px;
-        cursor: pointer;
-        transition: opacity 0.3s ease;
+        flex-shrink: 0;
+        border: 2px solid v.$white-color;
+        box-shadow: 0 0 0 1px v.$color-border, v.$block-shadow;
+        text-decoration: none;
+        transition: opacity 0.2s ease, box-shadow 0.2s ease;
+
         &:hover {
-            opacity: 0.8;
+            opacity: 0.9;
+            box-shadow: 0 0 0 1px v.$accent-color, 0 0 0 4px rgba(v.$accent-color, 0.15);
         }
     }
+
     &__avatarImage {
+        display: block;
         width: 100%;
         height: 100%;
         object-fit: cover;
     }
+
     &__avatarPlaceholder {
-        width: 100%;
-        height: 100%;
-        background: v.$color-grey;
-        border-radius: 50%;
-    }
-    &__items {
         display: flex;
         align-items: center;
-        flex-direction: column;
-        gap: 8px;
-        margin-left: 24px;
+        justify-content: center;
+        width: 100%;
+        height: 100%;
+        background: v.$light-accent-color;
+        color: v.$accent-color;
+        font-family: v.$font-sans;
+        font-size: 18px;
+        font-weight: 600;
+        line-height: 1;
     }
-    &__itemTitle {
+
+    &__info {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        min-width: 0;
+    }
+
+    &__name {
+        @include m.text22-600;
+        margin: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    &__phone {
         @include m.text14-400;
         margin: 0;
         color: v.$text-light-color;
     }
-    &__item {
-        @include m.text16-500;
+
+    &__meta {
+        display: flex;
+        align-items: stretch;
+        gap: 12px;
+        flex-shrink: 0;
+    }
+
+    &__metaItem {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        min-width: 110px;
+        padding: 10px 14px;
+        background: v.$white-color;
+        border: 1px solid v.$color-border;
+        border-radius: 12px;
+        box-shadow: 0 1px 2px rgba(26, 42, 74, 0.04);
+    }
+
+    &__metaLabel {
+        @include m.text14-400;
         margin: 0;
+        font-size: 12px;
         color: v.$text-light-color;
+    }
+
+    &__badge {
+        display: inline-flex;
+        align-items: center;
+        width: fit-content;
+        padding: 4px 10px;
+        border-radius: 999px;
+        font-family: v.$font-sans;
+        font-size: 12px;
+        font-weight: 500;
+        line-height: 1.2;
+
+        &_admin {
+            background: v.$light-accent-color;
+            color: v.$accent-color;
+        }
+
+        &_user {
+            background: v.$color-grey;
+            color: v.$text-light-color;
+        }
+
+        &_free {
+            background: v.$color-grey;
+            color: v.$text-light-color;
+        }
+
+        &_trial {
+            background: v.$light-accent-color;
+            color: v.$accent-color;
+        }
+
+        &_popular {
+            background: #ecfdf5;
+            color: v.$color-dark-green;
+        }
+
+        &_vip {
+            background: #fff7ed;
+            color: #c2410c;
+        }
+    }
+
+    @include m.until-tablet {
+        flex-wrap: wrap;
+        padding: 16px 20px;
+        gap: 16px;
+
+        &__meta {
+            width: 100%;
+        }
+
+        &__metaItem {
+            flex: 1;
+            min-width: 0;
+        }
+    }
+
+    @include m.mobile {
+        &__avatar {
+            width: 56px;
+            height: 56px;
+        }
+
+        &__name {
+            font-size: 18px;
+        }
+
+        &__meta {
+            flex-direction: column;
+        }
     }
 }

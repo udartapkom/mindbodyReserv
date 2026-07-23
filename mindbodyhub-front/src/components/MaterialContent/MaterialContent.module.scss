@@ -4,35 +4,68 @@
 .materialContent {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 0;
+  max-width: 720px;
 
   &__empty {
     @include m.text16-400;
+    margin: 0;
+    padding: 20px 0;
     color: v.$color-text-muted;
   }
 
   &__heading {
-    @include m.text22-600;
-    margin: 8px 0 0;
+    font-family: v.$font-sans;
+    font-weight: 700;
+    font-size: 28px;
+    line-height: 128%;
+    color: v.$text-dark-color;
+    margin: 40px 0 14px;
+
+    &:first-child {
+      margin-top: 0;
+    }
+
+    @include m.mobile {
+      font-size: 24px;
+      margin-top: 32px;
+    }
   }
 
   &__subheading {
     font-family: v.$font-sans;
     font-weight: 600;
-    font-size: 18px;
-    line-height: 130%;
+    font-size: 20px;
+    line-height: 132%;
     color: v.$text-dark-color;
-    margin: 4px 0 0;
+    margin: 28px 0 10px;
+
+    &:first-child {
+      margin-top: 0;
+    }
+
+    @include m.mobile {
+      font-size: 18px;
+    }
   }
 
   &__paragraph {
-    @include m.text18-400;
-    margin: 0;
+    font-family: v.$font-sans;
+    font-weight: 400;
+    font-size: 18px;
+    line-height: 168%;
+    color: v.$text-light-color;
+    margin: 0 0 18px;
     white-space: pre-wrap;
+
+    @include m.mobile {
+      font-size: 16px;
+      line-height: 162%;
+    }
   }
 
   &__figure {
-    margin: 8px 0 0;
+    margin: 12px 0 28px;
   }
 
   &__image {
@@ -40,20 +73,23 @@
     width: 100%;
     max-width: 100%;
     height: auto;
-    border-radius: 12px;
+    border-radius: 14px;
     border: 1px solid v.$color-border;
+    box-shadow: 0 8px 24px -12px rgba(26, 42, 74, 0.18);
   }
 
   &__caption {
     @include m.text14-400;
-    margin-top: 8px;
+    margin-top: 10px;
+    text-align: center;
     color: v.$color-text-muted;
   }
 
   &__link {
     color: v.$accent-color;
     text-decoration: underline;
-    text-underline-offset: 2px;
+    text-underline-offset: 3px;
+    transition: color 0.2s ease;
 
     &:hover {
       color: v.$text-dark-color;

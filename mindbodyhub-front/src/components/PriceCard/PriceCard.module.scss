@@ -150,6 +150,11 @@
             background-color: v.$light-accent-color;
             border-color: v.$accent-color;
         }
+        &:disabled {
+            opacity: 0.55;
+            cursor: not-allowed;
+            transform: none;
+        }
     }
 
     @media (max-width: 480px) {

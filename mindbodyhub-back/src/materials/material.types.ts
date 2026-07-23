@@ -1,7 +1,9 @@
 export type MaterialBlockType = 'heading' | 'subheading' | 'paragraph' | 'image';
 
-/** Access level when material is not bound to a paid tariff */
-export const FREE_ACCESS_TYPE = 'free';
+export {
+  FREE_ACCESS_TYPE,
+  REGISTERED_ACCESS_TYPE,
+} from '../common/tariff/access.types';
 
 export type MaterialHeadingBlock = {
   id: string;

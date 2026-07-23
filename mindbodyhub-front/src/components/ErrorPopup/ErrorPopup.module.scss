@@ -9,6 +9,14 @@
     &__icon {
         font-size: 64px;
         color: v.$color-error;
+
+        &_success {
+            color: v.$color-light-green;
+        }
+
+        &_info {
+            color: v.$accent-color;
+        }
     }
     &__title {
         @include m.text22-600;

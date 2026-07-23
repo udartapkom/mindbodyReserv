@@ -1,12 +1,15 @@
+import { Transform } from 'class-transformer';
 import {
   IsBoolean,
   IsEnum,
   IsOptional,
   IsString,
   IsUrl,
+  Matches,
   MaxLength,
   ValidateIf,
 } from 'class-validator';
+import { normalizePhone } from '../../common/utils/phone.util';
 import { UserRole } from '../user-role.enum';
 import { UserTariff } from '../user-tariff.enum';
 
@@ -22,6 +25,19 @@ export class AdminUpdateUserDto {
   @IsString()
   @MaxLength(100)
   lastName?: string | null;
+
+  @IsOptional()
+  @Transform(({ value }) => {
+    try {
+      return normalizePhone(String(value));
+    } catch {
+      return value;
+    }
+  })
+  @Matches(/^\+7\d{10}$/, {
+    message: 'Phone must be a valid Russian number, e.g. +79001234567',
+  })
+  phone?: string;
 
   @IsOptional()
   @IsEnum(UserRole)

@@ -44,31 +44,29 @@ Health check: `GET http://localhost:4000/health`
 
 ## Production (mindbodyhub.pro)
 
-1. Copy env file on server:
+Small VPS (~1GB RAM): **без Docker** — PostgreSQL + MinIO + PM2 + nginx.
+
+Домены: `mindbodyhub.pro`, `www`, `api`, `admin`, `minio`.
+
+### Первый запуск (уже сделан на сервере)
+
+См. `deploy/bootstrap-server.sh` и nginx `deploy/nginx/mindbodyhub.pro.conf`.
+
+### Обновления с локальной машины
 
 ```bash
-cp .env.production.example .env
-# Заполните секреты: JWT, DB, MinIO, ADMIN
+# SSH-ключ на сервер (рекомендуется вместо пароля)
+export DEPLOY_HOST=root@89.108.71.23
+./mindbodyhub-back/deploy/deploy-remote.sh
 ```
 
-2. Start stack:
+После SQL-изменений сначала примените файл из `deploy/migrations/` на сервере, затем деплой.
 
-```bash
-docker compose -f docker-compose.prod.yml up -d --build
-```
+### Env на сервере
 
-3. Configure Nginx (see `deploy/nginx/mindbodyhub.pro.conf`):
+`/opt/mindbodyhub/back/.env` — секреты только на сервере, не в git.
 
-| Domain | Purpose |
-|--------|---------|
-| `api.mindbodyhub.pro` | NestJS API |
-| `storage.mindbodyhub.pro` | MinIO S3 API (public files) |
-| `storage-admin.mindbodyhub.pro` | MinIO Console (restrict access!) |
-| `mindbodyhub.pro` | Frontend (Next.js) |
-
-4. Set `MINIO_PUBLIC_URL=https://storage.mindbodyhub.pro` in `.env`
-
-5. Frontend: `NEXT_PUBLIC_API_BASE_URL=https://api.mindbodyhub.pro`
+`NODE_ENV=production` → TypeORM `synchronize: false`.
 
 ## Storage module
 

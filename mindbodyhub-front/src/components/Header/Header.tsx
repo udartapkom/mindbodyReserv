@@ -10,29 +10,40 @@ import { useAuth } from '@/context/AuthContext';
 function Header() {
     const { isAuthenticated, logout } = useAuth();
     return (
-        <header className={styles.header}>
-            <div className={styles.header__container}>
-                <HeaderLogo />
-                <div className={styles.header__desktopNav}>
-                    <DesktopNavigation />
+        <div className={styles.headerStack}>
+            <header className={styles.header}>
+                <div className={styles.header__container}>
+                    <HeaderLogo />
+                    <div className={styles.header__desktopNav}>
+                        <DesktopNavigation />
+                    </div>
+                    {!isAuthenticated && (
+                        <Link href="/login" className={styles.header__button}>
+                            <Icon name="lock" variant="solid" style={{ color: '#3b82f6' }} />
+                            <span className={styles.header__buttonText}>Войти</span>
+                        </Link>
+                    )}
+                    {isAuthenticated && (
+                        <button onClick={logout} className={styles.header__button}>
+                            <Icon name="lock" variant="solid" style={{ color: '#3b82f6' }} />
+                            <span className={styles.header__buttonText}>Выйти</span>
+                        </button>
+                    )}
+                    <div className={styles.header__mobileNav}>
+                        <MobileNavigation />
+                    </div>
                 </div>
-                {!isAuthenticated && (
-                    <Link href="/login" className={styles.header__button}>
-                        <Icon name="lock" variant="solid" style={{ color: '#3b82f6' }} />
-                        <span className={styles.header__buttonText}>Войти</span>
+            </header>
+            <div className={styles.devBanner} role="status">
+                <p className={styles.devBanner__text}>
+                    Сайт находится в разработке. По всем вопросам обращайтесь в{' '}
+                    <Link href="/support" className={styles.devBanner__link}>
+                        техподдержку
                     </Link>
-                )}
-                {isAuthenticated && (
-                    <button onClick={logout} className={styles.header__button}>
-                        <Icon name="lock" variant="solid" style={{ color: '#3b82f6' }} />
-                        <span className={styles.header__buttonText}>Выйти</span>
-                    </button>
-                )}
-                <div className={styles.header__mobileNav}>
-                    <MobileNavigation />
-                </div>
-           </div>
-        </header>
+                    .
+                </p>
+            </div>
+        </div>
     );
 }
 

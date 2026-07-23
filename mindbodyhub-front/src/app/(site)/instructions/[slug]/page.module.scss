@@ -3,19 +3,35 @@
 
 .page {
   width: 100%;
-  max-width: v.$container-max;
-  margin: 0 auto;
-  padding: 48px v.$margin-page-x 80px;
+  padding: 40px v.$margin-page-x 88px;
+  background:
+    radial-gradient(ellipse 80% 50% at 50% -10%, rgba(59, 130, 246, 0.1), transparent 55%),
+    linear-gradient(180deg, #f8fbff 0%, v.$white-color 42%, v.$white-color 100%);
 
   @include m.mobile {
-    padding-top: 32px;
-    padding-bottom: 48px;
+    padding-top: 24px;
+    padding-bottom: 56px;
+  }
+
+  &__shell {
+    width: 100%;
+    max-width: 880px;
+    margin: 0 auto;
+    overflow: hidden;
+    background: v.$white-color;
+    border: 1px solid v.$color-border;
+    border-radius: 20px;
+    box-shadow: 0 16px 40px -20px rgba(26, 42, 74, 0.18);
   }
 
   &__back {
     @include m.text14-400;
-    display: inline-block;
-    margin-bottom: 24px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    max-width: 880px;
+    width: 100%;
+    margin: 0 auto 16px;
     color: v.$accent-color;
     text-decoration: none;
 
@@ -24,23 +40,57 @@
     }
   }
 
+  &__backWrap {
+    width: 100%;
+    max-width: 880px;
+    margin: 0 auto 16px;
+  }
+
+  &__hero {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    max-height: 420px;
+    background: v.$section-gradient;
+    overflow: hidden;
+  }
+
   &__cover {
     display: block;
     width: 100%;
-    max-height: 420px;
+    height: 100%;
     object-fit: cover;
-    border-radius: 16px;
-    border: 1px solid v.$color-border;
-    margin-bottom: 32px;
+  }
+
+  &__header {
+    padding: 36px 40px 8px;
+
+    @include m.mobile {
+      padding: 24px 20px 4px;
+    }
+  }
+
+  &__eyebrow {
+    @include m.text14-400;
+    display: inline-flex;
+    align-items: center;
+    margin: 0 0 12px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: v.$light-accent-color;
+    color: v.$accent-color;
+    font-weight: 500;
+    font-size: 12px;
   }
 
   &__title {
     font-family: v.$font-sans;
     font-weight: 700;
     font-size: 40px;
-    line-height: 120%;
+    line-height: 118%;
     color: v.$text-dark-color;
-    margin: 0 0 16px;
+    margin: 0 0 14px;
+    letter-spacing: -0.02em;
 
     @include m.mobile {
       font-size: 28px;
@@ -48,13 +98,35 @@
   }
 
   &__summary {
-    @include m.text18-400;
-    margin: 0 0 32px;
-    color: v.$color-text-muted;
+    font-family: v.$font-sans;
+    font-weight: 400;
+    font-size: 18px;
+    line-height: 150%;
+    margin: 0;
+    color: v.$text-light-color;
+    max-width: 40em;
+
+    @include m.mobile {
+      font-size: 16px;
+    }
   }
 
-  &__content {
-    padding-top: 8px;
-    border-top: 1px solid v.$color-border;
+  &__divider {
+    height: 1px;
+    margin: 24px 40px 0;
+    background: v.$color-border;
+
+    @include m.mobile {
+      margin-left: 20px;
+      margin-right: 20px;
+    }
+  }
+
+  &__body {
+    padding: 28px 40px 44px;
+
+    @include m.mobile {
+      padding: 20px 20px 32px;
+    }
   }
 }

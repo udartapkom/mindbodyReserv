@@ -42,29 +42,39 @@ async function InstructionPage({ params }: InstructionPageProps) {
   }
 
   return (
-    <article className={styles.page}>
-      <Link className={styles.page__back} href="/instructions">
-        ← К списку инструкций
-      </Link>
-
-      {article.coverUrl ? (
-        <img
-          className={styles.page__cover}
-          src={article.coverUrl}
-          alt={article.title}
-        />
-      ) : null}
-
-      <h1 className={styles.page__title}>{article.title}</h1>
-
-      {article.summary ? (
-        <p className={styles.page__summary}>{article.summary}</p>
-      ) : null}
-
-      <div className={styles.page__content}>
-        <MaterialContent blocks={article.blocks} />
+    <div className={styles.page}>
+      <div className={styles.page__backWrap}>
+        <Link className={styles.page__back} href="/instructions">
+          ← К списку инструкций
+        </Link>
       </div>
-    </article>
+
+      <article className={styles.page__shell}>
+        {article.coverUrl ? (
+          <div className={styles.page__hero}>
+            <img
+              className={styles.page__cover}
+              src={article.coverUrl}
+              alt=""
+            />
+          </div>
+        ) : null}
+
+        <header className={styles.page__header}>
+          <p className={styles.page__eyebrow}>Инструкция</p>
+          <h1 className={styles.page__title}>{article.title}</h1>
+          {article.summary ? (
+            <p className={styles.page__summary}>{article.summary}</p>
+          ) : null}
+        </header>
+
+        <div className={styles.page__divider} />
+
+        <div className={styles.page__body}>
+          <MaterialContent blocks={article.blocks} />
+        </div>
+      </article>
+    </div>
   );
 }
 

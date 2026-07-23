@@ -8,6 +8,9 @@ export type MaterialStatus = (typeof MaterialStatus)[keyof typeof MaterialStatus
 /** Public access when material is not bound to a paid tariff */
 export const FREE_ACCESS_TYPE = 'free';
 
+/** Access for any logged-in user (no paid tariff required) */
+export const REGISTERED_ACCESS_TYPE = 'registered';
+
 export type MaterialHeadingBlock = {
   id: string;
   type: 'heading';

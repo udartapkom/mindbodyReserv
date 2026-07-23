@@ -1,11 +1,9 @@
-import { cardData } from "@/content/cardData";
-import PriceCard from "@/components/PriceCard/PriceCard";
 import PriceComparison from "@/components/PriceComparison/PriceComparison";
 import styles from "./page.module.scss";
-// import FreePriceSection from "@/components/FreePriceSection/FreePriceSection";
 import PriceQuestionSection from "@/components/PriceQuestionSection/PriceQuestionSection";
 import Accordion from "@/components/Accordion/Accordion";
 import { priceFaq } from "@/content/PriceFaq";
+import PriceCardsClient from "@/components/PriceCardsClient/PriceCardsClient";
 
 function PricePage() {
     return (
@@ -16,20 +14,19 @@ function PricePage() {
                 <span className={styles.pricePage__descriptionSpan}>MindBodyHub</span>
             </p>
 
-            <div className={styles.pricePage__cardWrapper}>
-                {cardData.map((card) => (
-                    <PriceCard key={card.type} {...card} />
-                ))}
+            <PriceCardsClient
+                className={styles.pricePage__cardWrapper}
+                showPaymentResult
+            />
+            <PriceComparison />
+            <section className={styles.pricePage__faq}>
+                <h2 className={styles.pricePage__faqTitle}>Часто задаваемые вопросы</h2>
+                <Accordion items={priceFaq} />
+            </section>
+            <div className={styles.pricePage__questionSection}>
+                <PriceQuestionSection />
             </div>
-                <PriceComparison />
-                <section className={styles.pricePage__faq}>
-                    <h2 className={styles.pricePage__faqTitle}>Часто задаваемые вопросы</h2>
-                    <Accordion items={priceFaq} />
-                </section>
-                <div className={styles.pricePage__questionSection}>
-                    <PriceQuestionSection />
-                </div>
-            </div>
+        </div>
     );
 }
 

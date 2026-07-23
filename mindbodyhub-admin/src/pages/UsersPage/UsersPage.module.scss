@@ -243,10 +243,11 @@
   &__drawerAvatar {
     width: 88px;
     height: 88px;
-    margin: 0 auto 24px;
+    margin: 0;
     border-radius: 50%;
     overflow: hidden;
     background: v.$color-grey;
+    flex-shrink: 0;
 
     img,
     span {
@@ -255,6 +256,32 @@
       height: 100%;
       object-fit: cover;
     }
+  }
+
+  &__avatarBlock {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+
+  &__avatarActions {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+  }
+
+  &__avatarInput {
+    display: none;
+  }
+
+  &__avatarHint {
+    @include m.text14-400;
+    margin: 0;
+    color: v.$text-light-color;
+    text-align: center;
   }
 
   &__fields {

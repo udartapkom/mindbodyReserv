@@ -3,13 +3,20 @@
 import { useEffect, useState } from "react";
 import { problems as problemsApi } from "@/api/api";
 import type { Problem } from "@/api/responsesTypes";
+import { useAuth } from "@/context/AuthContext";
 
 export function usePublicMaterials() {
+  const { isAuthenticated, isLoading: isAuthLoading } = useAuth();
   const [materials, setMaterials] = useState<Problem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    if (isAuthLoading) {
+      return;
+    }
+
     let cancelled = false;
+    setIsLoading(true);
 
     problemsApi
       .getProblems()
@@ -32,7 +39,7 @@ export function usePublicMaterials() {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [isAuthenticated, isAuthLoading]);
 
-  return { materials, isLoading };
+  return { materials, isLoading: isAuthLoading || isLoading };
 }

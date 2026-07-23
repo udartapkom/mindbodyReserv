@@ -38,6 +38,19 @@ export const usersApi = {
     return normalizeUser(user);
   },
 
+  uploadAvatar: async (id: string, file: File): Promise<User> => {
+    const formData = new FormData();
+    formData.append('file', file);
+
+    const user = await fetchWithAuth(`${getApiBaseUrl()}/users/${id}/avatar`, {
+      method: 'POST',
+      headers: authHeaders(false),
+      body: formData,
+    }).then((res) => checkResponse<User>(res));
+
+    return normalizeUser(user);
+  },
+
   block: async (id: string): Promise<User> => {
     const user = await fetchWithAuth(`${getApiBaseUrl()}/users/${id}/block`, {
       method: 'PATCH',

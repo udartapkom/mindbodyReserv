@@ -5,10 +5,12 @@ export const UserRole = {
 
 export type UserRole = (typeof UserRole)[keyof typeof UserRole];
 
+/** User subscription tariff (registered is material-only access, not stored on user) */
 export const UserTariff = {
   FREE: 'free',
-  BASIC: 'basic',
-  PREMIUM: 'premium',
+  TRIAL: 'trial',
+  POPULAR: 'popular',
+  VIP: 'vip',
 } as const;
 
 export type UserTariff = (typeof UserTariff)[keyof typeof UserTariff];
@@ -32,6 +34,7 @@ export type User = {
 export type AdminUpdateUserPayload = {
   firstName?: string | null;
   lastName?: string | null;
+  phone?: string;
   role?: UserRole;
   tariff?: UserTariff;
   isActive?: boolean;

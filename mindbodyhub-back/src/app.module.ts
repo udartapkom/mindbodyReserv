@@ -8,6 +8,8 @@ import { StorageModule } from './storage/storage.module';
 import { MaterialsModule } from './materials/materials.module';
 import { KnowledgeModule } from './knowledge/knowledge.module';
 import { TariffsModule } from './tariffs/tariffs.module';
+import { TicketsModule } from './tickets/tickets.module';
+import { PaymentsModule } from './payments/payments.module';
 import { UsersModule } from './users/users.module';
 
 @Module({
@@ -33,6 +35,8 @@ import { UsersModule } from './users/users.module';
     TariffsModule,
     MaterialsModule,
     KnowledgeModule,
+    TicketsModule,
+    PaymentsModule,
     AuthModule,
     SeedModule,
   ],

@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { randomUUID } from 'crypto';
 import { Repository } from 'typeorm';
+import { StorageService } from '../storage/storage.service';
 import { UserRole } from './user-role.enum';
 import { UserTariff } from './user-tariff.enum';
 import { User } from './entities/user.entity';
@@ -24,6 +26,7 @@ export type UpdateUserProfileData = {
 export type AdminUpdateUserData = {
   firstName?: string | null;
   lastName?: string | null;
+  phone?: string;
   role?: UserRole;
   tariff?: UserTariff;
   isActive?: boolean;
@@ -35,6 +38,7 @@ export class UsersService {
   constructor(
     @InjectRepository(User)
     private readonly usersRepository: Repository<User>,
+    private readonly storageService: StorageService,
   ) {}
 
   findById(id: string): Promise<User | null> {
@@ -109,6 +113,10 @@ export class UsersService {
       user.lastName = data.lastName;
     }
 
+    if (data.phone !== undefined) {
+      user.phone = data.phone;
+    }
+
     if (data.role !== undefined) {
       user.role = data.role;
     }
@@ -126,6 +134,47 @@ export class UsersService {
     }
 
     return this.usersRepository.save(user);
+  }
+
+  async uploadAvatar(
+    id: string,
+    file: { buffer: Buffer; contentType: string; extension: string },
+  ): Promise<User> {
+    const user = await this.findById(id);
+
+    if (!user) {
+      throw new Error(`User ${id} not found`);
+    }
+
+    const key = `${id}/${randomUUID()}${file.extension}`;
+    const bucket = this.storageService.getAvatarsBucket();
+
+    await this.storageService.uploadFile({
+      bucket,
+      key,
+      body: file.buffer,
+      contentType: file.contentType,
+      isPublic: false,
+    });
+
+    user.avatarUrl = key;
+    return this.usersRepository.save(user);
+  }
+
+  async resolveAvatarUrl(avatarUrl: string | null): Promise<string | null> {
+    if (!avatarUrl) {
+      return null;
+    }
+
+    if (avatarUrl.startsWith('http://') || avatarUrl.startsWith('https://')) {
+      return avatarUrl;
+    }
+
+    return this.storageService.getPresignedUrl(
+      this.storageService.getAvatarsBucket(),
+      avatarUrl,
+      3600,
+    );
   }
 
   async setActive(id: string, isActive: boolean): Promise<User> {

@@ -5,8 +5,17 @@ import AvatarField from '@/components/Cabinet/AvatarField/AvatarField';
 import Popup from '@/components/Popup/Popup';
 import ErrorPopup from '@/components/ErrorPopup/ErrorPopup';
 import { useAuth } from '@/context/AuthContext';
+import type { IconName } from '@/shared/ui/Icon';
 import { isPasswordStrong, PASSWORD_POLICY_MESSAGE } from '@/utils/password';
 import styles from './page.module.scss';
+
+const PHONE_CHANGE_MESSAGE = 'Обратитесь в техподдержку для смены номера телефона';
+
+type ProfilePopup = {
+  title: string;
+  description: string;
+  icon: IconName;
+};
 
 function ProfilePageContent() {
   const { user, updateProfile, changePassword } = useAuth();
@@ -18,17 +27,29 @@ function ProfilePageContent() {
   const [isProfileSaving, setIsProfileSaving] = useState(false);
   const [isPasswordSaving, setIsPasswordSaving] = useState(false);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [isErrorOpen, setIsErrorOpen] = useState(false);
+  const [popup, setPopup] = useState<ProfilePopup | null>(null);
 
   useEffect(() => {
     setFirstName(user?.firstName ?? '');
     setLastName(user?.lastName ?? '');
   }, [user]);
 
+  const closePopup = () => setPopup(null);
+
   const showError = (message: string) => {
-    setErrorMessage(message);
-    setIsErrorOpen(true);
+    setPopup({
+      title: 'Ошибка',
+      description: message,
+      icon: 'times-circle-o',
+    });
+  };
+
+  const showPhoneChangeInfo = () => {
+    setPopup({
+      title: 'Смена телефона',
+      description: PHONE_CHANGE_MESSAGE,
+      icon: 'info-circle',
+    });
   };
 
   const handleProfileSubmit = async (event: FormEvent<HTMLFormElement>) => {
@@ -96,55 +117,75 @@ function ProfilePageContent() {
   };
 
   return (
-    <section>
-      <h1>Настройки профиля</h1>
-      <p>Здесь вы можете изменить свои данные и настройки аккаунта.</p>
+    <section className={styles.profile}>
+      <header className={styles.profile__header}>
+        <h1 className={styles.profile__title}>Настройки профиля</h1>
+        <p className={styles.profile__subtitle}>
+          Здесь вы можете изменить свои данные и настройки аккаунта.
+        </p>
+      </header>
 
       {successMessage ? <p className={styles.profile__success}>{successMessage}</p> : null}
 
-      <form className={styles.profile__form} onSubmit={(event) => void handleProfileSubmit(event)}>
-        <div className={styles.profile__formGroup}>
-          <label htmlFor="firstName" className={styles.profile__formGroupLabel}>
-            Имя
-          </label>
-          <input
-            type="text"
-            id="firstName"
-            name="firstName"
-            className={styles.profile__formGroupInput}
-            value={firstName}
-            onChange={(event) => setFirstName(event.target.value)}
-          />
-        </div>
+      <form className={styles.profile__card} onSubmit={(event) => void handleProfileSubmit(event)}>
+        <h2 className={styles.profile__cardTitle}>Основные данные</h2>
+        <p className={styles.profile__cardHint}>Имя, фамилия и аватар для вашего аккаунта</p>
 
-        <div className={styles.profile__formGroup}>
-          <label htmlFor="lastName" className={styles.profile__formGroupLabel}>
-            Фамилия
-          </label>
-          <input
-            type="text"
-            id="lastName"
-            name="lastName"
-            className={styles.profile__formGroupInput}
-            value={lastName}
-            onChange={(event) => setLastName(event.target.value)}
-          />
-        </div>
+        <div className={styles.profile__fields}>
+          <div className={styles.profile__formGroup}>
+            <label htmlFor="firstName" className={styles.profile__formGroupLabel}>
+              Имя
+            </label>
+            <input
+              type="text"
+              id="firstName"
+              name="firstName"
+              className={styles.profile__formGroupInput}
+              value={firstName}
+              onChange={(event) => setFirstName(event.target.value)}
+            />
+          </div>
 
-        <AvatarField onError={showError} />
+          <div className={styles.profile__formGroup}>
+            <label htmlFor="lastName" className={styles.profile__formGroupLabel}>
+              Фамилия
+            </label>
+            <input
+              type="text"
+              id="lastName"
+              name="lastName"
+              className={styles.profile__formGroupInput}
+              value={lastName}
+              onChange={(event) => setLastName(event.target.value)}
+            />
+          </div>
 
-        <div className={styles.profile__formGroup}>
-          <label htmlFor="phone" className={styles.profile__formGroupLabel}>
-            Телефон
-          </label>
-          <input
-            type="tel"
-            id="phone"
-            name="phone"
-            className={`${styles.profile__formGroupInput} ${styles.profile__formGroupInput_readonly}`}
-            value={user?.phone ?? ''}
-            readOnly
-          />
+          <AvatarField onError={showError} />
+
+          <div className={styles.profile__formGroup}>
+            <label htmlFor="phone" className={styles.profile__formGroupLabel}>
+              Телефон
+            </label>
+            <input
+              type="tel"
+              id="phone"
+              name="phone"
+              className={`${styles.profile__formGroupInput} ${styles.profile__formGroupInput_readonly}`}
+              value={user?.phone ?? ''}
+              readOnly
+              onClick={showPhoneChangeInfo}
+              onKeyDown={(event) => {
+                if (event.key === 'Enter' || event.key === ' ') {
+                  event.preventDefault();
+                  showPhoneChangeInfo();
+                }
+              }}
+              aria-describedby="phone-change-hint"
+            />
+            <span id="phone-change-hint" className={styles.profile__fieldHint}>
+              Нажмите, чтобы узнать, как сменить номер
+            </span>
+          </div>
         </div>
 
         <button type="submit" className={styles.profile__submit} disabled={isProfileSaving}>
@@ -152,49 +193,53 @@ function ProfilePageContent() {
         </button>
       </form>
 
-      <h3>Изменить пароль</h3>
-      <form className={styles.profile__form} onSubmit={(event) => void handlePasswordSubmit(event)}>
-        <div className={styles.profile__formGroup}>
-          <label htmlFor="oldPassword" className={styles.profile__formGroupLabel}>
-            Старый пароль
-          </label>
-          <input
-            type="password"
-            id="oldPassword"
-            name="oldPassword"
-            className={styles.profile__formGroupInput}
-            value={oldPassword}
-            onChange={(event) => setOldPassword(event.target.value)}
-            autoComplete="current-password"
-          />
-        </div>
-        <div className={styles.profile__formGroup}>
-          <label htmlFor="password" className={styles.profile__formGroupLabel}>
-            Новый пароль
-          </label>
-          <input
-            type="password"
-            id="password"
-            name="password"
-            className={styles.profile__formGroupInput}
-            value={newPassword}
-            onChange={(event) => setNewPassword(event.target.value)}
-            autoComplete="new-password"
-          />
-        </div>
-        <div className={styles.profile__formGroup}>
-          <label htmlFor="confirmPassword" className={styles.profile__formGroupLabel}>
-            Подтвердите пароль
-          </label>
-          <input
-            type="password"
-            id="confirmPassword"
-            name="confirmPassword"
-            className={styles.profile__formGroupInput}
-            value={confirmPassword}
-            onChange={(event) => setConfirmPassword(event.target.value)}
-            autoComplete="new-password"
-          />
+      <form className={styles.profile__card} onSubmit={(event) => void handlePasswordSubmit(event)}>
+        <h2 className={styles.profile__cardTitle}>Изменить пароль</h2>
+        <p className={styles.profile__cardHint}>Для смены пароля укажите текущий и новый пароль</p>
+
+        <div className={styles.profile__fields}>
+          <div className={styles.profile__formGroup}>
+            <label htmlFor="oldPassword" className={styles.profile__formGroupLabel}>
+              Старый пароль
+            </label>
+            <input
+              type="password"
+              id="oldPassword"
+              name="oldPassword"
+              className={styles.profile__formGroupInput}
+              value={oldPassword}
+              onChange={(event) => setOldPassword(event.target.value)}
+              autoComplete="current-password"
+            />
+          </div>
+          <div className={styles.profile__formGroup}>
+            <label htmlFor="password" className={styles.profile__formGroupLabel}>
+              Новый пароль
+            </label>
+            <input
+              type="password"
+              id="password"
+              name="password"
+              className={styles.profile__formGroupInput}
+              value={newPassword}
+              onChange={(event) => setNewPassword(event.target.value)}
+              autoComplete="new-password"
+            />
+          </div>
+          <div className={styles.profile__formGroup}>
+            <label htmlFor="confirmPassword" className={styles.profile__formGroupLabel}>
+              Подтвердите пароль
+            </label>
+            <input
+              type="password"
+              id="confirmPassword"
+              name="confirmPassword"
+              className={styles.profile__formGroupInput}
+              value={confirmPassword}
+              onChange={(event) => setConfirmPassword(event.target.value)}
+              autoComplete="new-password"
+            />
+          </div>
         </div>
 
         <button type="submit" className={styles.profile__submit} disabled={isPasswordSaving}>
@@ -202,13 +247,17 @@ function ProfilePageContent() {
         </button>
       </form>
 
-      <Popup title="Ошибка" isOpen={isErrorOpen} onClose={() => setIsErrorOpen(false)}>
+      <Popup
+        title={popup?.title ?? 'Уведомление'}
+        isOpen={popup !== null}
+        onClose={closePopup}
+      >
         <ErrorPopup
-          title="Ошибка"
-          description={errorMessage ?? 'Произошла ошибка'}
-          icon="times-circle-o"
+          title={popup?.title ?? 'Уведомление'}
+          description={popup?.description ?? ''}
+          icon={popup?.icon ?? 'info-circle'}
           variant="regular"
-          submit={() => setIsErrorOpen(false)}
+          submit={closePopup}
         />
       </Popup>
     </section>

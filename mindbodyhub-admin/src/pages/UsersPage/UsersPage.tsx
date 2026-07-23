@@ -1,4 +1,4 @@
-import { useEffect, useState, type FormEvent } from 'react';
+import { useEffect, useRef, useState, type ChangeEvent, type FormEvent } from 'react';
 import { usersApi } from '@/api/users';
 import { useAuth } from '@/context/AuthContext';
 import type { AdminUpdateUserPayload, User } from '@/types/user';
@@ -14,8 +14,9 @@ const roleLabels: Record<UserRole, string> = {
 
 const tariffLabels: Record<UserTariff, string> = {
   free: 'Free',
-  basic: 'Basic',
-  premium: 'Premium',
+  trial: 'Пробный',
+  popular: 'Популярный',
+  vip: 'VIP',
 };
 
 function formatDate(value?: string) {
@@ -51,6 +52,9 @@ function UsersPage() {
   const [saveError, setSaveError] = useState('');
   const [isSaving, setIsSaving] = useState(false);
   const [actionId, setActionId] = useState<string | null>(null);
+  const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
+  const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
+  const avatarInputRef = useRef<HTMLInputElement>(null);
 
   const loadUsers = async () => {
     setIsLoading(true);
@@ -73,13 +77,17 @@ function UsersPage() {
     setSelectedUser(user);
     setMode(nextMode);
     setSaveError('');
+    setAvatarPreview((prev) => {
+      if (prev) URL.revokeObjectURL(prev);
+      return null;
+    });
     setForm({
       firstName: user.firstName ?? '',
       lastName: user.lastName ?? '',
+      phone: user.phone,
       role: user.role,
       tariff: user.tariff ?? UserTariff.FREE,
       isActive: user.isActive ?? true,
-      avatarUrl: user.avatarUrl ?? '',
     });
   };
 
@@ -87,6 +95,10 @@ function UsersPage() {
     setSelectedUser(null);
     setMode(null);
     setSaveError('');
+    setAvatarPreview((prev) => {
+      if (prev) URL.revokeObjectURL(prev);
+      return null;
+    });
   };
 
   const updateUserInList = (updated: User) => {
@@ -105,10 +117,10 @@ function UsersPage() {
       const payload: AdminUpdateUserPayload = {
         firstName: form.firstName?.toString().trim() || null,
         lastName: form.lastName?.toString().trim() || null,
+        phone: form.phone?.toString().trim(),
         role: form.role,
         tariff: form.tariff,
         isActive: form.isActive,
-        avatarUrl: form.avatarUrl?.toString().trim() || null,
       };
 
       const updated = await usersApi.update(selectedUser.id, payload);
@@ -118,6 +130,39 @@ function UsersPage() {
       setSaveError(getErrorMessage(error, 'Не удалось сохранить изменения'));
     } finally {
       setIsSaving(false);
+    }
+  };
+
+  const handleAvatarChange = async (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file || !selectedUser) return;
+
+    const objectUrl = URL.createObjectURL(file);
+    setAvatarPreview((prev) => {
+      if (prev) URL.revokeObjectURL(prev);
+      return objectUrl;
+    });
+    setIsUploadingAvatar(true);
+    setSaveError('');
+
+    try {
+      const updated = await usersApi.uploadAvatar(selectedUser.id, file);
+      updateUserInList(updated);
+      setAvatarPreview((prev) => {
+        if (prev) URL.revokeObjectURL(prev);
+        return null;
+      });
+    } catch (error) {
+      setSaveError(getErrorMessage(error, 'Не удалось загрузить аватар'));
+      setAvatarPreview((prev) => {
+        if (prev) URL.revokeObjectURL(prev);
+        return null;
+      });
+    } finally {
+      setIsUploadingAvatar(false);
+      if (avatarInputRef.current) {
+        avatarInputRef.current.value = '';
+      }
     }
   };
 
@@ -225,6 +270,9 @@ function UsersPage() {
     );
   };
 
+  const drawerAvatarSrc =
+    avatarPreview ?? selectedUser?.avatar ?? selectedUser?.avatarUrl ?? null;
+
   return (
     <section className={styles.usersPage}>
       <header className={styles.usersPage__header}>
@@ -329,12 +377,38 @@ function UsersPage() {
             </div>
 
             <div className={styles.usersPage__drawerBody}>
-              <div className={styles.usersPage__drawerAvatar}>
-                {selectedUser.avatar ? (
-                  <img src={selectedUser.avatar} alt={getDisplayName(selectedUser)} />
-                ) : (
-                  <span />
-                )}
+              <div className={styles.usersPage__avatarBlock}>
+                <div className={styles.usersPage__drawerAvatar}>
+                  {drawerAvatarSrc ? (
+                    <img src={drawerAvatarSrc} alt={getDisplayName(selectedUser)} />
+                  ) : (
+                    <span />
+                  )}
+                </div>
+
+                {mode === 'edit' ? (
+                  <div className={styles.usersPage__avatarActions}>
+                    <input
+                      ref={avatarInputRef}
+                      type="file"
+                      accept="image/jpeg,image/png,image/webp"
+                      className={styles.usersPage__avatarInput}
+                      onChange={(event) => void handleAvatarChange(event)}
+                      disabled={isUploadingAvatar}
+                    />
+                    <button
+                      type="button"
+                      className={styles.usersPage__actionBtn}
+                      onClick={() => avatarInputRef.current?.click()}
+                      disabled={isUploadingAvatar}
+                    >
+                      {isUploadingAvatar ? 'Загрузка…' : 'Загрузить аватар'}
+                    </button>
+                    <p className={styles.usersPage__avatarHint}>
+                      JPG, PNG или WebP до 4 МБ
+                    </p>
+                  </div>
+                ) : null}
               </div>
 
               {mode === 'view' ? (
@@ -352,7 +426,7 @@ function UsersPage() {
                     </p>
                   </div>
                   <div className={styles.usersPage__field}>
-                    <span className={styles.usersPage__fieldLabel}>Телефон</span>
+                    <span className={styles.usersPage__fieldLabel}>Телефон (логин)</span>
                     <p className={styles.usersPage__fieldValue}>{selectedUser.phone}</p>
                   </div>
                   <div className={styles.usersPage__field}>
@@ -402,6 +476,19 @@ function UsersPage() {
                     onChange={(e) => setForm((prev) => ({ ...prev, lastName: e.target.value }))}
                   />
 
+                  <label className={styles.usersPage__fieldLabel} htmlFor="phone">
+                    Телефон (логин)
+                  </label>
+                  <input
+                    id="phone"
+                    className={styles.usersPage__input}
+                    value={form.phone?.toString() ?? ''}
+                    onChange={(e) => setForm((prev) => ({ ...prev, phone: e.target.value }))}
+                    placeholder="+79001234567"
+                    inputMode="tel"
+                    autoComplete="tel"
+                  />
+
                   <label className={styles.usersPage__fieldLabel} htmlFor="role">
                     Роль
                   </label>
@@ -429,8 +516,9 @@ function UsersPage() {
                     }
                   >
                     <option value={UserTariff.FREE}>Free</option>
-                    <option value={UserTariff.BASIC}>Basic</option>
-                    <option value={UserTariff.PREMIUM}>Premium</option>
+                    <option value={UserTariff.TRIAL}>Пробный (trial)</option>
+                    <option value={UserTariff.POPULAR}>Популярный (popular)</option>
+                    <option value={UserTariff.VIP}>VIP</option>
                   </select>
 
                   <label className={styles.usersPage__checkbox}>
@@ -444,17 +532,6 @@ function UsersPage() {
                     Активен
                   </label>
 
-                  <label className={styles.usersPage__fieldLabel} htmlFor="avatarUrl">
-                    URL аватара
-                  </label>
-                  <input
-                    id="avatarUrl"
-                    className={styles.usersPage__input}
-                    value={form.avatarUrl?.toString() ?? ''}
-                    onChange={(e) => setForm((prev) => ({ ...prev, avatarUrl: e.target.value }))}
-                    placeholder="https://..."
-                  />
-
                   {saveError ? <p className={styles.usersPage__error}>{saveError}</p> : null}
 
                   <div className={styles.usersPage__formActions}>
@@ -462,14 +539,14 @@ function UsersPage() {
                       type="button"
                       className={styles.usersPage__actionBtn}
                       onClick={() => setMode('view')}
-                      disabled={isSaving}
+                      disabled={isSaving || isUploadingAvatar}
                     >
                       Отмена
                     </button>
                     <button
                       type="submit"
                       className={`${styles.usersPage__actionBtn} ${styles.usersPage__actionBtn_primary}`}
-                      disabled={isSaving}
+                      disabled={isSaving || isUploadingAvatar}
                     >
                       {isSaving ? 'Сохранение...' : 'Сохранить'}
                     </button>
@@ -503,7 +580,7 @@ function UsersPage() {
                 <button
                   type="button"
                   className={`${styles.usersPage__actionBtn} ${styles.usersPage__actionBtn_primary}`}
-                  onClick={() => setMode('edit')}
+                  onClick={() => openDrawer(selectedUser, 'edit')}
                 >
                   Редактировать
                 </button>

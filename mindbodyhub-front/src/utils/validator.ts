@@ -23,6 +23,14 @@ export const validateBookingForm = (data: BookingFormData): ValidationErrors => 
 
   if (!data.telephone.trim()) {
     errors.telephone = 'заполните это поле';
+  } else if (data.telephone.replace(/\D/g, '').length < 10) {
+    errors.telephone = 'введите полный номер телефона';
+  }
+
+  if (!data.text.trim()) {
+    errors.text = 'заполните это поле';
+  } else if (data.text.trim().length > 5000) {
+    errors.text = 'не более 5000 символов';
   }
 
   return errors;

@@ -3,7 +3,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import { materialsApi } from '@/api/materials';
 import { tariffsApi } from '@/api/tariffs';
 import type { Material, MaterialBlock } from '@/types/material';
-import { FREE_ACCESS_TYPE, MaterialStatus } from '@/types/material';
+import { FREE_ACCESS_TYPE, MaterialStatus, REGISTERED_ACCESS_TYPE } from '@/types/material';
 import type { Tariff } from '@/types/tariff';
 import { createBlockId, getErrorMessage } from '@/utils/adminHelpers';
 import styles from './MaterialEditPage.module.scss';
@@ -327,6 +327,9 @@ function MaterialEditPage() {
           onChange={(e) => setTariffType(e.target.value)}
         >
           <option value={FREE_ACCESS_TYPE}>Free — общедоступный</option>
+          <option value={REGISTERED_ACCESS_TYPE}>
+            Registered — для зарегистрированных
+          </option>
           {tariffs.map((tariff) => (
             <option key={tariff.id} value={tariff.type}>
               {tariff.title} ({tariff.type})
@@ -334,8 +337,8 @@ function MaterialEditPage() {
           ))}
         </select>
         <p className={styles.materialEditPage__hint}>
-          Без привязки к тарифу материал доступен всем (free). Иначе — только
-          пользователям выбранного тарифа.
+          Free — всем. Registered — авторизованным. Trial / Popular / VIP —
+          пользователям соответствующего тарифа (VIP включает уровни ниже).
         </p>
 
         <label className={styles.materialEditPage__fieldLabel} htmlFor="summary">

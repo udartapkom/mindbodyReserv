@@ -10,8 +10,23 @@ import { TariffsService } from '../tariffs/tariffs.service';
 import { CreateMaterialDto } from './dto/create-material.dto';
 import { UpdateMaterialDto } from './dto/update-material.dto';
 import { Material } from './entities/material.entity';
-import { FREE_ACCESS_TYPE, MaterialStatus } from './material.types';
+import {
+  FREE_ACCESS_TYPE,
+  MaterialStatus,
+  REGISTERED_ACCESS_TYPE,
+} from './material.types';
+import {
+  getAccessibleTariffTypes,
+  isMaterialAccessible,
+} from '../common/tariff/access.types';
 import { normalizeBlocks, slugify } from './material.utils';
+
+export type MaterialAccessOptions = {
+  /** Explicit override (e.g. admin/debug query). Prefer userTariff for normal users. */
+  forTariff?: string;
+  userTariff?: string | null;
+  isAuthenticated?: boolean;
+};
 
 @Injectable()
 export class MaterialsService {
@@ -35,18 +50,16 @@ export class MaterialsService {
   }
 
   /**
-   * Published materials available for a user tariff:
-   * - free materials always
-   * - plus materials bound to `forTariff` (if provided)
-   * Without forTariff — only free (public) materials.
+   * Published materials available for the current visitor:
+   * - free — always
+   * - registered — when authenticated
+   * - paid ladder — by userTariff / forTariff (vip ⊃ popular ⊃ trial)
    */
-  findPublishedForAccess(forTariff?: string): Promise<Material[]> {
-    const types = [FREE_ACCESS_TYPE];
-    const normalized = forTariff?.trim();
-
-    if (normalized && normalized !== FREE_ACCESS_TYPE) {
-      types.push(normalized);
-    }
+  findPublishedForAccess(options: MaterialAccessOptions = {}): Promise<Material[]> {
+    const types = getAccessibleTariffTypes({
+      isAuthenticated: options.isAuthenticated,
+      userTariff: options.forTariff?.trim() || options.userTariff,
+    });
 
     return this.materialsRepository.find({
       where: {
@@ -54,6 +67,16 @@ export class MaterialsService {
         tariffType: In(types),
       },
       order: { publishedAt: 'DESC', updatedAt: 'DESC' },
+    });
+  }
+
+  isAccessible(
+    material: Material,
+    options: MaterialAccessOptions = {},
+  ): boolean {
+    return isMaterialAccessible(material.tariffType, {
+      isAuthenticated: options.isAuthenticated,
+      userTariff: options.forTariff?.trim() || options.userTariff,
     });
   }
 
@@ -88,10 +111,14 @@ export class MaterialsService {
       return FREE_ACCESS_TYPE;
     }
 
+    if (value === REGISTERED_ACCESS_TYPE) {
+      return REGISTERED_ACCESS_TYPE;
+    }
+
     const tariff = await this.tariffsService.findByType(value);
     if (!tariff) {
       throw new BadRequestException(
-        `Тариф с type="${value}" не найден. Выберите существующий тариф или free.`,
+        `Тариф с type="${value}" не найден. Выберите существующий тариф, free или registered.`,
       );
     }
 

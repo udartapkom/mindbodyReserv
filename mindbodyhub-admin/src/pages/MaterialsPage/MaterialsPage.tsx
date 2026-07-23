@@ -4,7 +4,7 @@ import { materialsApi } from '@/api/materials';
 import type { Material } from '@/types/material';
 import { MaterialStatus } from '@/types/material';
 import { formatDate, getErrorMessage } from '@/utils/adminHelpers';
-import { FREE_ACCESS_TYPE } from '@/types/material';
+import { FREE_ACCESS_TYPE, REGISTERED_ACCESS_TYPE } from '@/types/material';
 import styles from './MaterialsPage.module.scss';
 
 type DrawerMode = 'view' | null;
@@ -13,6 +13,12 @@ function tariffLabel(tariffType: string) {
   if (!tariffType || tariffType === FREE_ACCESS_TYPE) {
     return 'Free (общедоступный)';
   }
+  if (tariffType === REGISTERED_ACCESS_TYPE) {
+    return 'Registered (для зарегистрированных)';
+  }
+  if (tariffType === 'trial') return 'Пробный (trial)';
+  if (tariffType === 'popular') return 'Популярный (popular)';
+  if (tariffType === 'vip') return 'VIP';
   return tariffType;
 }
 

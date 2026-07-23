@@ -29,8 +29,12 @@ export const getApiBaseUrl = () => {
 
 const checkResponse = async <T>(res: Response): Promise<T> => {
   if (!res.ok) {
-    const json = await res.json().catch(() => ({}));
-    throw json;
+    const json = (await res.json().catch(() => ({}))) as Record<string, unknown>;
+    throw {
+      ...json,
+      statusCode:
+        typeof json.statusCode === "number" ? json.statusCode : res.status,
+    };
   }
   return res.json() as Promise<T>;
 };
@@ -137,16 +141,30 @@ export const auth = {
   },
 };
 
+const optionalAuthHeaders = (): HeadersInit => {
+  if (typeof window === "undefined") {
+    return {};
+  }
+
+  const token = authStorage.getToken();
+  if (!token) {
+    return {};
+  }
+
+  return { Authorization: `Bearer ${token}` };
+};
+
 export const problems = {
   getProblems: async () => {
-    const data = await fetch(`${getApiBaseUrl()}/materials/public`).then((res) =>
-      checkResponse<Problem[]>(res),
-    );
+    const data = await fetch(`${getApiBaseUrl()}/materials/public`, {
+      headers: optionalAuthHeaders(),
+    }).then((res) => checkResponse<Problem[]>(res));
     return data;
   },
   getBySlug: async (slug: string) => {
     const data = await fetch(
       `${getApiBaseUrl()}/materials/public/${encodeURIComponent(slug)}`,
+      { headers: optionalAuthHeaders() },
     ).then((res) => checkResponse<Material>(res));
     return data;
   },
@@ -164,5 +182,79 @@ export const knowledge = {
       `${getApiBaseUrl()}/knowledge/public/${encodeURIComponent(slug)}`,
     ).then((res) => checkResponse<KnowledgeArticle>(res));
     return data;
+  },
+};
+
+export type CreateTicketPayload = {
+  name: string;
+  phone: string;
+  message: string;
+  source?: "home" | "support" | "cabinet" | "other";
+};
+
+export type TicketResponse = {
+  id: string;
+  name: string;
+  phone: string;
+  message: string;
+  status: string;
+  source: string;
+  createdAt: string;
+};
+
+export const tickets = {
+  create: async (payload: CreateTicketPayload) => {
+    const headers: Record<string, string> = {
+      "Content-Type": "application/json",
+      ...(optionalAuthHeaders() as Record<string, string>),
+    };
+
+    return fetch(`${getApiBaseUrl()}/tickets`, {
+      method: "POST",
+      headers,
+      body: JSON.stringify(payload),
+    }).then((res) => checkResponse<TicketResponse>(res));
+  },
+};
+
+export type PublicTariff = {
+  id: string;
+  type: string;
+  title: string;
+  titleColor: string | null;
+  price: string;
+  period: string;
+  subTitle: string;
+  description: string[];
+  image: string;
+  imageAlt: string;
+  sortOrder: number;
+};
+
+export type CreatePaymentResponse = {
+  id: string;
+  paymentUrl: string;
+  status: string;
+  expiresIn: string | null;
+  amount: number;
+  currency: string;
+  tariffType: string;
+};
+
+export const tariffsApi = {
+  getPublic: async () => {
+    return fetch(`${getApiBaseUrl()}/tariffs/public`).then((res) =>
+      checkResponse<PublicTariff[]>(res),
+    );
+  },
+};
+
+export const payments = {
+  create: async (tariffType: string) => {
+    return fetch(`${getApiBaseUrl()}/payments/create`, {
+      method: "POST",
+      headers: authHeaders(),
+      body: JSON.stringify({ tariffType }),
+    }).then((res) => checkResponse<CreatePaymentResponse>(res));
   },
 };
