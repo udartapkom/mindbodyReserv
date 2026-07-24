@@ -19,9 +19,21 @@ const tariffLabels: Record<UserTariff, string> = {
   vip: 'VIP',
 };
 
-function formatDate(value?: string) {
+function formatDate(value?: string | null) {
   if (!value) return '—';
   return new Date(value).toLocaleDateString('ru-RU');
+}
+
+function toDateInputValue(iso?: string | null) {
+  if (!iso) return '';
+  const date = new Date(iso);
+  if (Number.isNaN(date.getTime())) return '';
+  return date.toISOString().slice(0, 10);
+}
+
+function fromDateInputValue(value: string): string | null {
+  if (!value.trim()) return null;
+  return new Date(`${value}T23:59:59.000Z`).toISOString();
 }
 
 function getDisplayName(user: User) {
@@ -87,6 +99,7 @@ function UsersPage() {
       phone: user.phone,
       role: user.role,
       tariff: user.tariff ?? UserTariff.FREE,
+      tariffExpiresAt: user.tariffExpiresAt ?? null,
       isActive: user.isActive ?? true,
     });
   };
@@ -114,12 +127,19 @@ function UsersPage() {
     setSaveError('');
 
     try {
+      const nextTariff = form.tariff;
       const payload: AdminUpdateUserPayload = {
         firstName: form.firstName?.toString().trim() || null,
         lastName: form.lastName?.toString().trim() || null,
         phone: form.phone?.toString().trim(),
         role: form.role,
-        tariff: form.tariff,
+        tariff: nextTariff,
+        tariffExpiresAt:
+          nextTariff === UserTariff.FREE
+            ? null
+            : form.tariffExpiresAt === undefined
+              ? null
+              : form.tariffExpiresAt,
         isActive: form.isActive,
       };
 
@@ -294,6 +314,7 @@ function UsersPage() {
               <th>Телефон</th>
               <th>Роль</th>
               <th>Тариф</th>
+              <th>Действует до</th>
               <th>Статус</th>
               <th>Создан</th>
               <th>Действия</th>
@@ -302,7 +323,7 @@ function UsersPage() {
           <tbody>
             {!isLoading && users.length === 0 ? (
               <tr>
-                <td colSpan={7} className={styles.usersPage__empty}>
+                <td colSpan={8} className={styles.usersPage__empty}>
                   Пользователей пока нет
                 </td>
               </tr>
@@ -335,6 +356,7 @@ function UsersPage() {
                   </span>
                 </td>
                 <td>{tariffLabels[user.tariff ?? UserTariff.FREE]}</td>
+                <td>{formatDate(user.tariffExpiresAt)}</td>
                 <td>
                   <span
                     className={`${styles.usersPage__badge} ${
@@ -442,6 +464,12 @@ function UsersPage() {
                     </p>
                   </div>
                   <div className={styles.usersPage__field}>
+                    <span className={styles.usersPage__fieldLabel}>Действует до</span>
+                    <p className={styles.usersPage__fieldValue}>
+                      {formatDate(selectedUser.tariffExpiresAt)}
+                    </p>
+                  </div>
+                  <div className={styles.usersPage__field}>
                     <span className={styles.usersPage__fieldLabel}>Статус</span>
                     <p className={styles.usersPage__fieldValue}>
                       {selectedUser.isActive === false ? 'Неактивен' : 'Активен'}
@@ -511,15 +539,38 @@ function UsersPage() {
                     id="tariff"
                     className={styles.usersPage__input}
                     value={form.tariff}
-                    onChange={(e) =>
-                      setForm((prev) => ({ ...prev, tariff: e.target.value as UserTariff }))
-                    }
+                    onChange={(e) => {
+                      const tariff = e.target.value as UserTariff;
+                      setForm((prev) => ({
+                        ...prev,
+                        tariff,
+                        tariffExpiresAt:
+                          tariff === UserTariff.FREE ? null : prev.tariffExpiresAt,
+                      }));
+                    }}
                   >
                     <option value={UserTariff.FREE}>Free</option>
                     <option value={UserTariff.TRIAL}>Пробный (trial)</option>
                     <option value={UserTariff.POPULAR}>Популярный (popular)</option>
                     <option value={UserTariff.VIP}>VIP</option>
                   </select>
+
+                  <label className={styles.usersPage__fieldLabel} htmlFor="tariffExpiresAt">
+                    Действует до
+                  </label>
+                  <input
+                    id="tariffExpiresAt"
+                    className={styles.usersPage__input}
+                    type="date"
+                    value={toDateInputValue(form.tariffExpiresAt)}
+                    onChange={(e) =>
+                      setForm((prev) => ({
+                        ...prev,
+                        tariffExpiresAt: fromDateInputValue(e.target.value),
+                      }))
+                    }
+                    disabled={form.tariff === UserTariff.FREE}
+                  />
 
                   <label className={styles.usersPage__checkbox}>
                     <input

@@ -61,9 +61,11 @@ async function InstructionPage({ params }: InstructionPageProps) {
         ) : null}
 
         <header className={styles.page__header}>
-          <p className={styles.page__eyebrow}>Инструкция</p>
+          {article.showMetadata !== false ? (
+            <p className={styles.page__eyebrow}>Инструкция</p>
+          ) : null}
           <h1 className={styles.page__title}>{article.title}</h1>
-          {article.summary ? (
+          {article.showMetadata !== false && article.summary ? (
             <p className={styles.page__summary}>{article.summary}</p>
           ) : null}
         </header>

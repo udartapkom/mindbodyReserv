@@ -33,10 +33,10 @@
         pointer-events: none;
         z-index: 1;
     }
-    &:hover {
+/*     &:hover {
         transform: translateY(-10px);
         box-shadow: v.$header-shadow;
-    }
+    } */
 
     &__image {
         width: 440px;
@@ -147,14 +147,82 @@
         width: 100%;
         margin-top: 24px;
         &:hover {
-            background-color: v.$light-accent-color;
-            border-color: v.$accent-color;
+            transform: translateY(-6px);
+            box-shadow: v.$header-shadow;
         }
         &:disabled {
             opacity: 0.55;
             cursor: not-allowed;
             transform: none;
         }
+    }
+
+    &__confirm {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 12px;
+        text-align: center;
+        max-width: 420px;
+    }
+
+    &__confirmIcon {
+        font-size: 56px;
+        color: v.$accent-color;
+    }
+
+    &__confirmText {
+        @include m.text16-400;
+        margin: 0;
+        color: v.$text-dark-color;
+        line-height: 1.45;
+
+        a {
+            color: v.$accent-color;
+            text-decoration: underline;
+            text-underline-offset: 2px;
+
+            &:hover {
+                opacity: 0.85;
+            }
+        }
+    }
+
+    &__confirmActions {
+        display: flex;
+        gap: 10px;
+        width: 100%;
+        margin-top: 8px;
+    }
+
+    &__confirmCancel,
+    &__confirmSubmit {
+        @include m.text16-400;
+        flex: 1;
+        border: none;
+        border-radius: 8px;
+        padding: 12px 16px;
+        cursor: pointer;
+        transition: opacity 0.2s ease;
+
+        &:hover:not(:disabled) {
+            opacity: 0.88;
+        }
+
+        &:disabled {
+            opacity: 0.55;
+            cursor: not-allowed;
+        }
+    }
+
+    &__confirmCancel {
+        background-color: v.$color-grey;
+        color: v.$text-dark-color;
+    }
+
+    &__confirmSubmit {
+        background-color: v.$accent-color;
+        color: v.$white-color;
     }
 
     @media (max-width: 480px) {

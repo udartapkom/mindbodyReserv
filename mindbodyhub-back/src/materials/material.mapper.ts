@@ -10,6 +10,7 @@ export type MaterialDto = {
   blocks: MaterialBlock[];
   coverUrl: string | null;
   summary: string | null;
+  showMetadata: boolean;
   publishedAt: Date | null;
   createdAt: Date;
   updatedAt: Date;
@@ -25,6 +26,7 @@ export function toMaterialDto(material: Material): MaterialDto {
     blocks: material.blocks ?? [],
     coverUrl: material.coverUrl,
     summary: material.summary,
+    showMetadata: material.showMetadata !== false,
     publishedAt: material.publishedAt,
     createdAt: material.createdAt,
     updatedAt: material.updatedAt,

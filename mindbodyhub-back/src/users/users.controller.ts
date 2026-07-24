@@ -77,7 +77,15 @@ export class UsersController {
       }
     }
 
-    const user = await this.usersService.adminUpdateUser(id, dto);
+    const user = await this.usersService.adminUpdateUser(id, {
+      ...dto,
+      tariffExpiresAt:
+        dto.tariffExpiresAt === undefined
+          ? undefined
+          : dto.tariffExpiresAt === null
+            ? null
+            : new Date(dto.tariffExpiresAt),
+    });
     return this.toEnrichedProfile(user);
   }
 

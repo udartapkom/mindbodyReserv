@@ -1,5 +1,6 @@
 import {
   IsArray,
+  IsBoolean,
   IsOptional,
   IsString,
   MaxLength,
@@ -27,6 +28,10 @@ export class CreateKnowledgeArticleDto {
   @IsString()
   @MaxLength(2048)
   coverUrl?: string | null;
+
+  @IsOptional()
+  @IsBoolean()
+  showMetadata?: boolean;
 
   @IsOptional()
   @IsArray()

@@ -95,6 +95,15 @@ function UserBar() {
             {getTariffLabel(user?.tariff)}
           </span>
         </div>
+
+        {user?.tariff && user.tariff !== 'free' && user.tariffExpiresAt ? (
+          <div className={styles.userBar__metaItem}>
+            <span className={styles.userBar__metaLabel}>Действителен до:</span>
+            <span className={styles.userBar__metaValue}>
+              {new Date(user.tariffExpiresAt).toLocaleDateString('ru-RU')}
+            </span>
+          </div>
+        ) : null}
       </div>
     </div>
   );

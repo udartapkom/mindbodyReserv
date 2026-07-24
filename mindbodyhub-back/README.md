@@ -68,6 +68,16 @@ export DEPLOY_HOST=root@89.108.71.23
 
 `NODE_ENV=production` → TypeORM `synchronize: false`.
 
+VK-оповещения админу (оплаты + тикеты):
+
+```env
+VK_BOT_TOKEN=
+VK_ADMIN_ID=
+ADMIN_PANEL_URL=https://admin.mindbodyhub.pro
+```
+
+(значения из `bots/.env`: `VK_BOT_TOKEN` и `ADMIN_ID` → `VK_ADMIN_ID`)
+
 ## Storage module
 
 `StorageService` (global) methods:

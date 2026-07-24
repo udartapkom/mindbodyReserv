@@ -69,6 +69,7 @@ export class KnowledgeService {
       slug,
       summary: data.summary?.trim() || null,
       coverUrl: data.coverUrl?.trim() || null,
+      showMetadata: data.showMetadata !== false,
       blocks,
       status: KnowledgeStatus.DRAFT,
       publishedAt: null,
@@ -105,6 +106,10 @@ export class KnowledgeService {
 
     if (data.coverUrl !== undefined) {
       article.coverUrl = data.coverUrl?.trim() || null;
+    }
+
+    if (data.showMetadata !== undefined) {
+      article.showMetadata = data.showMetadata;
     }
 
     if (data.blocks !== undefined) {

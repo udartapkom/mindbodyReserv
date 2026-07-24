@@ -1,8 +1,10 @@
-import { useEffect, useMemo, useState, type FormEvent } from 'react';
+import { useEffect, useMemo, useRef, useState, type FormEvent } from 'react';
 import { ticketsApi } from '@/api/tickets';
 import type { Ticket, UpdateTicketPayload } from '@/types/ticket';
 import { TicketSource, TicketStatus } from '@/types/ticket';
 import styles from './TicketsPage.module.scss';
+
+const POLL_INTERVAL_MS = 12_000;
 
 type StatusFilter = TicketStatus | 'all';
 
@@ -52,20 +54,45 @@ function TicketsPage() {
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('all');
   const [selectedTicket, setSelectedTicket] = useState<Ticket | null>(null);
   const [form, setForm] = useState<UpdateTicketPayload>({});
+  const [replyBody, setReplyBody] = useState('');
   const [saveError, setSaveError] = useState('');
   const [isSaving, setIsSaving] = useState(false);
+  const [isReplying, setIsReplying] = useState(false);
   const [actionId, setActionId] = useState<string | null>(null);
+  const selectedIdRef = useRef<string | null>(null);
+  const messagesRef = useRef<HTMLDivElement | null>(null);
+  const messagesEndRef = useRef<HTMLDivElement | null>(null);
+  selectedIdRef.current = selectedTicket?.id ?? null;
 
-  const loadTickets = async () => {
-    setIsLoading(true);
-    setListError('');
+  const lastMessageId = selectedTicket?.messages?.at(-1)?.id ?? null;
+  const messagesCount = selectedTicket?.messages?.length ?? 0;
+
+  useEffect(() => {
+    if (!selectedTicket || !messagesCount) return;
+    const frame = window.requestAnimationFrame(() => {
+      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
+      const el = messagesRef.current;
+      if (el) el.scrollTop = el.scrollHeight;
+    });
+    return () => window.cancelAnimationFrame(frame);
+  }, [selectedTicket?.id, lastMessageId, messagesCount]);
+
+  const loadTickets = async (opts?: { silent?: boolean }) => {
+    if (!opts?.silent) {
+      setIsLoading(true);
+      setListError('');
+    }
     try {
       const data = await ticketsApi.getAll();
       setTickets(data);
     } catch {
-      setListError('Не удалось загрузить обращения');
+      if (!opts?.silent) {
+        setListError('Не удалось загрузить обращения');
+      }
     } finally {
-      setIsLoading(false);
+      if (!opts?.silent) {
+        setIsLoading(false);
+      }
     }
   };
 
@@ -73,22 +100,72 @@ function TicketsPage() {
     void loadTickets();
   }, []);
 
+  useEffect(() => {
+    const poll = async () => {
+      if (document.visibilityState === 'hidden') return;
+      await loadTickets({ silent: true });
+      const id = selectedIdRef.current;
+      if (!id) return;
+      try {
+        const full = await ticketsApi.getById(id);
+        if (selectedIdRef.current !== id) return;
+        setSelectedTicket(full);
+        setForm({
+          status: full.status,
+          adminNote: full.adminNote ?? '',
+        });
+        setTickets((prev) => prev.map((item) => (item.id === full.id ? full : item)));
+      } catch {
+        // keep current drawer state on silent poll errors
+      }
+    };
+
+    const timer = window.setInterval(() => {
+      void poll();
+    }, POLL_INTERVAL_MS);
+
+    const onVisible = () => {
+      if (document.visibilityState === 'visible') {
+        void poll();
+      }
+    };
+    document.addEventListener('visibilitychange', onVisible);
+
+    return () => {
+      window.clearInterval(timer);
+      document.removeEventListener('visibilitychange', onVisible);
+    };
+  }, []);
+
   const filteredTickets = useMemo(() => {
     if (statusFilter === 'all') return tickets;
     return tickets.filter((ticket) => ticket.status === statusFilter);
   }, [tickets, statusFilter]);
 
-  const openTicket = (ticket: Ticket) => {
-    setSelectedTicket(ticket);
+  const openTicket = async (ticket: Ticket) => {
     setSaveError('');
+    setReplyBody('');
+    setSelectedTicket(ticket);
     setForm({
       status: ticket.status,
       adminNote: ticket.adminNote ?? '',
     });
+
+    try {
+      const full = await ticketsApi.getById(ticket.id);
+      setSelectedTicket(full);
+      setForm({
+        status: full.status,
+        adminNote: full.adminNote ?? '',
+      });
+    } catch (error) {
+      setSaveError(getErrorMessage(error, 'Не удалось загрузить переписку'));
+    }
   };
 
   const closeDrawer = () => {
     setSelectedTicket(null);
+    setReplyBody('');
     setSaveError('');
   };
 
@@ -119,6 +196,29 @@ function TicketsPage() {
       setSaveError(getErrorMessage(error, 'Не удалось сохранить изменения'));
     } finally {
       setIsSaving(false);
+    }
+  };
+
+  const handleReply = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (!selectedTicket || !replyBody.trim()) return;
+
+    setIsReplying(true);
+    setSaveError('');
+
+    try {
+      await ticketsApi.sendMessage(selectedTicket.id, replyBody.trim());
+      const full = await ticketsApi.getById(selectedTicket.id);
+      updateTicketInList(full);
+      setForm({
+        status: full.status,
+        adminNote: full.adminNote ?? '',
+      });
+      setReplyBody('');
+    } catch (error) {
+      setSaveError(getErrorMessage(error, 'Не удалось отправить ответ'));
+    } finally {
+      setIsReplying(false);
     }
   };
 
@@ -290,12 +390,58 @@ function TicketsPage() {
                   <span className={styles.ticketsPage__fieldLabel}>Источник</span>
                   <p className={styles.ticketsPage__fieldValue}>
                     {sourceLabels[selectedTicket.source]}
+                    {selectedTicket.userId ? ' · есть аккаунт' : ' · без аккаунта'}
                   </p>
                 </div>
-                <div className={styles.ticketsPage__field}>
-                  <span className={styles.ticketsPage__fieldLabel}>Сообщение</span>
-                  <p className={styles.ticketsPage__fieldValue}>{selectedTicket.message}</p>
+              </div>
+
+              <div className={styles.ticketsPage__thread}>
+                <h3 className={styles.ticketsPage__threadTitle}>Переписка</h3>
+                <div className={styles.ticketsPage__messages} ref={messagesRef}>
+                  {(selectedTicket.messages ?? []).length === 0 ? (
+                    <p className={styles.ticketsPage__threadEmpty}>
+                      Сообщений пока нет. Первое сообщение появится после загрузки.
+                    </p>
+                  ) : (
+                    (selectedTicket.messages ?? []).map((msg) => (
+                      <div
+                        key={msg.id}
+                        className={`${styles.ticketsPage__bubble} ${
+                          msg.authorType === 'admin'
+                            ? styles.ticketsPage__bubble_admin
+                            : styles.ticketsPage__bubble_user
+                        }`}
+                      >
+                        <div className={styles.ticketsPage__bubbleMeta}>
+                          {msg.authorType === 'admin' ? 'Вы' : 'Пользователь'} ·{' '}
+                          {formatDate(msg.createdAt)}
+                        </div>
+                        <p className={styles.ticketsPage__bubbleBody}>{msg.body}</p>
+                      </div>
+                    ))
+                  )}
+                  <div ref={messagesEndRef} aria-hidden />
                 </div>
+
+                <form
+                  className={styles.ticketsPage__replyForm}
+                  onSubmit={(e) => void handleReply(e)}
+                >
+                  <textarea
+                    className={styles.ticketsPage__textarea}
+                    value={replyBody}
+                    onChange={(e) => setReplyBody(e.target.value)}
+                    placeholder="Ответ пользователю (увидит в кабинете)"
+                    rows={3}
+                  />
+                  <button
+                    type="submit"
+                    className={`${styles.ticketsPage__actionBtn} ${styles.ticketsPage__actionBtn_primary}`}
+                    disabled={isReplying || !replyBody.trim()}
+                  >
+                    {isReplying ? 'Отправка…' : 'Отправить ответ'}
+                  </button>
+                </form>
               </div>
 
               <form className={styles.ticketsPage__form} onSubmit={(e) => void handleSave(e)}>
@@ -319,7 +465,7 @@ function TicketsPage() {
                 </select>
 
                 <label className={styles.ticketsPage__fieldLabel} htmlFor="adminNote">
-                  Заметка администратора
+                  Заметка администратора (внутренняя)
                 </label>
                 <textarea
                   id="adminNote"
@@ -336,7 +482,7 @@ function TicketsPage() {
                   className={`${styles.ticketsPage__actionBtn} ${styles.ticketsPage__actionBtn_primary}`}
                   disabled={isSaving}
                 >
-                  {isSaving ? 'Сохранение...' : 'Сохранить'}
+                  {isSaving ? 'Сохранение...' : 'Сохранить статус'}
                 </button>
               </form>
             </div>

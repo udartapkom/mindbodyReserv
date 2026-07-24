@@ -15,6 +15,7 @@ export function normalizeUser(raw: Partial<User> & Pick<User, 'id' | 'phone' | '
     avatar: avatarUrl,
     name: [firstName, lastName].filter(Boolean).join(' ') || undefined,
     tariff: raw.tariff ?? 'free',
+    tariffExpiresAt: raw.tariffExpiresAt ?? null,
     isActive: raw.isActive ?? true,
     phoneVerifiedAt: raw.phoneVerifiedAt ?? null,
     createdAt: raw.createdAt ?? '',

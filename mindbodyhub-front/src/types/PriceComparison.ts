@@ -1,4 +1,10 @@
 export type PriceComparisonRow = {
-    feature: string;
-    included: [boolean, boolean, boolean];
+  id: string;
+  feature: string;
+  included: Record<string, boolean>;
+  sortOrder: number;
+};
+
+export type PriceComparison = {
+  rows: PriceComparisonRow[];
 };

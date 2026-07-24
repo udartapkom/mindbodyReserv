@@ -137,6 +137,7 @@ export class MaterialsService {
       tariffType,
       summary: data.summary?.trim() || null,
       coverUrl: data.coverUrl?.trim() || null,
+      showMetadata: data.showMetadata !== false,
       blocks,
       status: MaterialStatus.DRAFT,
       publishedAt: null,
@@ -174,6 +175,10 @@ export class MaterialsService {
 
     if (data.coverUrl !== undefined) {
       material.coverUrl = data.coverUrl?.trim() || null;
+    }
+
+    if (data.showMetadata !== undefined) {
+      material.showMetadata = data.showMetadata;
     }
 
     if (data.blocks !== undefined) {

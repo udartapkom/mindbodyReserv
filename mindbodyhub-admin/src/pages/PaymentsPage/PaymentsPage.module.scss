@@ -24,6 +24,75 @@
     margin: 0;
   }
 
+  &__toolbar {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  &__dateFilters {
+    display: flex;
+    align-items: flex-end;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  &__dateField {
+    @include m.text14-400;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    color: v.$text-light-color;
+
+    input {
+      @include m.text14-400;
+      padding: 8px 10px;
+      border: 1px solid v.$color-border;
+      border-radius: 8px;
+      background: v.$white-color;
+      color: v.$text-dark-color;
+
+      &:focus {
+        outline: none;
+        border-color: v.$accent-color;
+        box-shadow: 0 0 0 2px rgba(v.$accent-color, 0.15);
+      }
+    }
+  }
+
+  &__sums {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 10px;
+  }
+
+  &__sumCard {
+    background: v.$white-color;
+    border: 1px solid v.$color-border;
+    border-radius: 12px;
+    padding: 12px 14px;
+    box-shadow: v.$block-shadow;
+
+    strong {
+      @include m.text16-500;
+      display: block;
+      margin-top: 4px;
+      color: v.$text-dark-color;
+    }
+  }
+
+  &__sumLabel {
+    @include m.text14-400;
+    color: v.$text-light-color;
+    font-size: 12px;
+  }
+
+  &__hint {
+    @include m.text14-400;
+    margin: 0;
+    color: v.$text-light-color;
+  }
+
   &__filters {
     display: flex;
     gap: 8px;
@@ -162,6 +231,22 @@
         color: v.$white-color;
         opacity: 0.92;
       }
+    }
+
+    &_danger {
+      border-color: v.$color-error;
+      color: v.$color-error;
+
+      &:hover:not(:disabled) {
+        border-color: v.$color-error;
+        color: v.$color-error;
+        background: rgba(v.$color-error, 0.06);
+      }
+    }
+
+    &:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
     }
   }
 

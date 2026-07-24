@@ -9,6 +9,7 @@ export type KnowledgeArticleDto = {
   blocks: KnowledgeBlock[];
   coverUrl: string | null;
   summary: string | null;
+  showMetadata: boolean;
   publishedAt: Date | null;
   createdAt: Date;
   updatedAt: Date;
@@ -25,6 +26,7 @@ export function toKnowledgeArticleDto(
     blocks: article.blocks ?? [],
     coverUrl: article.coverUrl,
     summary: article.summary,
+    showMetadata: article.showMetadata !== false,
     publishedAt: article.publishedAt,
     createdAt: article.createdAt,
     updatedAt: article.updatedAt,

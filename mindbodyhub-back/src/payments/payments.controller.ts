@@ -94,6 +94,24 @@ export class PaymentsController {
     return payments.map((payment) => this.paymentsService.toDto(payment));
   }
 
+  @Post(':id/sync')
+  @Roles(UserRole.ADMIN)
+  async sync(
+    @Param('id', ParseUUIDPipe) id: string,
+  ): Promise<PaymentDto> {
+    const payment = await this.paymentsService.syncFromProvider(id);
+    return this.paymentsService.toDto(payment);
+  }
+
+  @Post(':id/refund')
+  @Roles(UserRole.ADMIN)
+  async refund(
+    @Param('id', ParseUUIDPipe) id: string,
+  ): Promise<PaymentDto> {
+    const payment = await this.paymentsService.refundByAdmin(id);
+    return this.paymentsService.toDto(payment);
+  }
+
   @Get(':id')
   @Roles(UserRole.ADMIN)
   async findOne(

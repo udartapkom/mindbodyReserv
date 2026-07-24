@@ -77,11 +77,13 @@ function CoursePageContent({ slug }: CoursePageContentProps) {
         ) : null}
 
         <header className={styles.course__header}>
-          <p className={styles.course__eyebrow}>
-            {getMaterialAccessLabel(material.tariffType)}
-          </p>
+          {material.showMetadata !== false ? (
+            <p className={styles.course__eyebrow}>
+              {getMaterialAccessLabel(material.tariffType)}
+            </p>
+          ) : null}
           <h1 className={styles.course__title}>{material.title}</h1>
-          {material.summary ? (
+          {material.showMetadata !== false && material.summary ? (
             <p className={styles.course__summary}>{material.summary}</p>
           ) : null}
         </header>

@@ -1,16 +1,30 @@
 import { useEffect, useState, type FormEvent } from 'react';
 import { tariffsApi } from '@/api/tariffs';
-import type { CreateTariffPayload, Tariff, UpdateTariffPayload } from '@/types/tariff';
+import type {
+  CreateTariffPayload,
+  Tariff,
+  TariffComparisonRow,
+  UpdateTariffPayload,
+} from '@/types/tariff';
+import { createBlockId, getErrorMessage } from '@/utils/adminHelpers';
 import styles from './TariffsPage.module.scss';
 
 type DrawerMode = 'view' | 'edit' | 'create' | null;
+
+type ComparisonDraftRow = {
+  key: string;
+  feature: string;
+  included: Record<string, boolean>;
+};
 
 const emptyForm: CreateTariffPayload = {
   type: '',
   title: '',
   titleColor: '',
   price: '',
+  priceAmount: null,
   period: '',
+  durationDays: 30,
   subTitle: '',
   description: [],
   image: '',
@@ -18,15 +32,6 @@ const emptyForm: CreateTariffPayload = {
   sortOrder: 0,
   isActive: true,
 };
-
-function getErrorMessage(error: unknown, fallback: string): string {
-  if (error && typeof error === 'object' && 'message' in error) {
-    const message = (error as { message?: string | string[] }).message;
-    if (Array.isArray(message)) return message.join(', ');
-    if (typeof message === 'string') return message;
-  }
-  return fallback;
-}
 
 function descriptionToText(items: string[]) {
   return items.join('\n');
@@ -37,6 +42,23 @@ function textToDescription(value: string) {
     .split('\n')
     .map((line) => line.trim())
     .filter(Boolean);
+}
+
+function toComparisonDraft(
+  rows: TariffComparisonRow[],
+  tariffTypes: string[],
+): ComparisonDraftRow[] {
+  return rows.map((row) => {
+    const included: Record<string, boolean> = {};
+    for (const type of tariffTypes) {
+      included[type] = row.included[type] === true;
+    }
+    return {
+      key: row.id || createBlockId(),
+      feature: row.feature,
+      included,
+    };
+  });
 }
 
 function TariffsPage() {
@@ -51,30 +73,72 @@ function TariffsPage() {
   const [isSaving, setIsSaving] = useState(false);
   const [actionId, setActionId] = useState<string | null>(null);
 
-  const loadTariffs = async () => {
-    setIsLoading(true);
-    setListError('');
+  const [comparisonRows, setComparisonRows] = useState<ComparisonDraftRow[]>([]);
+  const [comparisonError, setComparisonError] = useState('');
+  const [comparisonSuccess, setComparisonSuccess] = useState('');
+  const [isComparisonLoading, setIsComparisonLoading] = useState(true);
+  const [isComparisonSaving, setIsComparisonSaving] = useState(false);
+
+  const activeTariffs = tariffs.filter((tariff) => tariff.isActive);
+  const comparisonColumns =
+    activeTariffs.length > 0 ? activeTariffs : tariffs;
+
+  const loadComparison = async (tariffList: Tariff[]) => {
+    setIsComparisonLoading(true);
+    setComparisonError('');
     try {
-      const data = await tariffsApi.getAll();
-      setTariffs(data);
-    } catch {
-      setListError('Не удалось загрузить список тарифов');
+      const data = await tariffsApi.getComparison();
+      const types = tariffList.map((t) => t.type);
+      setComparisonRows(toComparisonDraft(data.rows, types));
+    } catch (error) {
+      setComparisonError(
+        getErrorMessage(error, 'Не удалось загрузить сравнение тарифов'),
+      );
     } finally {
-      setIsLoading(false);
+      setIsComparisonLoading(false);
     }
   };
 
   useEffect(() => {
-    void loadTariffs();
+    const load = async () => {
+      setIsLoading(true);
+      setListError('');
+      try {
+        const data = await tariffsApi.getAll();
+        setTariffs(data);
+        await loadComparison(data);
+      } catch {
+        setListError('Не удалось загрузить список тарифов');
+        setIsComparisonLoading(false);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    void load();
   }, []);
 
+  // Keep comparison checkboxes in sync when tariffs list changes
+  useEffect(() => {
+    const types = tariffs.map((t) => t.type);
+    setComparisonRows((prev) =>
+      prev.map((row) => {
+        const included: Record<string, boolean> = {};
+        for (const type of types) {
+          included[type] = row.included[type] === true;
+        }
+        return { ...row, included };
+      }),
+    );
+  }, [tariffs]);
   const fillForm = (tariff: Tariff) => {
     setForm({
       type: tariff.type,
       title: tariff.title,
       titleColor: tariff.titleColor ?? '',
       price: tariff.price,
+      priceAmount: tariff.priceAmount ?? null,
       period: tariff.period,
+      durationDays: tariff.durationDays ?? 30,
       subTitle: tariff.subTitle,
       description: tariff.description,
       image: tariff.image,
@@ -123,7 +187,12 @@ function TariffsPage() {
     title: form.title.trim(),
     titleColor: form.titleColor?.toString().trim() || null,
     price: form.price.trim(),
+    priceAmount:
+      form.priceAmount === null || form.priceAmount === undefined
+        ? null
+        : Number(form.priceAmount) || null,
     period: form.period.trim(),
+    durationDays: Number(form.durationDays) || 30,
     subTitle: form.subTitle.trim(),
     description: textToDescription(descriptionText),
     image: form.image.trim(),
@@ -215,6 +284,89 @@ function TariffsPage() {
       setListError(getErrorMessage(error, 'Не удалось удалить тариф'));
     } finally {
       setActionId(null);
+    }
+  };
+
+  const addComparisonRow = () => {
+    const included: Record<string, boolean> = {};
+    for (const tariff of tariffs) {
+      included[tariff.type] = false;
+    }
+    setComparisonRows((prev) => [
+      ...prev,
+      { key: createBlockId(), feature: '', included },
+    ]);
+    setComparisonSuccess('');
+  };
+
+  const updateComparisonFeature = (key: string, feature: string) => {
+    setComparisonRows((prev) =>
+      prev.map((row) => (row.key === key ? { ...row, feature } : row)),
+    );
+    setComparisonSuccess('');
+  };
+
+  const toggleComparisonIncluded = (key: string, tariffType: string) => {
+    setComparisonRows((prev) =>
+      prev.map((row) => {
+        if (row.key !== key) return row;
+        return {
+          ...row,
+          included: {
+            ...row.included,
+            [tariffType]: !row.included[tariffType],
+          },
+        };
+      }),
+    );
+    setComparisonSuccess('');
+  };
+
+  const moveComparisonRow = (index: number, direction: -1 | 1) => {
+    setComparisonRows((prev) => {
+      const nextIndex = index + direction;
+      if (nextIndex < 0 || nextIndex >= prev.length) return prev;
+      const copy = [...prev];
+      const [item] = copy.splice(index, 1);
+      copy.splice(nextIndex, 0, item);
+      return copy;
+    });
+    setComparisonSuccess('');
+  };
+
+  const removeComparisonRow = (key: string) => {
+    setComparisonRows((prev) => prev.filter((row) => row.key !== key));
+    setComparisonSuccess('');
+  };
+
+  const handleSaveComparison = async () => {
+    setIsComparisonSaving(true);
+    setComparisonError('');
+    setComparisonSuccess('');
+
+    const payloadRows = comparisonRows
+      .map((row, index) => ({
+        feature: row.feature.trim(),
+        included: row.included,
+        sortOrder: index,
+      }))
+      .filter((row) => row.feature.length > 0);
+
+    try {
+      const updated = await tariffsApi.updateComparison({ rows: payloadRows });
+      setComparisonRows(
+        toComparisonDraft(
+          updated.rows,
+          tariffs.map((t) => t.type),
+        ),
+      );
+      setComparisonSuccess('Сравнение сохранено');
+    } catch (error) {
+      setComparisonError(
+        getErrorMessage(error, 'Не удалось сохранить сравнение тарифов'),
+      );
+    } finally {
+      setIsComparisonSaving(false);
     }
   };
 
@@ -353,6 +505,132 @@ function TariffsPage() {
         </table>
       </div>
 
+      <div className={styles.tariffsPage__tableCard}>
+        <div className={styles.tariffsPage__sectionHeader}>
+          <div>
+            <h2 className={styles.tariffsPage__sectionTitle}>Сравнение тарифов</h2>
+            <p className={styles.tariffsPage__sectionHint}>
+              Строки таблицы на странице «Тарифы». Колонки — активные тарифы
+              (по порядку). Отметьте, что входит в каждый тариф.
+            </p>
+          </div>
+          <div className={styles.tariffsPage__sectionActions}>
+            <button
+              type="button"
+              className={styles.tariffsPage__actionBtn}
+              onClick={addComparisonRow}
+              disabled={isComparisonLoading || isComparisonSaving}
+            >
+              Добавить строку
+            </button>
+            <button
+              type="button"
+              className={`${styles.tariffsPage__actionBtn} ${styles.tariffsPage__actionBtn_primary}`}
+              onClick={() => void handleSaveComparison()}
+              disabled={isComparisonLoading || isComparisonSaving}
+            >
+              {isComparisonSaving ? 'Сохранение…' : 'Сохранить сравнение'}
+            </button>
+          </div>
+        </div>
+
+        {comparisonError ? (
+          <p className={styles.tariffsPage__error}>{comparisonError}</p>
+        ) : null}
+        {comparisonSuccess ? (
+          <p className={styles.tariffsPage__success}>{comparisonSuccess}</p>
+        ) : null}
+
+        {isComparisonLoading ? (
+          <p className={styles.tariffsPage__sectionHint}>Загрузка сравнения…</p>
+        ) : (
+          <div className={styles.tariffsPage__comparisonScroll}>
+            <table className={styles.tariffsPage__comparisonTable}>
+              <thead>
+                <tr>
+                  <th>Возможность</th>
+                  {comparisonColumns.map((tariff) => (
+                    <th key={tariff.id}>
+                      {tariff.title}
+                      <span className={styles.tariffsPage__meta}>
+                        {' '}
+                        ({tariff.type})
+                      </span>
+                    </th>
+                  ))}
+                  <th>Действия</th>
+                </tr>
+              </thead>
+              <tbody>
+                {comparisonRows.length === 0 ? (
+                  <tr>
+                    <td
+                      colSpan={comparisonColumns.length + 2}
+                      className={styles.tariffsPage__empty}
+                    >
+                      Строк пока нет — добавьте возможность
+                    </td>
+                  </tr>
+                ) : null}
+                {comparisonRows.map((row, index) => (
+                  <tr key={row.key}>
+                    <td>
+                      <input
+                        className={styles.tariffsPage__comparisonInput}
+                        value={row.feature}
+                        onChange={(e) =>
+                          updateComparisonFeature(row.key, e.target.value)
+                        }
+                        placeholder="Название возможности"
+                      />
+                    </td>
+                    {comparisonColumns.map((tariff) => (
+                      <td key={tariff.id} className={styles.tariffsPage__checkCell}>
+                        <input
+                          type="checkbox"
+                          checked={row.included[tariff.type] === true}
+                          onChange={() =>
+                            toggleComparisonIncluded(row.key, tariff.type)
+                          }
+                          aria-label={`${row.feature || 'Возможность'} — ${tariff.title}`}
+                        />
+                      </td>
+                    ))}
+                    <td>
+                      <div className={styles.tariffsPage__actions}>
+                        <button
+                          type="button"
+                          className={styles.tariffsPage__actionBtn}
+                          onClick={() => moveComparisonRow(index, -1)}
+                          disabled={index === 0}
+                        >
+                          ↑
+                        </button>
+                        <button
+                          type="button"
+                          className={styles.tariffsPage__actionBtn}
+                          onClick={() => moveComparisonRow(index, 1)}
+                          disabled={index === comparisonRows.length - 1}
+                        >
+                          ↓
+                        </button>
+                        <button
+                          type="button"
+                          className={`${styles.tariffsPage__actionBtn} ${styles.tariffsPage__actionBtn_danger}`}
+                          onClick={() => removeComparisonRow(row.key)}
+                        >
+                          Удалить
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
+
       {mode ? (
         <>
           <button
@@ -401,6 +679,10 @@ function TariffsPage() {
                     <span className={styles.tariffsPage__fieldLabel}>Цена</span>
                     <p className={styles.tariffsPage__fieldValue}>
                       {selectedTariff.price} {selectedTariff.period}
+                      {selectedTariff.priceAmount != null
+                        ? ` · оплата ${selectedTariff.priceAmount} ₽`
+                        : ''}
+                      {` · ${selectedTariff.durationDays ?? 30} дн.`}
                     </p>
                   </div>
                   <div className={styles.tariffsPage__field}>
@@ -472,7 +754,7 @@ function TariffsPage() {
                   />
 
                   <label className={styles.tariffsPage__fieldLabel} htmlFor="price">
-                    Цена
+                    Цена (отображение)
                   </label>
                   <input
                     id="price"
@@ -483,8 +765,28 @@ function TariffsPage() {
                     required
                   />
 
+                  <label className={styles.tariffsPage__fieldLabel} htmlFor="priceAmount">
+                    Цена для оплаты (₽)
+                  </label>
+                  <input
+                    id="priceAmount"
+                    className={styles.tariffsPage__input}
+                    type="number"
+                    min={1}
+                    step={1}
+                    value={form.priceAmount ?? ''}
+                    onChange={(e) =>
+                      setForm((prev) => ({
+                        ...prev,
+                        priceAmount: e.target.value === '' ? null : Number(e.target.value),
+                      }))
+                    }
+                    placeholder="999"
+                    required
+                  />
+
                   <label className={styles.tariffsPage__fieldLabel} htmlFor="period">
-                    Период
+                    Период (отображение)
                   </label>
                   <input
                     id="period"
@@ -492,6 +794,25 @@ function TariffsPage() {
                     value={form.period}
                     onChange={(e) => setForm((prev) => ({ ...prev, period: e.target.value }))}
                     placeholder="/ месяц"
+                    required
+                  />
+
+                  <label className={styles.tariffsPage__fieldLabel} htmlFor="durationDays">
+                    Срок доступа (дней)
+                  </label>
+                  <input
+                    id="durationDays"
+                    className={styles.tariffsPage__input}
+                    type="number"
+                    min={1}
+                    step={1}
+                    value={form.durationDays ?? 30}
+                    onChange={(e) =>
+                      setForm((prev) => ({
+                        ...prev,
+                        durationDays: Number(e.target.value) || 30,
+                      }))
+                    }
                     required
                   />
 

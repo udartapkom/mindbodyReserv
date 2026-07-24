@@ -42,6 +42,7 @@ export function normalizeBlocks(raw: unknown): MaterialBlock[] {
       const key = typeof item.key === 'string' ? item.key.trim() : '';
       const url = typeof item.url === 'string' ? item.url.trim() : '';
       const alt = typeof item.alt === 'string' ? item.alt.trim() : '';
+      const showAlt = item.showAlt !== false;
 
       if (!key || !url) {
         throw new BadRequestException(
@@ -49,7 +50,7 @@ export function normalizeBlocks(raw: unknown): MaterialBlock[] {
         );
       }
 
-      return { id, type: 'image', key, url, alt };
+      return { id, type: 'image', key, url, alt, showAlt };
     }
 
     const text = typeof item.text === 'string' ? item.text : '';
@@ -59,7 +60,8 @@ export function normalizeBlocks(raw: unknown): MaterialBlock[] {
     }
 
     if (type === 'subheading') {
-      return { id, type: 'subheading', text };
+      const level = item.level === 2 ? 2 : 3;
+      return { id, type: 'subheading', text, level };
     }
 
     return { id, type: 'paragraph', text };

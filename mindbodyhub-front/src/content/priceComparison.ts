@@ -1,6 +1,10 @@
-import type { PriceComparisonRow } from '@/types/PriceComparison';
+/** Fallback for offline until API comparison is loaded */
+export type StaticPriceComparisonRow = {
+    feature: string;
+    included: [boolean, boolean, boolean];
+};
 
-export const priceComparisonRows: PriceComparisonRow[] = [
+export const priceComparisonRows: StaticPriceComparisonRow[] = [
     {
         feature: 'Доступ к мыслям и заметкам',
         included: [true, true, true],

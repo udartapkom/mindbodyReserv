@@ -8,6 +8,7 @@ export type UserPublicProfile = {
   phone: string;
   role: UserRole;
   tariff: UserTariff;
+  tariffExpiresAt: string | null;
   avatarUrl: string | null;
   isActive: boolean;
   phoneVerifiedAt: string | null;

@@ -4,7 +4,9 @@ export type Tariff = {
   title: string;
   titleColor: string | null;
   price: string;
+  priceAmount: number | null;
   period: string;
+  durationDays: number;
   subTitle: string;
   description: string[];
   image: string;
@@ -20,7 +22,9 @@ export type CreateTariffPayload = {
   title: string;
   titleColor?: string | null;
   price: string;
+  priceAmount?: number | null;
   period: string;
+  durationDays?: number;
   subTitle: string;
   description: string[];
   image: string;
@@ -30,3 +34,22 @@ export type CreateTariffPayload = {
 };
 
 export type UpdateTariffPayload = Partial<CreateTariffPayload>;
+
+export type TariffComparisonRow = {
+  id: string;
+  feature: string;
+  included: Record<string, boolean>;
+  sortOrder: number;
+};
+
+export type TariffComparison = {
+  rows: TariffComparisonRow[];
+};
+
+export type UpdateTariffComparisonPayload = {
+  rows: Array<{
+    feature: string;
+    included: Record<string, boolean>;
+    sortOrder?: number;
+  }>;
+};

@@ -8,13 +8,20 @@ import {
   ParseUUIDPipe,
   Patch,
   Post,
+  Put,
 } from '@nestjs/common';
 import { Public } from '../auth/decorators/public.decorator';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { UserRole } from '../users/user-role.enum';
 import { CreateTariffDto } from './dto/create-tariff.dto';
+import { UpdateTariffComparisonDto } from './dto/update-tariff-comparison.dto';
 import { UpdateTariffDto } from './dto/update-tariff.dto';
-import { TariffDto, toTariffDto } from './tariff.mapper';
+import {
+  TariffComparisonDto,
+  TariffDto,
+  toTariffComparisonRowDto,
+  toTariffDto,
+} from './tariff.mapper';
 import { TariffsService } from './tariffs.service';
 
 @Controller('tariffs')
@@ -27,6 +34,30 @@ export class TariffsController {
   async findPublic(): Promise<TariffDto[]> {
     const tariffs = await this.tariffsService.findActive();
     return tariffs.map(toTariffDto);
+  }
+
+  /** Public comparison matrix for /price */
+  @Public()
+  @Get('comparison/public')
+  async findComparisonPublic(): Promise<TariffComparisonDto> {
+    const rows = await this.tariffsService.findComparisonRows();
+    return { rows: rows.map(toTariffComparisonRowDto) };
+  }
+
+  @Get('comparison')
+  @Roles(UserRole.ADMIN)
+  async findComparison(): Promise<TariffComparisonDto> {
+    const rows = await this.tariffsService.findComparisonRows();
+    return { rows: rows.map(toTariffComparisonRowDto) };
+  }
+
+  @Put('comparison')
+  @Roles(UserRole.ADMIN)
+  async updateComparison(
+    @Body() dto: UpdateTariffComparisonDto,
+  ): Promise<TariffComparisonDto> {
+    const rows = await this.tariffsService.replaceComparisonRows(dto);
+    return { rows: rows.map(toTariffComparisonRowDto) };
   }
 
   @Get()

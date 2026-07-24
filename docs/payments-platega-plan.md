@@ -370,8 +370,8 @@ payments.getMy(id)
 ### Фаза 0 — Подготовка (0.5–1 дн.)
 
 - [x] Унифицировать модель тарифов (`free` / `registered` / `trial` / `popular` / `vip`)
-- [ ] Положить ключи в `.env` / secrets staging и prod
-- [ ] В ЛК Platega указать Callback URL: `https://api.mindbodyhub.pro/payments/webhook/platega`
+- [x] Положить ключи в `.env` / secrets staging и prod
+- [x] В ЛК Platega указать Callback URL: `https://api.mindbodyhub.pro/payments/webhook/platega`
 - [ ] Зафиксировать формат `price` в тарифах
 - [ ] Уточнить у менеджера Platega: нужна ли обязательная `metadata`, точная схема callback
 
@@ -385,7 +385,7 @@ payments.getMy(id)
 - [x] `POST /payments/webhook/platega` + идемпотентность + активация тарифа
 - [x] Admin `GET /payments`
 - [ ] Unit/integration smoke: create → mock callback → user.tariff updated
-- [ ] Заполнить `PLATEGA_MERCHANT_ID` / `PLATEGA_SECRET` в `.env`
+- [x] Заполнить `PLATEGA_MERCHANT_ID` / `PLATEGA_SECRET` в `.env`
 
 ### Фаза 2 — Frontend (1 дн.)
 
@@ -403,19 +403,21 @@ payments.getMy(id)
 ### Фаза 4 — Staging / Prod (0.5–1 дн.)
 
 - [x] Админка «Настройки» → блок «Тестовый платёж» (1/2/3 ₽: trial/popular/vip)
-- [ ] Тестовый платёж на staging/prod (через Настройки или /price)
-- [ ] Проверка callback, ретраев, повторного callback
-- [ ] Проверка fail/cancel
-- [ ] Мониторинг логов webhook
-- [ ] Документировать runbook для саппорта (ручная активация)
+- [x] Тестовый платёж на prod (vip 3 ₽) — статус paid, тариф сменился
+- [ ] Проверка fail/cancel (отмена оплаты без оплаты)
+- [ ] Смоук пользовательского флоу: `/price` → «Подключить» → оплата
+- [ ] Доступ к материалам по новому тарифу после оплаты
+- [ ] Документировать runbook для саппорта (ручная активация тарифа в админке Users)
 
 ### Фаза 5 — После MVP (бэклог)
+
+Подробный план: [payments-phase-5.md](./payments-phase-5.md).
 
 - [ ] Срок действия тарифа (`tariffExpiresAt`) и напоминания
 - [ ] Рекуррентные СБП-подписки Platega (если нужны автопродления)
 - [ ] Возвраты через Platega API
 - [ ] Выгрузка транзакций / сверка в «Бухгалтерии»
-- [ ] Уведомление админу в Telegram при `CONFIRMED` / `CHARGEBACKED`
+- [x] Уведомление админу в VK при `CONFIRMED` / `CHARGEBACKED` и новых тикетах
 - [ ] Нормализация `tariffs.price` в числовое поле `priceAmount` (сейчас парсим строку)
 
 ---

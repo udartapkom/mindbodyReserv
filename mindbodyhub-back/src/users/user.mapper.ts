@@ -9,6 +9,7 @@ export function toPublicProfile(user: User): UserPublicProfile {
     phone: user.phone,
     role: user.role,
     tariff: user.tariff,
+    tariffExpiresAt: user.tariffExpiresAt?.toISOString() ?? null,
     avatarUrl: user.avatarUrl,
     isActive: user.isActive,
     phoneVerifiedAt: user.phoneVerifiedAt?.toISOString() ?? null,
@@ -25,6 +26,7 @@ export function toAuthUserSummary(user: User) {
     phone: user.phone,
     role: user.role,
     tariff: user.tariff,
+    tariffExpiresAt: user.tariffExpiresAt?.toISOString() ?? null,
     avatarUrl: user.avatarUrl,
   };
 }

@@ -11,6 +11,20 @@ export enum TicketSource {
   OTHER = 'other',
 }
 
+export enum TicketMessageAuthor {
+  USER = 'user',
+  ADMIN = 'admin',
+}
+
+export type TicketMessageDto = {
+  id: string;
+  ticketId: string;
+  authorType: TicketMessageAuthor;
+  authorUserId: string | null;
+  body: string;
+  createdAt: string;
+};
+
 export type TicketDto = {
   id: string;
   name: string;
@@ -22,4 +36,5 @@ export type TicketDto = {
   adminNote: string | null;
   createdAt: string;
   updatedAt: string;
+  messages?: TicketMessageDto[];
 };

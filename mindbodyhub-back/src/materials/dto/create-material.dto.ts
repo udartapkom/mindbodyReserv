@@ -1,5 +1,6 @@
 import {
   IsArray,
+  IsBoolean,
   IsOptional,
   IsString,
   Matches,
@@ -36,6 +37,10 @@ export class CreateMaterialDto {
   @IsString()
   @MaxLength(2048)
   coverUrl?: string | null;
+
+  @IsOptional()
+  @IsBoolean()
+  showMetadata?: boolean;
 
   @IsOptional()
   @IsArray()

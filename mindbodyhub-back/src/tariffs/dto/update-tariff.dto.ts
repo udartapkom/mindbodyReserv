@@ -37,9 +37,19 @@ export class UpdateTariffDto {
   price?: string;
 
   @IsOptional()
+  @IsInt()
+  @Min(1)
+  priceAmount?: number;
+
+  @IsOptional()
   @IsString()
   @MaxLength(50)
   period?: string;
+
+  @IsOptional()
+  @IsInt()
+  @Min(1)
+  durationDays?: number;
 
   @IsOptional()
   @IsString()

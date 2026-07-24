@@ -25,6 +25,7 @@ export type User = {
   avatar?: string;
   role: UserRole;
   tariff?: UserTariff | null;
+  tariffExpiresAt?: string | null;
   isActive?: boolean;
   phoneVerifiedAt?: string | null;
   createdAt?: string;
@@ -37,6 +38,7 @@ export type AdminUpdateUserPayload = {
   phone?: string;
   role?: UserRole;
   tariff?: UserTariff;
+  tariffExpiresAt?: string | null;
   isActive?: boolean;
   avatarUrl?: string | null;
 };

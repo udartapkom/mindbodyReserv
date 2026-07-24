@@ -1,6 +1,7 @@
 import { Transform } from 'class-transformer';
 import {
   IsBoolean,
+  IsDateString,
   IsEnum,
   IsOptional,
   IsString,
@@ -46,6 +47,11 @@ export class AdminUpdateUserDto {
   @IsOptional()
   @IsEnum(UserTariff)
   tariff?: UserTariff;
+
+  @IsOptional()
+  @ValidateIf((_, value) => value !== null)
+  @IsDateString()
+  tariffExpiresAt?: string | null;
 
   @IsOptional()
   @IsBoolean()

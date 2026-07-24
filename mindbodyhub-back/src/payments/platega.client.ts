@@ -155,6 +155,52 @@ export class PlategaClient {
     };
   }
 
+  async getCancelSupported(
+    transactionId: string,
+  ): Promise<{
+    supported: boolean;
+    totalDeductUsdt: number | null;
+    blockReason: string | null;
+  }> {
+    this.assertConfigured();
+
+    const data = await this.request<Record<string, unknown>>(
+      'GET',
+      `/transaction/${encodeURIComponent(transactionId)}/cancel-supported`,
+    );
+
+    return {
+      supported: data.supported === true,
+      totalDeductUsdt:
+        typeof data.totalDeductUsdt === 'number' ? data.totalDeductUsdt : null,
+      blockReason:
+        typeof data.blockReason === 'string' ? data.blockReason : null,
+    };
+  }
+
+  async cancelTransaction(
+    transactionId: string,
+  ): Promise<{
+    transactionId: string;
+    accepted: boolean;
+    manualControlRequired: boolean;
+    message: string | null;
+  }> {
+    this.assertConfigured();
+
+    const data = await this.request<Record<string, unknown>>(
+      'POST',
+      `/transaction/${encodeURIComponent(transactionId)}/cancel`,
+    );
+
+    return {
+      transactionId: String(data.transactionId ?? transactionId),
+      accepted: data.accepted === true,
+      manualControlRequired: data.manualControlRequired === true,
+      message: typeof data.message === 'string' ? data.message : null,
+    };
+  }
+
   private async request<T>(
     method: 'GET' | 'POST',
     path: string,

@@ -36,6 +36,7 @@ function KnowledgeEditPage() {
   const [title, setTitle] = useState('');
   const [slug, setSlug] = useState('');
   const [summary, setSummary] = useState('');
+  const [showMetadata, setShowMetadata] = useState(true);
   const [coverUrl, setCoverUrl] = useState('');
   const [blocks, setBlocks] = useState<KnowledgeBlock[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -58,6 +59,7 @@ function KnowledgeEditPage() {
         setTitle(data.title);
         setSlug(data.slug);
         setSummary(data.summary ?? '');
+        setShowMetadata(data.showMetadata !== false);
         setCoverUrl(data.coverUrl ?? '');
         setBlocks(data.blocks ?? []);
       } catch (err) {
@@ -76,7 +78,7 @@ function KnowledgeEditPage() {
     if (type === 'image') {
       setBlocks((prev) => [
         ...prev,
-        { id: blockId, type: 'image', key: '', url: '', alt: '' },
+        { id: blockId, type: 'image', key: '', url: '', alt: '', showAlt: true },
       ]);
       return;
     }
@@ -85,6 +87,14 @@ function KnowledgeEditPage() {
       setBlocks((prev) => [
         ...prev,
         { id: blockId, type: 'link', text: '', url: '' },
+      ]);
+      return;
+    }
+
+    if (type === 'subheading') {
+      setBlocks((prev) => [
+        ...prev,
+        { id: blockId, type: 'subheading', text: '', level: 3 },
       ]);
       return;
     }
@@ -219,12 +229,14 @@ function KnowledgeEditPage() {
         slug: slug.trim(),
         summary: summary.trim() || null,
         coverUrl: coverUrl.trim() || null,
+        showMetadata,
         blocks,
       });
       setArticle(updated);
       setTitle(updated.title);
       setSlug(updated.slug);
       setSummary(updated.summary ?? '');
+      setShowMetadata(updated.showMetadata !== false);
       setCoverUrl(updated.coverUrl ?? '');
       setBlocks(updated.blocks ?? []);
       setSuccess('Сохранено');
@@ -387,6 +399,19 @@ function KnowledgeEditPage() {
           onChange={(e) => setSummary(e.target.value)}
         />
 
+        <label className={styles.knowledgeEditPage__checkbox}>
+          <input
+            type="checkbox"
+            checked={showMetadata}
+            onChange={(e) => setShowMetadata(e.target.checked)}
+          />
+          Показывать метаданные на странице статьи
+        </label>
+        <p className={styles.knowledgeEditPage__hint}>
+          Метка «Инструкция» и краткое описание. Заголовок и обложка всегда
+          остаются.
+        </p>
+
         <span className={styles.knowledgeEditPage__fieldLabel}>
           Обложка (превью в списке)
         </span>
@@ -490,13 +515,32 @@ function KnowledgeEditPage() {
           {blocks.map((block, index) => (
             <article key={block.id} className={styles.knowledgeEditPage__block}>
               <div className={styles.knowledgeEditPage__blockHeader}>
-                <span className={styles.knowledgeEditPage__blockType}>
-                  {block.type === 'heading' && 'Заголовок'}
-                  {block.type === 'subheading' && 'Подзаголовок'}
-                  {block.type === 'paragraph' && 'Абзац'}
-                  {block.type === 'link' && 'Ссылка'}
-                  {block.type === 'image' && 'Изображение'}
-                </span>
+                <div className={styles.knowledgeEditPage__blockTypeRow}>
+                  <span className={styles.knowledgeEditPage__blockType}>
+                    {block.type === 'heading' && 'Заголовок'}
+                    {block.type === 'subheading' && 'Подзаголовок'}
+                    {block.type === 'paragraph' && 'Абзац'}
+                    {block.type === 'link' && 'Ссылка'}
+                    {block.type === 'image' && 'Изображение'}
+                  </span>
+                  {block.type === 'subheading' ? (
+                    <label className={styles.knowledgeEditPage__levelLabel}>
+                      Уровень
+                      <select
+                        className={styles.knowledgeEditPage__levelSelect}
+                        value={block.level ?? 3}
+                        onChange={(e) =>
+                          updateBlock(block.id, {
+                            level: Number(e.target.value) === 2 ? 2 : 3,
+                          })
+                        }
+                      >
+                        <option value={2}>H2 — крупный</option>
+                        <option value={3}>H3 — обычный</option>
+                      </select>
+                    </label>
+                  ) : null}
+                </div>
                 <div className={styles.knowledgeEditPage__blockActions}>
                   <button
                     type="button"
@@ -538,10 +582,18 @@ function KnowledgeEditPage() {
 
               {block.type === 'subheading' ? (
                 <input
-                  className={styles.knowledgeEditPage__subheadingInput}
+                  className={
+                    (block.level ?? 3) === 2
+                      ? styles.knowledgeEditPage__subheadingH2Input
+                      : styles.knowledgeEditPage__subheadingInput
+                  }
                   value={block.text}
                   onChange={(e) => updateBlock(block.id, { text: e.target.value })}
-                  placeholder="Подзаголовок"
+                  placeholder={
+                    (block.level ?? 3) === 2
+                      ? 'Подзаголовок (H2)'
+                      : 'Подзаголовок (H3)'
+                  }
                 />
               ) : null}
 
@@ -643,6 +695,16 @@ function KnowledgeEditPage() {
                     onChange={(e) => updateBlock(block.id, { alt: e.target.value })}
                     placeholder="Описание изображения"
                   />
+                  <label className={styles.knowledgeEditPage__checkbox}>
+                    <input
+                      type="checkbox"
+                      checked={block.showAlt !== false}
+                      onChange={(e) =>
+                        updateBlock(block.id, { showAlt: e.target.checked })
+                      }
+                    />
+                    Показывать alt как подпись под изображением
+                  </label>
                 </>
               ) : null}
             </article>

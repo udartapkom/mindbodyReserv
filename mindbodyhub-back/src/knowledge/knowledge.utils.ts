@@ -46,6 +46,7 @@ export function normalizeKnowledgeBlocks(raw: unknown): KnowledgeBlock[] {
       const key = typeof item.key === 'string' ? item.key.trim() : '';
       const url = typeof item.url === 'string' ? item.url.trim() : '';
       const alt = typeof item.alt === 'string' ? item.alt.trim() : '';
+      const showAlt = item.showAlt !== false;
 
       if (!key || !url) {
         throw new BadRequestException(
@@ -53,7 +54,7 @@ export function normalizeKnowledgeBlocks(raw: unknown): KnowledgeBlock[] {
         );
       }
 
-      return { id, type: 'image', key, url, alt };
+      return { id, type: 'image', key, url, alt, showAlt };
     }
 
     if (type === 'link') {
@@ -74,7 +75,8 @@ export function normalizeKnowledgeBlocks(raw: unknown): KnowledgeBlock[] {
     }
 
     if (type === 'subheading') {
-      return { id, type: 'subheading', text };
+      const level = item.level === 2 ? 2 : 3;
+      return { id, type: 'subheading', text, level };
     }
 
     return { id, type: 'paragraph', text };

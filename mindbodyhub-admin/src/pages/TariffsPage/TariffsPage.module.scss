@@ -36,6 +36,90 @@
     overflow: auto;
   }
 
+  &__sectionHeader {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 20px 20px 0;
+    flex-wrap: wrap;
+  }
+
+  &__sectionTitle {
+    @include m.text22-600;
+    margin: 0 0 6px;
+  }
+
+  &__sectionHint {
+    @include m.text14-400;
+    margin: 0;
+    color: v.$text-light-color;
+    max-width: 560px;
+  }
+
+  &__sectionActions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  &__success {
+    @include m.text14-400;
+    color: #047857;
+    margin: 12px 20px 0;
+  }
+
+  &__comparisonScroll {
+    overflow: auto;
+    padding: 16px 20px 20px;
+  }
+
+  &__comparisonTable {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 720px;
+
+    th,
+    td {
+      @include m.text14-400;
+      padding: 10px 12px;
+      text-align: left;
+      border-bottom: 1px solid v.$color-border;
+      vertical-align: middle;
+    }
+
+    th {
+      font-weight: 600;
+      background: v.$light-accent-color;
+    }
+  }
+
+  &__comparisonInput {
+    @include m.text14-400;
+    width: 100%;
+    min-width: 200px;
+    padding: 8px 10px;
+    border: 1px solid v.$color-border;
+    border-radius: 8px;
+    background: v.$white-color;
+
+    &:focus {
+      outline: none;
+      border-color: v.$accent-color;
+      box-shadow: 0 0 0 2px rgba(v.$accent-color, 0.15);
+    }
+  }
+
+  &__checkCell {
+    text-align: center !important;
+
+    input {
+      width: 18px;
+      height: 18px;
+      cursor: pointer;
+    }
+  }
+
   &__table {
     width: 100%;
     border-collapse: collapse;

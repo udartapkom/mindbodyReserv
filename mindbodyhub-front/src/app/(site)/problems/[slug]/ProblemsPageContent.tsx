@@ -78,11 +78,13 @@ function ProblemsPageContent({ slug }: ProblemsPageContentProps) {
         ) : null}
 
         <header className={styles.page__header}>
-          <p className={styles.page__eyebrow}>
-            {getMaterialAccessLabel(material.tariffType)}
-          </p>
+          {material.showMetadata !== false ? (
+            <p className={styles.page__eyebrow}>
+              {getMaterialAccessLabel(material.tariffType)}
+            </p>
+          ) : null}
           <h1 className={styles.page__title}>{material.title}</h1>
-          {material.summary ? (
+          {material.showMetadata !== false && material.summary ? (
             <p className={styles.page__summary}>{material.summary}</p>
           ) : null}
         </header>

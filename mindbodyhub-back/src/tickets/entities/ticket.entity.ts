@@ -2,10 +2,12 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { TicketSource, TicketStatus } from '../ticket.types';
+import { TicketMessage } from './ticket-message.entity';
 
 @Entity('tickets')
 export class Ticket {
@@ -40,6 +42,9 @@ export class Ticket {
 
   @Column({ name: 'admin_note', type: 'text', nullable: true })
   adminNote: string | null;
+
+  @OneToMany(() => TicketMessage, (message) => message.ticket)
+  messages?: TicketMessage[];
 
   @CreateDateColumn({ name: 'created_at', type: 'timestamptz' })
   createdAt: Date;

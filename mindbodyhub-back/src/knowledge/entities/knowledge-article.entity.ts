@@ -30,6 +30,10 @@ export class KnowledgeArticle {
   @Column({ type: 'text', nullable: true })
   summary: string | null;
 
+  /** Show eyebrow + summary on the public article page */
+  @Column({ name: 'show_metadata', type: 'boolean', default: true })
+  showMetadata: boolean;
+
   @Column({ name: 'published_at', type: 'timestamptz', nullable: true })
   publishedAt: Date | null;
 

@@ -31,6 +31,9 @@ export class User {
   @Column({ type: 'enum', enum: UserTariff, default: UserTariff.FREE })
   tariff: UserTariff;
 
+  @Column({ name: 'tariff_expires_at', type: 'timestamptz', nullable: true })
+  tariffExpiresAt: Date | null;
+
   @Column({ name: 'avatar_url', type: 'varchar', length: 2048, nullable: true })
   avatarUrl: string | null;
 

@@ -13,6 +13,7 @@ export type User = {
   avatar?: string | null;
   role: UserRole;
   tariff: string;
+  tariffExpiresAt: string | null;
   isActive: boolean;
   phoneVerifiedAt: string | null;
   createdAt: string;

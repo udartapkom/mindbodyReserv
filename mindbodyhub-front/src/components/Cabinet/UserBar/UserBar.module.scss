@@ -103,6 +103,12 @@
         color: v.$text-light-color;
     }
 
+    &__metaValue {
+        @include m.text16-500;
+        margin: 0;
+        color: v.$text-dark-color;
+    }
+
     &__badge {
         display: inline-flex;
         align-items: center;

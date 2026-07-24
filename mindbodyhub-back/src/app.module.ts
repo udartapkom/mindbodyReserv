@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ScheduleModule } from '@nestjs/schedule';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './auth/auth.module';
 import { HealthModule } from './health/health.module';
@@ -10,11 +11,13 @@ import { KnowledgeModule } from './knowledge/knowledge.module';
 import { TariffsModule } from './tariffs/tariffs.module';
 import { TicketsModule } from './tickets/tickets.module';
 import { PaymentsModule } from './payments/payments.module';
+import { NotificationsModule } from './notifications/notifications.module';
 import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
+    ScheduleModule.forRoot(),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: (config: ConfigService) => ({
@@ -31,6 +34,7 @@ import { UsersModule } from './users/users.module';
     }),
     HealthModule,
     StorageModule,
+    NotificationsModule,
     UsersModule,
     TariffsModule,
     MaterialsModule,

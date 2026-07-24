@@ -25,12 +25,24 @@ function MaterialContent({ blocks }: MaterialContentProps) {
                 {block.text}
               </h2>
             );
-          case "subheading":
+          case "subheading": {
+            const isH2 = block.level === 2;
+            if (isH2) {
+              return (
+                <h2
+                  key={block.id}
+                  className={styles.materialContent__subheadingH2}
+                >
+                  {block.text}
+                </h2>
+              );
+            }
             return (
               <h3 key={block.id} className={styles.materialContent__subheading}>
                 {block.text}
               </h3>
             );
+          }
           case "paragraph":
             return (
               <p key={block.id} className={styles.materialContent__paragraph}>
@@ -46,7 +58,7 @@ function MaterialContent({ blocks }: MaterialContentProps) {
                   alt={block.alt || ""}
                   loading="lazy"
                 />
-                {block.alt ? (
+                {block.alt && block.showAlt !== false ? (
                   <figcaption className={styles.materialContent__caption}>
                     {block.alt}
                   </figcaption>

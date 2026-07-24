@@ -36,4 +36,16 @@ export const paymentsApi = {
       headers: authHeaders(),
       body: JSON.stringify({ tariffType }),
     }).then((res) => checkResponse<CreatePaymentResponse>(res)),
+
+  sync: (id: string): Promise<Payment> =>
+    fetchWithAuth(`${getApiBaseUrl()}/payments/${id}/sync`, {
+      method: 'POST',
+      headers: authHeaders(),
+    }).then((res) => checkResponse<Payment>(res)),
+
+  refund: (id: string): Promise<Payment> =>
+    fetchWithAuth(`${getApiBaseUrl()}/payments/${id}/refund`, {
+      method: 'POST',
+      headers: authHeaders(),
+    }).then((res) => checkResponse<Payment>(res)),
 };

@@ -15,6 +15,23 @@ export const TicketSource = {
 
 export type TicketSource = (typeof TicketSource)[keyof typeof TicketSource];
 
+export const TicketMessageAuthor = {
+  USER: 'user',
+  ADMIN: 'admin',
+} as const;
+
+export type TicketMessageAuthor =
+  (typeof TicketMessageAuthor)[keyof typeof TicketMessageAuthor];
+
+export type TicketMessage = {
+  id: string;
+  ticketId: string;
+  authorType: TicketMessageAuthor;
+  authorUserId: string | null;
+  body: string;
+  createdAt: string;
+};
+
 export type Ticket = {
   id: string;
   name: string;
@@ -26,6 +43,7 @@ export type Ticket = {
   adminNote: string | null;
   createdAt: string;
   updatedAt: string;
+  messages?: TicketMessage[];
 };
 
 export type UpdateTicketPayload = {

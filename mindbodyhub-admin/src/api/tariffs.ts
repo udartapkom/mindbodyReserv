@@ -1,6 +1,12 @@
 import { getApiBaseUrl } from './api';
 import { authHeaders, checkResponse, fetchWithAuth } from './http';
-import type { CreateTariffPayload, Tariff, UpdateTariffPayload } from '@/types/tariff';
+import type {
+  CreateTariffPayload,
+  Tariff,
+  TariffComparison,
+  UpdateTariffComparisonPayload,
+  UpdateTariffPayload,
+} from '@/types/tariff';
 
 export const tariffsApi = {
   getAll: (): Promise<Tariff[]> =>
@@ -45,4 +51,18 @@ export const tariffsApi = {
       headers: authHeaders(),
     }).then((res) => checkResponse<{ success: true }>(res));
   },
+
+  getComparison: (): Promise<TariffComparison> =>
+    fetchWithAuth(`${getApiBaseUrl()}/tariffs/comparison`, {
+      headers: authHeaders(),
+    }).then((res) => checkResponse<TariffComparison>(res)),
+
+  updateComparison: (
+    payload: UpdateTariffComparisonPayload,
+  ): Promise<TariffComparison> =>
+    fetchWithAuth(`${getApiBaseUrl()}/tariffs/comparison`, {
+      method: 'PUT',
+      headers: authHeaders(),
+      body: JSON.stringify(payload),
+    }).then((res) => checkResponse<TariffComparison>(res)),
 };

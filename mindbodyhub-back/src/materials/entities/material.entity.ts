@@ -36,6 +36,10 @@ export class Material {
   @Column({ type: 'text', nullable: true })
   summary: string | null;
 
+  /** Show access label + summary on the public material page */
+  @Column({ name: 'show_metadata', type: 'boolean', default: true })
+  showMetadata: boolean;
+
   @Column({ name: 'published_at', type: 'timestamptz', nullable: true })
   publishedAt: Date | null;
 

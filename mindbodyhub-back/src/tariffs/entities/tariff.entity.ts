@@ -24,8 +24,16 @@ export class Tariff {
   @Column({ length: 50 })
   price: string;
 
+  /** Integer rubles for Platega create; preferred over parsing `price` */
+  @Column({ name: 'price_amount', type: 'int', nullable: true })
+  priceAmount: number | null;
+
   @Column({ length: 50 })
   period: string;
+
+  /** Access duration in days after payment / renewal */
+  @Column({ name: 'duration_days', type: 'int', default: 30 })
+  durationDays: number;
 
   @Column({ name: 'sub_title', length: 200 })
   subTitle: string;

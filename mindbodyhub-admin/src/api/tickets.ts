@@ -1,6 +1,6 @@
 import { getApiBaseUrl } from './api';
 import { authHeaders, checkResponse, fetchWithAuth } from './http';
-import type { Ticket, UpdateTicketPayload } from '@/types/ticket';
+import type { Ticket, TicketMessage, UpdateTicketPayload } from '@/types/ticket';
 
 export const ticketsApi = {
   getAll: (): Promise<Ticket[]> =>
@@ -19,6 +19,13 @@ export const ticketsApi = {
       headers: authHeaders(),
       body: JSON.stringify(payload),
     }).then((res) => checkResponse<Ticket>(res)),
+
+  sendMessage: (id: string, body: string): Promise<TicketMessage> =>
+    fetchWithAuth(`${getApiBaseUrl()}/tickets/${id}/messages`, {
+      method: 'POST',
+      headers: authHeaders(),
+      body: JSON.stringify({ body }),
+    }).then((res) => checkResponse<TicketMessage>(res)),
 
   remove: async (id: string): Promise<void> => {
     await fetchWithAuth(`${getApiBaseUrl()}/tickets/${id}`, {

@@ -29,6 +29,7 @@ export type AdminUpdateUserData = {
   phone?: string;
   role?: UserRole;
   tariff?: UserTariff;
+  tariffExpiresAt?: Date | null;
   isActive?: boolean;
   avatarUrl?: string | null;
 };
@@ -123,6 +124,13 @@ export class UsersService {
 
     if (data.tariff !== undefined) {
       user.tariff = data.tariff;
+      if (data.tariff === UserTariff.FREE && data.tariffExpiresAt === undefined) {
+        user.tariffExpiresAt = null;
+      }
+    }
+
+    if (data.tariffExpiresAt !== undefined) {
+      user.tariffExpiresAt = data.tariffExpiresAt;
     }
 
     if (data.isActive !== undefined) {
@@ -196,6 +204,23 @@ export class UsersService {
     }
 
     await this.usersRepository.remove(user);
+  }
+
+  /** Daily job: paid tariffs past tariffExpiresAt → free */
+  async expireOverdueTariffs(): Promise<number> {
+    const result = await this.usersRepository
+      .createQueryBuilder()
+      .update(User)
+      .set({
+        tariff: UserTariff.FREE,
+        tariffExpiresAt: null,
+      })
+      .where('tariff != :free', { free: UserTariff.FREE })
+      .andWhere('tariff_expires_at IS NOT NULL')
+      .andWhere('tariff_expires_at < NOW()')
+      .execute();
+
+    return result.affected ?? 0;
   }
 
   async updatePassword(id: string, passwordHash: string): Promise<User> {

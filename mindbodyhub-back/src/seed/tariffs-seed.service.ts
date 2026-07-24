@@ -8,7 +8,9 @@ const DEFAULT_TARIFFS = [
     imageAlt: 'Философия и самопознание',
     title: 'Пробный',
     price: '99₽',
+    priceAmount: 99,
     period: '/ неделя',
+    durationDays: 7,
     titleColor: '#B1AEAF',
     subTitle: 'Философия',
     description: [
@@ -25,7 +27,9 @@ const DEFAULT_TARIFFS = [
     title: 'Популярный',
     titleColor: '#3b82f6',
     price: '999₽',
+    priceAmount: 999,
     period: '/ месяц',
+    durationDays: 30,
     subTitle: 'Отношения & секс',
     description: [
       'Решение проблем в отношениях',
@@ -41,7 +45,9 @@ const DEFAULT_TARIFFS = [
     imageAlt: 'Ментальное здоровье и психология бизнеса',
     title: 'VIP',
     price: '3000₽',
+    priceAmount: 3000,
     period: '/ месяц',
+    durationDays: 30,
     subTitle: 'Ментальные проблемы & бизнес',
     titleColor: '#FF6700',
     description: [
@@ -52,6 +58,39 @@ const DEFAULT_TARIFFS = [
       'Личные консультации',
     ],
     sortOrder: 2,
+  },
+];
+
+const DEFAULT_COMPARISON = [
+  {
+    feature: 'Доступ к мыслям и заметкам',
+    included: { trial: true, popular: true, vip: true },
+    sortOrder: 0,
+  },
+  {
+    feature: 'Еженедельные инсайты',
+    included: { trial: true, popular: true, vip: true },
+    sortOrder: 1,
+  },
+  {
+    feature: 'Цитаты',
+    included: { trial: true, popular: true, vip: true },
+    sortOrder: 2,
+  },
+  {
+    feature: 'Отношения и сексуальная психология',
+    included: { trial: false, popular: true, vip: false },
+    sortOrder: 3,
+  },
+  {
+    feature: 'Ментальное здоровье и бизнес',
+    included: { trial: false, popular: false, vip: true },
+    sortOrder: 4,
+  },
+  {
+    feature: 'Личные консультации',
+    included: { trial: false, popular: false, vip: true },
+    sortOrder: 5,
   },
 ];
 
@@ -67,6 +106,16 @@ export class TariffsSeedService implements OnModuleInit {
       this.logger.log(`Tariffs seed: created ${created} tariffs`);
     } else {
       this.logger.log('Tariffs seed skipped: tariffs already exist');
+    }
+
+    const comparisonCreated =
+      await this.tariffsService.seedComparisonIfEmpty(DEFAULT_COMPARISON);
+    if (comparisonCreated > 0) {
+      this.logger.log(
+        `Tariff comparison seed: created ${comparisonCreated} rows`,
+      );
+    } else {
+      this.logger.log('Tariff comparison seed skipped: rows already exist');
     }
   }
 }

@@ -1,8 +1,9 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import Image from 'next/image';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { payments } from '@/api/api';
 import ErrorPopup from '@/components/ErrorPopup/ErrorPopup';
 import Popup from '@/components/Popup/Popup';
@@ -53,18 +54,31 @@ function PriceCard({
     const router = useRouter();
     const { user, isAuthenticated, isLoading } = useAuth();
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [isConfirmOpen, setIsConfirmOpen] = useState(false);
     const [popup, setPopup] = useState<FormPopup | null>(null);
 
     const isCurrentTariff = user?.tariff === type;
     const closePopup = () => setPopup(null);
+    const closeConfirm = () => {
+        if (isSubmitting) return;
+        setIsConfirmOpen(false);
+    };
 
-    const handleConnect = async () => {
+    const handleConnectClick = () => {
         if (isLoading || isSubmitting || isCurrentTariff) {
             return;
         }
 
         if (!isAuthenticated) {
             router.push(`/login?next=${encodeURIComponent('/price')}`);
+            return;
+        }
+
+        setIsConfirmOpen(true);
+    };
+
+    const handleConfirmConnect = async () => {
+        if (isLoading || isSubmitting || isCurrentTariff) {
             return;
         }
 
@@ -77,6 +91,7 @@ function PriceCard({
             }
             window.location.assign(result.paymentUrl);
         } catch (error) {
+            setIsConfirmOpen(false);
             setPopup({
                 title: 'Ошибка',
                 description: getErrorMessage(
@@ -130,7 +145,7 @@ function PriceCard({
                             ? { backgroundColor: titleColor, color: '#fff' }
                             : undefined
                     }
-                    onClick={() => void handleConnect()}
+                    onClick={handleConnectClick}
                     disabled={isSubmitting || isCurrentTariff || isLoading}
                 >
                     {isCurrentTariff
@@ -140,6 +155,58 @@ function PriceCard({
                           : 'Подключить'}
                 </button>
             </div>
+
+            <Popup
+                title="Подтверждение оплаты"
+                isOpen={isConfirmOpen}
+                onClose={closeConfirm}
+            >
+                <div className={styles.priceCard__confirm}>
+                    <Icon
+                        name="info-circle"
+                        variant="regular"
+                        className={styles.priceCard__confirmIcon}
+                    />
+                    <p className={styles.priceCard__confirmText}>
+                        Нажимая на кнопку «Подключить»,
+                        <br />
+                        Вы соглашаетесь с{' '}
+                        <Link href="/privacy" target="_blank" rel="noopener noreferrer">
+                            политикой конфиденциальности
+                        </Link>{' '}
+                        а так же с{' '}
+                        <Link href="/terms" target="_blank" rel="noopener noreferrer">
+                            пользовательским соглашением
+                        </Link>
+                        .
+                        <br />
+                        Далее вы будете перенаправлены на страницу оплаты.
+                    </p>
+                    <div className={styles.priceCard__confirmActions}>
+                        <button
+                            type="button"
+                            className={styles.priceCard__confirmCancel}
+                            onClick={closeConfirm}
+                            disabled={isSubmitting}
+                        >
+                            Отмена
+                        </button>
+                        <button
+                            type="button"
+                            className={styles.priceCard__confirmSubmit}
+                            style={
+                                titleColor
+                                    ? { backgroundColor: titleColor, color: '#fff' }
+                                    : undefined
+                            }
+                            onClick={() => void handleConfirmConnect()}
+                            disabled={isSubmitting}
+                        >
+                            {isSubmitting ? 'Создание оплаты…' : 'Подключить'}
+                        </button>
+                    </div>
+                </div>
+            </Popup>
 
             <Popup
                 title={popup?.title ?? 'Уведомление'}

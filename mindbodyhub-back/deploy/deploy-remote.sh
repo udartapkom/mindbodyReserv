@@ -45,9 +45,14 @@ ssh $SSH_OPTS "$HOST" 'bash -s' <<'REMOTE'
 set -euo pipefail
 cd /opt/mindbodyhub/back
 npm ci --omit=dev
-# Apply any new SQL migrations here manually when needed
-pm2 restart mbh-api mbh-front
+# Prefer ecosystem so front stays on :3000 and API on :4000
+if [[ -f /opt/mindbodyhub/ecosystem.config.cjs ]]; then
+  pm2 startOrReload /opt/mindbodyhub/ecosystem.config.cjs --update-env
+else
+  pm2 restart mbh-api mbh-front --update-env
+fi
 nginx -t && systemctl reload nginx
+sleep 2
 curl -fsS https://api.mindbodyhub.pro/health
 echo
 REMOTE

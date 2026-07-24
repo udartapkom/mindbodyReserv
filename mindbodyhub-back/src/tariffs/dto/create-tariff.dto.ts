@@ -33,9 +33,19 @@ export class CreateTariffDto {
   @MaxLength(50)
   price: string;
 
+  @IsOptional()
+  @IsInt()
+  @Min(1)
+  priceAmount?: number;
+
   @IsString()
   @MaxLength(50)
   period: string;
+
+  @IsOptional()
+  @IsInt()
+  @Min(1)
+  durationDays?: number;
 
   @IsString()
   @MaxLength(200)

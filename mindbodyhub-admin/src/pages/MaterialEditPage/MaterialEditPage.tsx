@@ -18,6 +18,7 @@ function MaterialEditPage() {
   const [title, setTitle] = useState('');
   const [slug, setSlug] = useState('');
   const [summary, setSummary] = useState('');
+  const [showMetadata, setShowMetadata] = useState(true);
   const [coverUrl, setCoverUrl] = useState('');
   const [tariffType, setTariffType] = useState(FREE_ACCESS_TYPE);
   const [tariffs, setTariffs] = useState<Tariff[]>([]);
@@ -46,6 +47,7 @@ function MaterialEditPage() {
         setTitle(data.title);
         setSlug(data.slug);
         setSummary(data.summary ?? '');
+        setShowMetadata(data.showMetadata !== false);
         setCoverUrl(data.coverUrl ?? '');
         setTariffType(data.tariffType || FREE_ACCESS_TYPE);
         setTariffs(tariffList);
@@ -66,7 +68,15 @@ function MaterialEditPage() {
     if (type === 'image') {
       setBlocks((prev) => [
         ...prev,
-        { id: blockId, type: 'image', key: '', url: '', alt: '' },
+        { id: blockId, type: 'image', key: '', url: '', alt: '', showAlt: true },
+      ]);
+      return;
+    }
+
+    if (type === 'subheading') {
+      setBlocks((prev) => [
+        ...prev,
+        { id: blockId, type: 'subheading', text: '', level: 3 },
       ]);
       return;
     }
@@ -163,12 +173,14 @@ function MaterialEditPage() {
         tariffType,
         summary: summary.trim() || null,
         coverUrl: coverUrl.trim() || null,
+        showMetadata,
         blocks,
       });
       setMaterial(updated);
       setTitle(updated.title);
       setSlug(updated.slug);
       setSummary(updated.summary ?? '');
+      setShowMetadata(updated.showMetadata !== false);
       setCoverUrl(updated.coverUrl ?? '');
       setTariffType(updated.tariffType || FREE_ACCESS_TYPE);
       setBlocks(updated.blocks ?? []);
@@ -351,6 +363,19 @@ function MaterialEditPage() {
           onChange={(e) => setSummary(e.target.value)}
         />
 
+        <label className={styles.materialEditPage__checkbox}>
+          <input
+            type="checkbox"
+            checked={showMetadata}
+            onChange={(e) => setShowMetadata(e.target.checked)}
+          />
+          Показывать метаданные на странице материала
+        </label>
+        <p className={styles.materialEditPage__hint}>
+          Метка доступа и краткое описание. Заголовок и обложка всегда
+          остаются.
+        </p>
+
         <span className={styles.materialEditPage__fieldLabel}>
           Обложка (превью в списке)
         </span>
@@ -447,12 +472,31 @@ function MaterialEditPage() {
           {blocks.map((block, index) => (
             <article key={block.id} className={styles.materialEditPage__block}>
               <div className={styles.materialEditPage__blockHeader}>
-                <span className={styles.materialEditPage__blockType}>
-                  {block.type === 'heading' && 'Заголовок'}
-                  {block.type === 'subheading' && 'Подзаголовок'}
-                  {block.type === 'paragraph' && 'Абзац'}
-                  {block.type === 'image' && 'Изображение'}
-                </span>
+                <div className={styles.materialEditPage__blockTypeRow}>
+                  <span className={styles.materialEditPage__blockType}>
+                    {block.type === 'heading' && 'Заголовок'}
+                    {block.type === 'subheading' && 'Подзаголовок'}
+                    {block.type === 'paragraph' && 'Абзац'}
+                    {block.type === 'image' && 'Изображение'}
+                  </span>
+                  {block.type === 'subheading' ? (
+                    <label className={styles.materialEditPage__levelLabel}>
+                      Уровень
+                      <select
+                        className={styles.materialEditPage__levelSelect}
+                        value={block.level ?? 3}
+                        onChange={(e) =>
+                          updateBlock(block.id, {
+                            level: Number(e.target.value) === 2 ? 2 : 3,
+                          })
+                        }
+                      >
+                        <option value={2}>H2 — крупный</option>
+                        <option value={3}>H3 — обычный</option>
+                      </select>
+                    </label>
+                  ) : null}
+                </div>
                 <div className={styles.materialEditPage__blockActions}>
                   <button
                     type="button"
@@ -494,10 +538,18 @@ function MaterialEditPage() {
 
               {block.type === 'subheading' ? (
                 <input
-                  className={styles.materialEditPage__subheadingInput}
+                  className={
+                    (block.level ?? 3) === 2
+                      ? styles.materialEditPage__subheadingH2Input
+                      : styles.materialEditPage__subheadingInput
+                  }
                   value={block.text}
                   onChange={(e) => updateBlock(block.id, { text: e.target.value })}
-                  placeholder="Подзаголовок"
+                  placeholder={
+                    (block.level ?? 3) === 2
+                      ? 'Подзаголовок (H2)'
+                      : 'Подзаголовок (H3)'
+                  }
                 />
               ) : null}
 
@@ -549,6 +601,16 @@ function MaterialEditPage() {
                     onChange={(e) => updateBlock(block.id, { alt: e.target.value })}
                     placeholder="Описание изображения"
                   />
+                  <label className={styles.materialEditPage__checkbox}>
+                    <input
+                      type="checkbox"
+                      checked={block.showAlt !== false}
+                      onChange={(e) =>
+                        updateBlock(block.id, { showAlt: e.target.checked })
+                      }
+                    />
+                    Показывать alt как подпись под изображением
+                  </label>
                 </>
               ) : null}
             </article>

@@ -2,6 +2,7 @@ import { auth as authStorage } from "./auth";
 import type { AuthTokensResponse, Problem } from "./responsesTypes";
 import type { KnowledgeArticle } from "@/types/knowledge";
 import type { Material } from "@/types/material";
+import type { PriceComparison } from "@/types/PriceComparison";
 import type { ChangePasswordPayload, UpdateProfilePayload, User } from "@/types/user";
 import { normalizeUser } from "@/utils/user";
 
@@ -39,28 +40,79 @@ const checkResponse = async <T>(res: Response): Promise<T> => {
   return res.json() as Promise<T>;
 };
 
-const authHeaders = (json = true): HeadersInit => {
-  const token = authStorage.getToken();
-  if (!token) {
-    throw new Error("Unauthorized");
-  }
-
-  const headers: Record<string, string> = {
-    Authorization: `Bearer ${token}`,
-  };
-
-  if (json) {
-    headers["Content-Type"] = "application/json";
-  }
-
-  return headers;
-};
-
 const saveAuthSession = (data: AuthTokensResponse) => {
   authStorage.setToken(data.accessToken);
   authStorage.setRefreshToken(data.refreshToken);
   authStorage.setUser(normalizeUser(data.user));
 };
+
+let refreshPromise: Promise<boolean> | null = null;
+
+async function refreshAccessToken(): Promise<boolean> {
+  if (refreshPromise) {
+    return refreshPromise;
+  }
+
+  refreshPromise = (async () => {
+    const refreshToken = authStorage.getRefreshToken();
+    if (!refreshToken) {
+      return false;
+    }
+
+    try {
+      const res = await fetch(`${getApiBaseUrl()}/auth/refresh`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ refreshToken }),
+      });
+
+      if (!res.ok) {
+        return false;
+      }
+
+      const data = (await res.json()) as AuthTokensResponse;
+      saveAuthSession(data);
+      return true;
+    } catch {
+      return false;
+    } finally {
+      refreshPromise = null;
+    }
+  })();
+
+  return refreshPromise;
+}
+
+async function fetchWithAuth(
+  url: string,
+  init: RequestInit = {},
+): Promise<Response> {
+  if (!authStorage.getToken() && !authStorage.getRefreshToken()) {
+    throw new Error("Unauthorized");
+  }
+
+  const makeInit = (): RequestInit => {
+    const headers = new Headers(init.headers);
+    const accessToken = authStorage.getToken();
+    if (accessToken) {
+      headers.set("Authorization", `Bearer ${accessToken}`);
+    }
+    return { ...init, headers };
+  };
+
+  let response = authStorage.getToken()
+    ? await fetch(url, makeInit())
+    : new Response(null, { status: 401 });
+
+  if (response.status === 401) {
+    const refreshed = await refreshAccessToken();
+    if (refreshed) {
+      response = await fetch(url, makeInit());
+    }
+  }
+
+  return response;
+}
 
 const saveUserProfile = (user: User) => {
   const normalized = normalizeUser(user);
@@ -96,25 +148,25 @@ export const auth = {
     authStorage.removeToken();
   },
   getProfile: async () => {
-    const user = await fetch(`${getApiBaseUrl()}/auth/me`, {
-      headers: authHeaders(false),
-    }).then((res) => checkResponse<User>(res));
+    const user = await fetchWithAuth(`${getApiBaseUrl()}/auth/me`).then((res) =>
+      checkResponse<User>(res),
+    );
 
     return saveUserProfile(user);
   },
   updateProfile: async (payload: UpdateProfilePayload) => {
-    const user = await fetch(`${getApiBaseUrl()}/auth/me`, {
+    const user = await fetchWithAuth(`${getApiBaseUrl()}/auth/me`, {
       method: "PATCH",
-      headers: authHeaders(),
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
     }).then((res) => checkResponse<User>(res));
 
     return saveUserProfile(user);
   },
   changePassword: async (payload: ChangePasswordPayload) => {
-    await fetch(`${getApiBaseUrl()}/auth/me/password`, {
+    await fetchWithAuth(`${getApiBaseUrl()}/auth/me/password`, {
       method: "PATCH",
-      headers: authHeaders(),
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
     }).then((res) => checkResponse<{ success: true }>(res));
   },
@@ -122,9 +174,8 @@ export const auth = {
     const formData = new FormData();
     formData.append("file", file);
 
-    const user = await fetch(`${getApiBaseUrl()}/auth/me/avatar`, {
+    const user = await fetchWithAuth(`${getApiBaseUrl()}/auth/me/avatar`, {
       method: "POST",
-      headers: authHeaders(false),
       body: formData,
     }).then((res) => checkResponse<User>(res));
 
@@ -192,14 +243,27 @@ export type CreateTicketPayload = {
   source?: "home" | "support" | "cabinet" | "other";
 };
 
+export type TicketMessage = {
+  id: string;
+  ticketId: string;
+  authorType: "user" | "admin";
+  authorUserId: string | null;
+  body: string;
+  createdAt: string;
+};
+
 export type TicketResponse = {
   id: string;
   name: string;
   phone: string;
   message: string;
-  status: string;
+  status: "new" | "in_progress" | "closed" | string;
   source: string;
+  userId?: string | null;
+  adminNote?: string | null;
   createdAt: string;
+  updatedAt?: string;
+  messages?: TicketMessage[];
 };
 
 export const tickets = {
@@ -215,6 +279,34 @@ export const tickets = {
       body: JSON.stringify(payload),
     }).then((res) => checkResponse<TicketResponse>(res));
   },
+
+  getMine: async () => {
+    return fetchWithAuth(`${getApiBaseUrl()}/tickets/me`).then((res) =>
+      checkResponse<TicketResponse[]>(res),
+    );
+  },
+
+  getMineById: async (id: string) => {
+    return fetchWithAuth(`${getApiBaseUrl()}/tickets/me/${id}`).then((res) =>
+      checkResponse<TicketResponse>(res),
+    );
+  },
+
+  createMine: async (message: string, name?: string) => {
+    return fetchWithAuth(`${getApiBaseUrl()}/tickets/me`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ message, name }),
+    }).then((res) => checkResponse<TicketResponse>(res));
+  },
+
+  sendMineMessage: async (id: string, body: string) => {
+    return fetchWithAuth(`${getApiBaseUrl()}/tickets/me/${id}/messages`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ body }),
+    }).then((res) => checkResponse<TicketMessage>(res));
+  },
 };
 
 export type PublicTariff = {
@@ -223,7 +315,9 @@ export type PublicTariff = {
   title: string;
   titleColor: string | null;
   price: string;
+  priceAmount?: number | null;
   period: string;
+  durationDays?: number;
   subTitle: string;
   description: string[];
   image: string;
@@ -247,13 +341,19 @@ export const tariffsApi = {
       checkResponse<PublicTariff[]>(res),
     );
   },
+
+  getComparisonPublic: async () => {
+    return fetch(`${getApiBaseUrl()}/tariffs/comparison/public`).then((res) =>
+      checkResponse<PriceComparison>(res),
+    );
+  },
 };
 
 export const payments = {
   create: async (tariffType: string) => {
-    return fetch(`${getApiBaseUrl()}/payments/create`, {
+    return fetchWithAuth(`${getApiBaseUrl()}/payments/create`, {
       method: "POST",
-      headers: authHeaders(),
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ tariffType }),
     }).then((res) => checkResponse<CreatePaymentResponse>(res));
   },

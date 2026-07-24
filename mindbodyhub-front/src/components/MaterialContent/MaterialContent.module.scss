@@ -17,7 +17,7 @@
   &__heading {
     font-family: v.$font-sans;
     font-weight: 700;
-    font-size: 28px;
+    font-size: 30px;
     line-height: 128%;
     color: v.$text-dark-color;
     margin: 40px 0 14px;
@@ -27,8 +27,25 @@
     }
 
     @include m.mobile {
-      font-size: 24px;
+      font-size: 26px;
       margin-top: 32px;
+    }
+  }
+
+  &__subheadingH2 {
+    font-family: v.$font-sans;
+    font-weight: 600;
+    font-size: 24px;
+    line-height: 130%;
+    color: v.$text-dark-color;
+    margin: 32px 0 12px;
+
+    &:first-child {
+      margin-top: 0;
+    }
+
+    @include m.mobile {
+      font-size: 22px;
     }
   }
 
