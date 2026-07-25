@@ -18,6 +18,8 @@ export type IconName =
   | "credit-card"
   | "database"
   | "envelope"
+  | "eye"
+  | "eye-slash"
   | "gem"
   | "handshake"
   | "headset"

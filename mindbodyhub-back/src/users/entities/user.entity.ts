@@ -5,6 +5,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { PhoneCountry } from '../phone-country.enum';
 import { UserRole } from '../user-role.enum';
 import { UserTariff } from '../user-tariff.enum';
 
@@ -21,6 +22,14 @@ export class User {
 
   @Column({ unique: true })
   phone: string;
+
+  @Column({
+    name: 'phone_country',
+    type: 'enum',
+    enum: PhoneCountry,
+    nullable: true,
+  })
+  phoneCountry: PhoneCountry | null;
 
   @Column({ name: 'password_hash' })
   passwordHash: string;

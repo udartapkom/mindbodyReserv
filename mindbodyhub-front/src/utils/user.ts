@@ -8,6 +8,7 @@ export function normalizeUser(raw: Partial<User> & Pick<User, 'id' | 'phone' | '
   return {
     id: raw.id,
     phone: raw.phone,
+    phoneCountry: raw.phoneCountry ?? null,
     role: raw.role,
     firstName,
     lastName,
@@ -48,6 +49,21 @@ export function getTariffLabel(tariff?: string | null): string {
   }
 
   return TARIFF_LABELS[tariff] ?? tariff;
+}
+
+export const PHONE_COUNTRY_LABELS: Record<string, string> = {
+  ru: 'Россия',
+  kz: 'Казахстан',
+  by: 'Беларусь',
+  other: 'Другая страна',
+};
+
+export function getPhoneCountryLabel(country?: string | null): string {
+  if (!country) {
+    return '—';
+  }
+
+  return PHONE_COUNTRY_LABELS[country] ?? country;
 }
 
 export function getRoleLabel(role: UserRole): string {

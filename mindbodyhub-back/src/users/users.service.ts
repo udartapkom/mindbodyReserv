@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { randomUUID } from 'crypto';
 import { Repository } from 'typeorm';
 import { StorageService } from '../storage/storage.service';
+import { PhoneCountry } from './phone-country.enum';
 import { UserRole } from './user-role.enum';
 import { UserTariff } from './user-tariff.enum';
 import { User } from './entities/user.entity';
@@ -15,6 +16,7 @@ export type CreateUserData = {
   firstName?: string | null;
   lastName?: string | null;
   avatarUrl?: string | null;
+  phoneCountry?: PhoneCountry | null;
 };
 
 export type UpdateUserProfileData = {
@@ -27,6 +29,7 @@ export type AdminUpdateUserData = {
   firstName?: string | null;
   lastName?: string | null;
   phone?: string;
+  phoneCountry?: PhoneCountry | null;
   role?: UserRole;
   tariff?: UserTariff;
   tariffExpiresAt?: Date | null;
@@ -69,6 +72,7 @@ export class UsersService {
       firstName: data.firstName ?? null,
       lastName: data.lastName ?? null,
       avatarUrl: data.avatarUrl ?? null,
+      phoneCountry: data.phoneCountry ?? null,
     });
 
     return this.usersRepository.save(user);
@@ -116,6 +120,10 @@ export class UsersService {
 
     if (data.phone !== undefined) {
       user.phone = data.phone;
+    }
+
+    if (data.phoneCountry !== undefined) {
+      user.phoneCountry = data.phoneCountry;
     }
 
     if (data.role !== undefined) {

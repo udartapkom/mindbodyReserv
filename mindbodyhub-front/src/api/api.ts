@@ -181,11 +181,15 @@ export const auth = {
 
     return saveUserProfile(user);
   },
-  register: async (phone: string, password: string) => {
+  register: async (
+    phone: string,
+    password: string,
+    phoneCountry?: string,
+  ) => {
     const data = await fetch(`${getApiBaseUrl()}/auth/register`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ phone, password }),
+      body: JSON.stringify({ phone, password, phoneCountry }),
     }).then((res) => checkResponse<AuthTokensResponse>(res));
 
     saveAuthSession(data);
@@ -345,6 +349,20 @@ export const tariffsApi = {
   getComparisonPublic: async () => {
     return fetch(`${getApiBaseUrl()}/tariffs/comparison/public`).then((res) =>
       checkResponse<PriceComparison>(res),
+    );
+  },
+};
+
+export type SupportLinksResponse = {
+  telegram: string;
+  vk: string;
+  max: string;
+};
+
+export const settingsApi = {
+  getSupportLinks: async () => {
+    return fetch(`${getApiBaseUrl()}/settings/support-links`).then((res) =>
+      checkResponse<SupportLinksResponse>(res),
     );
   },
 };

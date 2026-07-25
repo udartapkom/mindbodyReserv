@@ -17,6 +17,9 @@
     height: 80px;
     box-shadow: v.$header-shadow;
     background-color: v.$white-color;
+    @include m.mobile {
+        height: 60px;
+    }
     &__container {
         display: flex;
         align-items: center;

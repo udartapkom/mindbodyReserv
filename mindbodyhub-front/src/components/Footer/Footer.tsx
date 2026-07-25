@@ -2,9 +2,13 @@ import styles from "./Footer.module.scss";
 import HeaderLogo from "../HeaderLogo/HeaderLogo";
 import Link from "next/link";
 
-function Footer() {
+type FooterProps = {
+    className?: string;
+};
+
+function Footer({ className }: FooterProps) {
     return (
-        <footer className={styles.footer}>
+        <footer className={[styles.footer, className].filter(Boolean).join(" ")}>
             <div className={styles.footer__container}>
                 <div className={styles.footer__logo}>
                     <HeaderLogo />

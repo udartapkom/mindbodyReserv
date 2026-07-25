@@ -14,4 +14,8 @@
     margin: 0 auto;
     padding-left: 24px;
     padding-right: 24px;
+    @include m.mobile {
+        padding-top: 40px;
+        padding-bottom: 40px;
+    }
 }

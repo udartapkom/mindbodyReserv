@@ -50,6 +50,7 @@ export class AuthService {
       passwordHash,
       firstName: dto.firstName ?? null,
       lastName: dto.lastName ?? null,
+      phoneCountry: dto.phoneCountry ?? null,
     });
 
     return this.issueTokens(user);

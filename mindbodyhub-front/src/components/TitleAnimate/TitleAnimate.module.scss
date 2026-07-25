@@ -1,5 +1,5 @@
 @use "../../styles/variables" as v;
-
+@use "../../styles/mixins" as m;
 .titleAnimate {
     padding: 60px 0 60px;
 }
@@ -74,8 +74,14 @@
     }
 }
 
-@media (max-width: 768px) {
-    .titleAnimate {
-        padding: 48px 0 40px;
+    @media (max-width: 768px) {
+        .titleAnimate {
+            padding: 48px 0 40px;
+        }
     }
-}
+
+    @media (max-width: 480px) {
+        .titleAnimate {
+            padding: 24px 0 20px;
+        }
+    }

@@ -2,7 +2,7 @@ import { useEffect, useRef, useState, type ChangeEvent, type FormEvent } from 'r
 import { usersApi } from '@/api/users';
 import { useAuth } from '@/context/AuthContext';
 import type { AdminUpdateUserPayload, User } from '@/types/user';
-import { UserRole, UserTariff } from '@/types/user';
+import { PhoneCountry, UserRole, UserTariff, phoneCountryLabels } from '@/types/user';
 import styles from './UsersPage.module.scss';
 
 type DrawerMode = 'view' | 'edit' | null;
@@ -97,6 +97,7 @@ function UsersPage() {
       firstName: user.firstName ?? '',
       lastName: user.lastName ?? '',
       phone: user.phone,
+      phoneCountry: user.phoneCountry ?? null,
       role: user.role,
       tariff: user.tariff ?? UserTariff.FREE,
       tariffExpiresAt: user.tariffExpiresAt ?? null,
@@ -132,6 +133,7 @@ function UsersPage() {
         firstName: form.firstName?.toString().trim() || null,
         lastName: form.lastName?.toString().trim() || null,
         phone: form.phone?.toString().trim(),
+        phoneCountry: form.phoneCountry ?? null,
         role: form.role,
         tariff: nextTariff,
         tariffExpiresAt:
@@ -312,6 +314,7 @@ function UsersPage() {
             <tr>
               <th>Пользователь</th>
               <th>Телефон</th>
+              <th>Страна</th>
               <th>Роль</th>
               <th>Тариф</th>
               <th>Действует до</th>
@@ -323,7 +326,7 @@ function UsersPage() {
           <tbody>
             {!isLoading && users.length === 0 ? (
               <tr>
-                <td colSpan={8} className={styles.usersPage__empty}>
+                <td colSpan={9} className={styles.usersPage__empty}>
                   Пользователей пока нет
                 </td>
               </tr>
@@ -344,6 +347,11 @@ function UsersPage() {
                   </div>
                 </td>
                 <td>{user.phone}</td>
+                <td>
+                  {user.phoneCountry
+                    ? phoneCountryLabels[user.phoneCountry]
+                    : '—'}
+                </td>
                 <td>
                   <span
                     className={`${styles.usersPage__badge} ${
@@ -452,6 +460,14 @@ function UsersPage() {
                     <p className={styles.usersPage__fieldValue}>{selectedUser.phone}</p>
                   </div>
                   <div className={styles.usersPage__field}>
+                    <span className={styles.usersPage__fieldLabel}>Страна номера</span>
+                    <p className={styles.usersPage__fieldValue}>
+                      {selectedUser.phoneCountry
+                        ? phoneCountryLabels[selectedUser.phoneCountry]
+                        : '—'}
+                    </p>
+                  </div>
+                  <div className={styles.usersPage__field}>
                     <span className={styles.usersPage__fieldLabel}>Роль</span>
                     <p className={styles.usersPage__fieldValue}>
                       {roleLabels[selectedUser.role]}
@@ -516,6 +532,29 @@ function UsersPage() {
                     inputMode="tel"
                     autoComplete="tel"
                   />
+
+                  <label className={styles.usersPage__fieldLabel} htmlFor="phoneCountry">
+                    Страна номера
+                  </label>
+                  <select
+                    id="phoneCountry"
+                    className={styles.usersPage__input}
+                    value={form.phoneCountry ?? ''}
+                    onChange={(e) =>
+                      setForm((prev) => ({
+                        ...prev,
+                        phoneCountry: e.target.value
+                          ? (e.target.value as PhoneCountry)
+                          : null,
+                      }))
+                    }
+                  >
+                    <option value="">Не указана</option>
+                    <option value={PhoneCountry.RU}>{phoneCountryLabels.ru}</option>
+                    <option value={PhoneCountry.KZ}>{phoneCountryLabels.kz}</option>
+                    <option value={PhoneCountry.BY}>{phoneCountryLabels.by}</option>
+                    <option value={PhoneCountry.OTHER}>{phoneCountryLabels.other}</option>
+                  </select>
 
                   <label className={styles.usersPage__fieldLabel} htmlFor="role">
                     Роль

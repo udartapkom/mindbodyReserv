@@ -13,6 +13,7 @@ import { TicketsModule } from './tickets/tickets.module';
 import { PaymentsModule } from './payments/payments.module';
 import { NotificationsModule } from './notifications/notifications.module';
 import { UsersModule } from './users/users.module';
+import { SettingsModule } from './settings/settings.module';
 
 @Module({
   imports: [
@@ -41,6 +42,7 @@ import { UsersModule } from './users/users.module';
     KnowledgeModule,
     TicketsModule,
     PaymentsModule,
+    SettingsModule,
     AuthModule,
     SeedModule,
   ],

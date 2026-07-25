@@ -1,10 +1,15 @@
 import { Transform } from 'class-transformer';
-import { IsOptional, IsString, Matches, MaxLength } from 'class-validator';
+import { IsEnum, IsOptional, IsString, Matches, MaxLength } from 'class-validator';
 import {
   PASSWORD_POLICY_MESSAGE,
   PASSWORD_POLICY_REGEX,
 } from '../../common/utils/password.util';
-import { normalizePhone } from '../../common/utils/phone.util';
+import {
+  normalizePhone,
+  PHONE_E164_MESSAGE,
+  PHONE_E164_REGEX,
+} from '../../common/utils/phone.util';
+import { PhoneCountry } from '../../users/phone-country.enum';
 
 export class RegisterDto {
   @Transform(({ value }) => {
@@ -14,10 +19,14 @@ export class RegisterDto {
       return value;
     }
   })
-  @Matches(/^\+7\d{10}$/, {
-    message: 'Phone must be a valid Russian number, e.g. +79001234567',
+  @Matches(PHONE_E164_REGEX, {
+    message: PHONE_E164_MESSAGE,
   })
   phone: string;
+
+  @IsOptional()
+  @IsEnum(PhoneCountry)
+  phoneCountry?: PhoneCountry;
 
   @IsString()
   @Matches(PASSWORD_POLICY_REGEX, {

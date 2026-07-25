@@ -6,7 +6,9 @@ import Popup from '@/components/Popup/Popup';
 import ErrorPopup from '@/components/ErrorPopup/ErrorPopup';
 import { useAuth } from '@/context/AuthContext';
 import type { IconName } from '@/shared/ui/Icon';
+import { PasswordInput } from '@/shared/ui/PasswordInput';
 import { isPasswordStrong, PASSWORD_POLICY_MESSAGE } from '@/utils/password';
+import { getPhoneCountryLabel } from '@/utils/user';
 import styles from './page.module.scss';
 
 const PHONE_CHANGE_MESSAGE = 'Обратитесь в техподдержку для смены номера телефона';
@@ -186,6 +188,20 @@ function ProfilePageContent() {
               Нажмите, чтобы узнать, как сменить номер
             </span>
           </div>
+
+          <div className={styles.profile__formGroup}>
+            <label htmlFor="phoneCountry" className={styles.profile__formGroupLabel}>
+              Страна номера
+            </label>
+            <input
+              type="text"
+              id="phoneCountry"
+              name="phoneCountry"
+              className={`${styles.profile__formGroupInput} ${styles.profile__formGroupInput_readonly}`}
+              value={getPhoneCountryLabel(user?.phoneCountry)}
+              readOnly
+            />
+          </div>
         </div>
 
         <button type="submit" className={styles.profile__submit} disabled={isProfileSaving}>
@@ -202,8 +218,7 @@ function ProfilePageContent() {
             <label htmlFor="oldPassword" className={styles.profile__formGroupLabel}>
               Старый пароль
             </label>
-            <input
-              type="password"
+            <PasswordInput
               id="oldPassword"
               name="oldPassword"
               className={styles.profile__formGroupInput}
@@ -216,8 +231,7 @@ function ProfilePageContent() {
             <label htmlFor="password" className={styles.profile__formGroupLabel}>
               Новый пароль
             </label>
-            <input
-              type="password"
+            <PasswordInput
               id="password"
               name="password"
               className={styles.profile__formGroupInput}
@@ -230,8 +244,7 @@ function ProfilePageContent() {
             <label htmlFor="confirmPassword" className={styles.profile__formGroupLabel}>
               Подтвердите пароль
             </label>
-            <input
-              type="password"
+            <PasswordInput
               id="confirmPassword"
               name="confirmPassword"
               className={styles.profile__formGroupInput}

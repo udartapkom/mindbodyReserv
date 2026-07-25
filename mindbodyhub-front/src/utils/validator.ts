@@ -1,3 +1,5 @@
+import { isValidPhone } from './phone';
+
 export interface BookingFormData {
   name: string;
   telephone: string;
@@ -23,7 +25,7 @@ export const validateBookingForm = (data: BookingFormData): ValidationErrors => 
 
   if (!data.telephone.trim()) {
     errors.telephone = 'заполните это поле';
-  } else if (data.telephone.replace(/\D/g, '').length < 10) {
+  } else if (!isValidPhone(data.telephone)) {
     errors.telephone = 'введите полный номер телефона';
   }
 

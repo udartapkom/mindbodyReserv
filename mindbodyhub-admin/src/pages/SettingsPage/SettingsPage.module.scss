@@ -160,3 +160,48 @@
     color: #b42318;
   }
 }
+
+.settingsPage__linksForm {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.settingsPage__linkRow {
+  display: grid;
+  grid-template-columns: 48px 1fr;
+  gap: 12px;
+  align-items: center;
+}
+
+.settingsPage__linkIcon {
+  width: 48px;
+  height: 48px;
+  object-fit: contain;
+}
+
+.settingsPage__input {
+  @include m.text16-400;
+  width: 100%;
+  height: 44px;
+  padding: 0 12px;
+  border: 1px solid v.$color-border;
+  border-radius: 10px;
+  background: v.$white-color;
+  color: v.$text-dark-color;
+  box-sizing: border-box;
+}
+
+.settingsPage__linksActions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  margin-top: 4px;
+}
+
+.settingsPage__success {
+  @include m.text14-400;
+  margin: 0;
+  color: #067647;
+}

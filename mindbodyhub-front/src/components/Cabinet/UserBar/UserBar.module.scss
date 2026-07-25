@@ -123,6 +123,9 @@
         &_admin {
             background: v.$light-accent-color;
             color: v.$accent-color;
+            @include m.mobile {
+                font-size: 10px;
+            }
         }
 
         &_user {
@@ -176,8 +179,11 @@
             font-size: 18px;
         }
 
-        &__meta {
-            flex-direction: column;
+         &__meta {
+            gap: 6px;
+        }
+        &__metaItem {
+            padding: 6px 8px;
         }
     }
 }

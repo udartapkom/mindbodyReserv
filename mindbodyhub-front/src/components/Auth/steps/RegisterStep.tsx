@@ -1,25 +1,35 @@
 'use client';
 
 import { useState } from 'react';
-import { PatternFormat } from 'react-number-format';
 import { authCopy } from '@/content/authCopy';
 import { Toast } from '@/shared/ui/Toast';
+import { PasswordInput } from '@/shared/ui/PasswordInput';
+import { PhoneField } from '@/shared/ui/PhoneField';
 import { isPasswordStrong, PASSWORD_POLICY_MESSAGE } from '@/utils/password';
+import type { PhoneCountryId } from '@/utils/phone';
 import styles from '../AuthFlow.module.scss';
 import Popup from '@/components/Popup/Popup';
 import ErrorPopup from '@/components/ErrorPopup/ErrorPopup';
 
 type RegisterStepProps = {
     phone: string;
+    phoneCountry: PhoneCountryId;
     onPhoneChange: (phone: string) => void;
-    onSubmit: (phone: string, password: string) => void | Promise<void>;
+    onPhoneCountryChange: (country: PhoneCountryId) => void;
+    onSubmit: (
+        phone: string,
+        password: string,
+        phoneCountry: PhoneCountryId,
+    ) => void | Promise<void>;
     onLoginClick: () => void;
     onBackClick: () => void;
 };
 
 function RegisterStep({
     phone,
+    phoneCountry,
     onPhoneChange,
+    onPhoneCountryChange,
     onSubmit,
     onLoginClick,
     onBackClick,
@@ -54,7 +64,7 @@ function RegisterStep({
 
         setShowPasswordPolicyError(false);
         setShowPasswordMismatchError(false);
-        await onSubmit(phone, password);
+        await onSubmit(phone, password, phoneCountry);
     };
     const handlePopupClose = () => {
         setIsPopupOpen(false);
@@ -71,15 +81,14 @@ function RegisterStep({
                 onSubmit={handleSubmit}
             >
                 <span className={styles.authFlow__label}>{authCopy.phoneLabel}</span>
-                <PatternFormat
-                    className={styles.authFlow__input}
+                <PhoneField
                     id="register-telephone"
                     name="telephone"
-                    format="+7 (###) ###-##-##"
-                    mask="_"
-                    placeholder={authCopy.phonePlaceholder}
+                    className={styles.authFlow__phoneField}
                     value={phone}
-                    onValueChange={(values) => onPhoneChange(values.formattedValue)}
+                    country={phoneCountry}
+                    onChange={onPhoneChange}
+                    onCountryChange={onPhoneCountryChange}
                 />
 
                 <div className={styles.authFlow__field}>
@@ -98,14 +107,14 @@ function RegisterStep({
                         variant={hasPasswordPolicyError ? 'error' : 'info'}
                     />
 
-                    <input
+                    <PasswordInput
                         className={[
                             styles.authFlow__input,
                             hasPasswordPolicyError || hasPasswordMismatch
                                 ? styles.authFlow__input_error
                                 : '',
                         ].join(' ')}
-                        type="password"
+                        wrapperClassName={styles.authFlow__passwordField}
                         placeholder={authCopy.passwordPlaceholder}
                         value={password}
                         onFocus={() => setIsPasswordFocused(true)}
@@ -115,6 +124,7 @@ function RegisterStep({
                             setShowPasswordPolicyError(false);
                             setShowPasswordMismatchError(false);
                         }}
+                        autoComplete="new-password"
                     />
                 </div>
 
@@ -126,18 +136,19 @@ function RegisterStep({
                 >
                     {authCopy.passwordConfirmLabel}
                 </span>
-                <input
+                <PasswordInput
                     className={[
                         styles.authFlow__input,
                         hasPasswordMismatch ? styles.authFlow__input_error : '',
                     ].join(' ')}
-                    type="password"
+                    wrapperClassName={styles.authFlow__passwordField}
                     placeholder={authCopy.passwordConfirmPlaceholder}
                     value={passwordConfirm}
                     onChange={(event) => {
                         setPasswordConfirm(event.target.value);
                         setShowPasswordMismatchError(false);
                     }}
+                    autoComplete="new-password"
                 />
                 <button type="submit" className={styles.authFlow__button}>
                     {authCopy.registerSubmit}

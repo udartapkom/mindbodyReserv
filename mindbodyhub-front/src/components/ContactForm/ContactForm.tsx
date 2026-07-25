@@ -1,11 +1,12 @@
 'use client';
 
 import { FormEvent, useEffect, useState } from 'react';
-import { PatternFormat } from 'react-number-format';
 import { tickets } from '@/api/api';
 import ErrorPopup from '@/components/ErrorPopup/ErrorPopup';
 import Popup from '@/components/Popup/Popup';
 import type { IconName } from '@/shared/ui/Icon';
+import { PhoneField } from '@/shared/ui/PhoneField';
+import { normalizePhone } from '@/utils/phone';
 import styles from './ContactForm.module.scss';
 import {
     getVisibleValidationErrors,
@@ -107,7 +108,7 @@ function ContactForm({
         try {
             await tickets.create({
                 name: formData.name.trim(),
-                phone: formData.telephone,
+                phone: normalizePhone(formData.telephone),
                 message: formData.question.trim(),
                 source,
             });
@@ -170,15 +171,12 @@ function ContactForm({
                 </div>
 
                 <div className={styles.contactForm__field}>
-                    <PatternFormat
+                    <PhoneField
                         id="telephone"
                         name="telephone"
-                        format="+7 (###) ###-##-##"
-                        mask="_"
-                        placeholder="+7 (___) ___-__-__"
-                        className={`${styles.contactForm__input} ${errors.telephone ? styles.contactForm__input_error : ''}`}
+                        hasError={Boolean(errors.telephone)}
                         value={formData.telephone}
-                        onValueChange={(values) => handleInputChange('telephone', values.value)}
+                        onChange={(phone) => handleInputChange('telephone', phone)}
                         onBlur={() => handleBlur('telephone')}
                         disabled={isSubmitting}
                     />

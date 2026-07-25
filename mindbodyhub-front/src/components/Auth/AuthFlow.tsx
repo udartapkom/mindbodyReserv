@@ -10,6 +10,7 @@ import Popup from '@/components/Popup/Popup';
 import ErrorPopup from '@/components/ErrorPopup/ErrorPopup';
 import styles from './AuthFlow.module.scss';
 import { useState } from 'react';
+import type { PhoneCountryId } from '@/utils/phone';
 
 function AuthFlow() {
     const { login, register } = useAuth();
@@ -21,7 +22,9 @@ function AuthFlow() {
     const {
         step,
         phone,
+        phoneCountry,
         setPhone,
+        setPhoneCountry,
         goToLogin,
         goToRegister,
         goToRecover,
@@ -38,9 +41,13 @@ function AuthFlow() {
         }
     };
 
-    const handleRegisterSubmit = async (registerPhone: string, password: string) => {
+    const handleRegisterSubmit = async (
+        registerPhone: string,
+        password: string,
+        country: PhoneCountryId,
+    ) => {
         try {
-            await register(registerPhone, password);
+            await register(registerPhone, password, country);
         } catch (e: any) {
             setAuthErrorDescription(
                 e?.message ||
@@ -63,7 +70,9 @@ function AuthFlow() {
             {step === 'login' && (
                 <LoginStep
                     phone={phone}
+                    phoneCountry={phoneCountry}
                     onPhoneChange={setPhone}
+                    onPhoneCountryChange={setPhoneCountry}
                     onSubmit={handleLoginSubmit}
                     onRegisterClick={goToRegister}
                     onRecoverClick={goToRecover}
@@ -73,7 +82,9 @@ function AuthFlow() {
             {step === 'register' && (
                 <RegisterStep
                     phone={phone}
+                    phoneCountry={phoneCountry}
                     onPhoneChange={setPhone}
+                    onPhoneCountryChange={setPhoneCountry}
                     onSubmit={handleRegisterSubmit}
                     onLoginClick={goToLogin}
                     onBackClick={goToLogin}
@@ -87,7 +98,9 @@ function AuthFlow() {
                     </p>
                     <RecoverPasswordStep
                         phone={phone}
+                        phoneCountry={phoneCountry}
                         onPhoneChange={setPhone}
+                        onPhoneCountryChange={setPhoneCountry}
                         onSubmit={handleRecoverSubmit}
                         onBackClick={goToLogin}
                     />

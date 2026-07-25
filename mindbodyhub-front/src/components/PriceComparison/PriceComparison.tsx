@@ -11,6 +11,7 @@ import styles from './PriceComparison.module.scss';
 function PriceComparison() {
     const [plans, setPlans] = useState<PublicTariff[]>([]);
     const [rows, setRows] = useState<PriceComparisonRow[]>([]);
+    const [activePlanType, setActivePlanType] = useState<string | null>(null);
 
     useEffect(() => {
         let cancelled = false;
@@ -69,11 +70,23 @@ function PriceComparison() {
                   sortOrder: index,
               }));
 
+    const defaultPlanType =
+        headerPlans.length === 0
+            ? null
+            : headerPlans.length === 3
+              ? headerPlans[1].type
+              : headerPlans[0].type;
+
+    const resolvedActivePlanType = activePlanType ?? defaultPlanType;
+    const activePlan =
+        headerPlans.find((plan) => plan.type === resolvedActivePlanType) ?? headerPlans[0];
+
     return (
         <section className={styles.priceComparison} aria-labelledby="price-comparison-title">
             <h2 id="price-comparison-title" className={styles.priceComparison__title}>
                 Сравнение тарифов
             </h2>
+
             <div className={styles.priceComparison__scroll}>
                 <div className={styles.priceComparison__table} role="table">
                     <div className={`${styles.priceComparison__row} ${styles.priceComparison__row_header}`} role="row">
@@ -116,6 +129,80 @@ function PriceComparison() {
                     ))}
                 </div>
             </div>
+
+            {activePlan ? (
+                <div className={styles.priceComparison__tabs}>
+                    <div
+                        className={styles.priceComparison__tabList}
+                        role="tablist"
+                        aria-label="Тарифы для сравнения"
+                    >
+                        {headerPlans.map((plan) => {
+                            const isActive = plan.type === activePlan.type;
+                            return (
+                                <button
+                                    key={plan.type}
+                                    type="button"
+                                    role="tab"
+                                    id={`price-comparison-tab-${plan.type}`}
+                                    aria-selected={isActive}
+                                    aria-controls={`price-comparison-panel-${plan.type}`}
+                                    tabIndex={isActive ? 0 : -1}
+                                    className={
+                                        isActive
+                                            ? `${styles.priceComparison__tab} ${styles.priceComparison__tab_active}`
+                                            : styles.priceComparison__tab
+                                    }
+                                    onClick={() => setActivePlanType(plan.type)}
+                                >
+                                    <span className={styles.priceComparison__tabTitle}>{plan.title}</span>
+                                    <span className={styles.priceComparison__tabPrice}>
+                                        {plan.price}
+                                        {plan.period}
+                                    </span>
+                                </button>
+                            );
+                        })}
+                    </div>
+
+                    <div
+                        className={styles.priceComparison__tabPanel}
+                        role="tabpanel"
+                        id={`price-comparison-panel-${activePlan.type}`}
+                        aria-labelledby={`price-comparison-tab-${activePlan.type}`}
+                    >
+                        <div className={styles.priceComparison__tabHeader}>
+                            <span className={styles.priceComparison__planName}>{activePlan.subTitle}</span>
+                            <span className={styles.priceComparison__planPrice}>
+                                {activePlan.price}
+                                {activePlan.period}
+                            </span>
+                        </div>
+                        <ul className={styles.priceComparison__featureList}>
+                            {tableRows.map((row) => {
+                                const isIncluded = row.included[activePlan.type] === true;
+                                return (
+                                    <li key={row.id} className={styles.priceComparison__featureItem}>
+                                        <span className={styles.priceComparison__featureName}>
+                                            {row.feature}
+                                        </span>
+                                        <Icon
+                                            name={isIncluded ? 'check' : 'circle'}
+                                            variant={isIncluded ? 'solid' : 'regular'}
+                                            title={isIncluded ? 'Включено' : 'Не включено'}
+                                            className={
+                                                isIncluded
+                                                    ? styles.priceComparison__icon_included
+                                                    : styles.priceComparison__icon_excluded
+                                            }
+                                        />
+                                    </li>
+                                );
+                            })}
+                        </ul>
+                    </div>
+                </div>
+            ) : null}
         </section>
     );
 }

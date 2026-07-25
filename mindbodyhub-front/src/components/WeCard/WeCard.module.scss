@@ -24,7 +24,9 @@
     }
     &__title {
         @include m.text22-600;
-
+        @include m.mobile {
+            margin: 0;
+        }
     }
     &__description {
         @include m.text16-400;

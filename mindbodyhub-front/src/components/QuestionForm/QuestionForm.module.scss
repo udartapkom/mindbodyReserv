@@ -6,6 +6,9 @@
     justify-content: center;
     padding: 60px v.$margin-page-x;
     width: 100%;
+    @include m.mobile {
+        padding: 40px 24px;
+    }
 
     &__container {
         display: grid;

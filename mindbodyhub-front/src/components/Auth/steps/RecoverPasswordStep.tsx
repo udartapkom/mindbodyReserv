@@ -1,20 +1,25 @@
 'use client';
 
 import { FormEvent } from 'react';
-import { PatternFormat } from 'react-number-format';
 import { authCopy } from '@/content/authCopy';
+import { PhoneField } from '@/shared/ui/PhoneField';
+import type { PhoneCountryId } from '@/utils/phone';
 import styles from '../AuthFlow.module.scss';
 
 type RecoverPasswordStepProps = {
     phone: string;
+    phoneCountry: PhoneCountryId;
     onPhoneChange: (phone: string) => void;
+    onPhoneCountryChange: (country: PhoneCountryId) => void;
     onSubmit: (phone: string) => void;
     onBackClick: () => void;
 };
 
 function RecoverPasswordStep({
     phone,
+    phoneCountry,
     onPhoneChange,
+    onPhoneCountryChange,
     onSubmit,
     onBackClick,
 }: RecoverPasswordStepProps) {
@@ -27,15 +32,14 @@ function RecoverPasswordStep({
         <>
             <form className={styles.authFlow__form} onSubmit={handleSubmit}>
                 <span className={styles.authFlow__label}>{authCopy.phoneLabel}</span>
-                <PatternFormat
-                    className={styles.authFlow__input}
+                <PhoneField
                     id="recover-telephone"
                     name="telephone"
-                    format="+7 (###) ###-##-##"
-                    mask="_"
-                    placeholder={authCopy.phonePlaceholder}
+                    className={styles.authFlow__phoneField}
                     value={phone}
-                    onValueChange={(values) => onPhoneChange(values.formattedValue)}
+                    country={phoneCountry}
+                    onChange={onPhoneChange}
+                    onCountryChange={onPhoneCountryChange}
                 />
                 <button type="submit" className={styles.authFlow__button}>
                     {authCopy.recoverSubmit}

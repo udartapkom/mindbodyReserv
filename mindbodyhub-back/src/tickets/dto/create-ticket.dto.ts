@@ -7,7 +7,11 @@ import {
   MaxLength,
   MinLength,
 } from 'class-validator';
-import { normalizePhone } from '../../common/utils/phone.util';
+import {
+  normalizePhone,
+  PHONE_E164_MESSAGE,
+  PHONE_E164_REGEX,
+} from '../../common/utils/phone.util';
 import { TicketSource } from '../ticket.types';
 
 export class CreateTicketDto {
@@ -23,8 +27,8 @@ export class CreateTicketDto {
       return value;
     }
   })
-  @Matches(/^\+7\d{10}$/, {
-    message: 'Phone must be a valid Russian number, e.g. +79001234567',
+  @Matches(PHONE_E164_REGEX, {
+    message: PHONE_E164_MESSAGE,
   })
   phone: string;
 

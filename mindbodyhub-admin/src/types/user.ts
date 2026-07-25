@@ -15,9 +15,26 @@ export const UserTariff = {
 
 export type UserTariff = (typeof UserTariff)[keyof typeof UserTariff];
 
+export const PhoneCountry = {
+  RU: 'ru',
+  KZ: 'kz',
+  BY: 'by',
+  OTHER: 'other',
+} as const;
+
+export type PhoneCountry = (typeof PhoneCountry)[keyof typeof PhoneCountry];
+
+export const phoneCountryLabels: Record<PhoneCountry, string> = {
+  ru: 'Россия',
+  kz: 'Казахстан',
+  by: 'Беларусь',
+  other: 'Другая страна',
+};
+
 export type User = {
   id: string;
   phone: string;
+  phoneCountry?: PhoneCountry | null;
   firstName?: string | null;
   lastName?: string | null;
   name?: string;
@@ -36,6 +53,7 @@ export type AdminUpdateUserPayload = {
   firstName?: string | null;
   lastName?: string | null;
   phone?: string;
+  phoneCountry?: PhoneCountry | null;
   role?: UserRole;
   tariff?: UserTariff;
   tariffExpiresAt?: string | null;

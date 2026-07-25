@@ -7,6 +7,9 @@
     width: 100%;
     display: flex;
     justify-content: center;
+    @include m.mobile {
+        padding: 40px 0;
+    }
     &__container {
         max-width: 1280px;
         width: 100%;
@@ -14,6 +17,9 @@
         flex-direction: column;
         align-items: center;
         justify-content: center;
+        @include m.mobile {
+            gap: 12px;;
+        }
     }
     &__icon {
         color: v.$accent-color;
@@ -23,6 +29,9 @@
     &__title {
         @include m.text46-900;
         color: v.$text-dark-color;
+        @include m.mobile {
+            margin: 0;
+        }
     }
     &__description {
         @include m.text18-400;
@@ -31,6 +40,9 @@
         &_bold {
             color: v.$accent-color;
             font-weight: 700;
+        }
+        @include m.mobile {
+            margin: 0;
         }
     }
 }

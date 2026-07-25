@@ -8,6 +8,10 @@
     justify-content: center;
     align-items: center;
     background: v.$white-color;
+    @include m.mobile {
+        padding-top: 0;
+        padding-bottom: 40px;
+    }
     &__text {
         @include m.text18-400;
         color: v.$text-dark-color;

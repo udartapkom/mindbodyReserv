@@ -2,13 +2,21 @@ import { useEffect, useMemo, useState } from 'react';
 import type { FormEvent } from 'react';
 import { Link } from 'react-router-dom';
 import { paymentsApi, type CreatePaymentResponse } from '@/api/payments';
+import { settingsApi } from '@/api/settings';
 import { tariffsApi } from '@/api/tariffs';
 import type { Payment } from '@/types/payment';
 import { PaymentStatus } from '@/types/payment';
+import type { SupportLinks } from '@/types/settings';
 import type { Tariff } from '@/types/tariff';
 import styles from './SettingsPage.module.scss';
 
 const PAID_TARIFF_TYPES = new Set(['trial', 'popular', 'vip']);
+
+const EMPTY_LINKS: SupportLinks = {
+  telegram: '',
+  vk: '',
+  max: '',
+};
 
 const statusLabels: Record<PaymentStatus, string> = {
   pending: 'Ожидает',
@@ -37,6 +45,12 @@ function SettingsPage() {
   const [error, setError] = useState('');
   const [created, setCreated] = useState<CreatePaymentResponse | null>(null);
   const [payment, setPayment] = useState<Payment | null>(null);
+
+  const [links, setLinks] = useState<SupportLinks>(EMPTY_LINKS);
+  const [isLoadingLinks, setIsLoadingLinks] = useState(true);
+  const [isSavingLinks, setIsSavingLinks] = useState(false);
+  const [linksError, setLinksError] = useState('');
+  const [linksSuccess, setLinksSuccess] = useState('');
 
   const paidTariffs = useMemo(
     () =>
@@ -68,6 +82,48 @@ function SettingsPage() {
       cancelled = true;
     };
   }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      setIsLoadingLinks(true);
+      setLinksError('');
+      try {
+        const data = await settingsApi.getSupportLinks();
+        if (!cancelled) setLinks(data);
+      } catch (err) {
+        if (!cancelled) {
+          setLinksError(getErrorMessage(err, 'Не удалось загрузить ссылки поддержки'));
+        }
+      } finally {
+        if (!cancelled) setIsLoadingLinks(false);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const onSaveLinks = async (event: FormEvent) => {
+    event.preventDefault();
+    setIsSavingLinks(true);
+    setLinksError('');
+    setLinksSuccess('');
+
+    try {
+      const saved = await settingsApi.updateSupportLinks({
+        telegram: links.telegram.trim(),
+        vk: links.vk.trim(),
+        max: links.max.trim(),
+      });
+      setLinks(saved);
+      setLinksSuccess('Ссылки сохранены');
+    } catch (err) {
+      setLinksError(getErrorMessage(err, 'Не удалось сохранить ссылки'));
+    } finally {
+      setIsSavingLinks(false);
+    }
+  };
 
   const onCreate = async (event: FormEvent) => {
     event.preventDefault();
@@ -112,6 +168,103 @@ function SettingsPage() {
   return (
     <section className={styles.settingsPage}>
       <h1 className={styles.settingsPage__title}>Настройки</h1>
+
+      <div className={styles.settingsPage__section}>
+        <h2 className={styles.settingsPage__sectionTitle}>Ссылки поддержки</h2>
+        <p className={styles.settingsPage__hint}>
+          Эти URL используются на сайте в карточках поддержки и в блоках «Написать
+          нам» (Telegram, VK, MAX).
+        </p>
+
+        <form className={styles.settingsPage__linksForm} onSubmit={onSaveLinks}>
+          <label className={styles.settingsPage__field}>
+            <span className={styles.settingsPage__label}>Telegram</span>
+            <div className={styles.settingsPage__linkRow}>
+              <img
+                className={styles.settingsPage__linkIcon}
+                src="/icons/telegram.svg"
+                alt=""
+                width={48}
+                height={48}
+              />
+              <input
+                className={styles.settingsPage__input}
+                type="url"
+                value={links.telegram}
+                disabled={isLoadingLinks || isSavingLinks}
+                onChange={(e) =>
+                  setLinks((prev) => ({ ...prev, telegram: e.target.value }))
+                }
+                placeholder="https://t.me/..."
+                required
+              />
+            </div>
+          </label>
+
+          <label className={styles.settingsPage__field}>
+            <span className={styles.settingsPage__label}>ВКонтакте</span>
+            <div className={styles.settingsPage__linkRow}>
+              <img
+                className={styles.settingsPage__linkIcon}
+                src="/icons/vk.svg"
+                alt=""
+                width={48}
+                height={48}
+              />
+              <input
+                className={styles.settingsPage__input}
+                type="url"
+                value={links.vk}
+                disabled={isLoadingLinks || isSavingLinks}
+                onChange={(e) =>
+                  setLinks((prev) => ({ ...prev, vk: e.target.value }))
+                }
+                placeholder="https://vk.com/..."
+                required
+              />
+            </div>
+          </label>
+
+          <label className={styles.settingsPage__field}>
+            <span className={styles.settingsPage__label}>MAX</span>
+            <div className={styles.settingsPage__linkRow}>
+              <img
+                className={styles.settingsPage__linkIcon}
+                src="/icons/max.svg"
+                alt=""
+                width={48}
+                height={48}
+              />
+              <input
+                className={styles.settingsPage__input}
+                type="url"
+                value={links.max}
+                disabled={isLoadingLinks || isSavingLinks}
+                onChange={(e) =>
+                  setLinks((prev) => ({ ...prev, max: e.target.value }))
+                }
+                placeholder="https://max.ru/..."
+                required
+              />
+            </div>
+          </label>
+
+          <div className={styles.settingsPage__linksActions}>
+            <button
+              type="submit"
+              className={styles.settingsPage__button}
+              disabled={isLoadingLinks || isSavingLinks}
+            >
+              {isSavingLinks ? 'Сохранение…' : 'Сохранить ссылки'}
+            </button>
+            {linksSuccess ? (
+              <p className={styles.settingsPage__success}>{linksSuccess}</p>
+            ) : null}
+          </div>
+        </form>
+
+        {linksError ? <p className={styles.settingsPage__error}>{linksError}</p> : null}
+      </div>
 
       <div className={styles.settingsPage__section}>
         <h2 className={styles.settingsPage__sectionTitle}>Тестовый платёж</h2>

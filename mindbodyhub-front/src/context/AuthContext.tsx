@@ -18,7 +18,11 @@ type AuthContextValue = {
   isAuthenticated: boolean;
   isLoading: boolean;
   login: (phone: string, password: string) => Promise<void>;
-  register: (phone: string, password: string) => Promise<void>;
+  register: (
+    phone: string,
+    password: string,
+    phoneCountry?: string,
+  ) => Promise<void>;
   logout: () => Promise<void>;
   refreshUser: () => Promise<User | null>;
   updateProfile: (payload: UpdateProfilePayload) => Promise<User>;
@@ -77,12 +81,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     router.push(next ?? "/cabinet");
   }, [router]);
 
-  const register = useCallback(async (phone: string, password: string) => {
-    await authApi.register(phone, password);
-    setUser(authStorage.getUser());
-    const next = getSafeNextPath();
-    router.push(next ?? "/cabinet");
-  }, [router]);
+  const register = useCallback(
+    async (phone: string, password: string, phoneCountry?: string) => {
+      await authApi.register(phone, password, phoneCountry);
+      setUser(authStorage.getUser());
+      const next = getSafeNextPath();
+      router.push(next ?? "/cabinet");
+    },
+    [router],
+  );
 
   const logout = useCallback(async () => {
     await authApi.logout();

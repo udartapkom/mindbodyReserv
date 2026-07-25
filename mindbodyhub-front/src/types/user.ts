@@ -3,9 +3,12 @@ export enum UserRole {
   USER = 'user',
 }
 
+export type PhoneCountry = 'ru' | 'kz' | 'by' | 'other';
+
 export type User = {
   id: string;
   phone: string;
+  phoneCountry: PhoneCountry | null;
   firstName: string | null;
   lastName: string | null;
   name?: string;

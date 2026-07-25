@@ -2,7 +2,14 @@ import { UserPublicProfile } from '../users/user.types';
 
 export type AuthUserSummary = Pick<
   UserPublicProfile,
-  'id' | 'firstName' | 'lastName' | 'phone' | 'role' | 'tariff' | 'avatarUrl'
+  | 'id'
+  | 'firstName'
+  | 'lastName'
+  | 'phone'
+  | 'phoneCountry'
+  | 'role'
+  | 'tariff'
+  | 'avatarUrl'
 >;
 
 export type AuthTokensResponse = {

@@ -11,11 +11,18 @@
     background: v.$dark-gradient;
     border-radius: 16px;
     margin: 60px 12px;
-
+    @include m.mobile {
+        margin: 40px 12px;
+        width: auto;
+    }
     &__title {
         @include m.text46-900;
         color: v.$accent-color;
         text-align: center;
         margin-bottom: 0;
+        @include m.mobile {
+            @include m.text32-600;
+            color: v.$accent-color;
+        }
     }
 }

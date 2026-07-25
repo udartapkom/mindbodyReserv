@@ -1,22 +1,27 @@
-import React from 'react';
-import styles from './SupportCardSection.module.scss';
+'use client';
+
 import SupportCard from '../SupportCard/SupportCard';
-import { supportCard } from '@/content/supportCard';
+import { buildSupportCards } from '@/content/supportCard';
+import { useSupportLinks } from '@/hooks/useSupportLinks';
+import styles from './SupportCardSection.module.scss';
 
 const SupportCardSection = () => {
-    return (
-        <section className={styles.supportCardSection}>
-            {supportCard.map((card) => (
-                <SupportCard
-                    key={card.id}
-                    title={card.title}
-                    description={card.description}
-                    icon={card.icon}
-                    link={card.link}
-                />
-            ))}
-        </section>
-    );
+  const { links } = useSupportLinks();
+  const cards = buildSupportCards(links);
+
+  return (
+    <section className={styles.supportCardSection}>
+      {cards.map((card) => (
+        <SupportCard
+          key={card.id}
+          title={card.title}
+          description={card.description}
+          icon={card.icon}
+          link={card.link}
+        />
+      ))}
+    </section>
+  );
 };
 
 export default SupportCardSection;

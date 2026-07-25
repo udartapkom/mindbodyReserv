@@ -227,8 +227,18 @@
 
     @media (max-width: 480px) {
         &__image {
-            width: 180px;
-            height: 180px;
+            width: 360px;
+            height: 360px;
+        }
+        &__priceWrapper {
+            margin-top: 22px;
+        }
+        &__subTitle {
+            margin-top: 8px;
+            margin-bottom: 8px;
+        }
+        &__description {
+            gap: 12px;
         }
 
         &::before {

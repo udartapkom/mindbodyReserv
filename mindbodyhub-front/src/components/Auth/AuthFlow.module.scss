@@ -58,8 +58,22 @@
         border: 1px solid #ccc;
         border-radius: 10px;
         margin-bottom: 10px;
+        font-weight: 500;
+        font-size: 14px;
         &:focus-visible {
             outline: none;
+        }
+    }
+
+    &__phoneField {
+        margin-bottom: 10px;
+    }
+
+    &__passwordField {
+        margin-bottom: 10px;
+
+        input {
+            margin-bottom: 0;
         }
     }
 

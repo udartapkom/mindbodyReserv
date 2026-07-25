@@ -33,11 +33,17 @@ DO $$ BEGIN
 EXCEPTION WHEN duplicate_object THEN NULL;
 END $$;
 
+DO $$ BEGIN
+  CREATE TYPE users_phone_country_enum AS ENUM ('ru', 'kz', 'by', 'other');
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
+
 CREATE TABLE IF NOT EXISTS users (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   first_name VARCHAR(100),
   last_name VARCHAR(100),
   phone VARCHAR(255) NOT NULL UNIQUE,
+  phone_country users_phone_country_enum,
   password_hash VARCHAR(255) NOT NULL,
   role users_role_enum NOT NULL DEFAULT 'user',
   tariff users_tariff_enum NOT NULL DEFAULT 'free',
@@ -119,3 +125,20 @@ CREATE TABLE IF NOT EXISTS tickets (
 
 CREATE INDEX IF NOT EXISTS idx_tickets_status ON tickets(status);
 CREATE INDEX IF NOT EXISTS idx_tickets_created_at ON tickets(created_at DESC);
+
+CREATE TABLE IF NOT EXISTS site_settings (
+  id INT PRIMARY KEY DEFAULT 1 CHECK (id = 1),
+  support_telegram_url VARCHAR(2048) NOT NULL DEFAULT 'https://t.me/mbh_support',
+  support_vk_url VARCHAR(2048) NOT NULL DEFAULT 'https://vk.com/mindbodyhubpro',
+  support_max_url VARCHAR(2048) NOT NULL DEFAULT 'https://max.ru',
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+INSERT INTO site_settings (id, support_telegram_url, support_vk_url, support_max_url)
+VALUES (
+  1,
+  'https://t.me/mbh_support',
+  'https://vk.com/mindbodyhubpro',
+  'https://max.ru'
+)
+ON CONFLICT (id) DO NOTHING;

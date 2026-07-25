@@ -1,11 +1,13 @@
 'use client';
 
 import { useCallback, useState } from 'react';
+import { DEFAULT_PHONE_COUNTRY, type PhoneCountryId } from '@/utils/phone';
 import type { AuthFlowState, AuthStep, SmsPurpose } from '../types/authFlow';
 
 const initialState: AuthFlowState = {
     step: 'login',
     phone: '',
+    phoneCountry: DEFAULT_PHONE_COUNTRY,
     smsPurpose: null,
 };
 
@@ -14,6 +16,10 @@ export function useAuthFlow() {
 
     const setPhone = useCallback((phone: string) => {
         setState((current) => ({ ...current, phone }));
+    }, []);
+
+    const setPhoneCountry = useCallback((phoneCountry: PhoneCountryId) => {
+        setState((current) => ({ ...current, phoneCountry }));
     }, []);
 
     const goToStep = useCallback((step: AuthStep) => {
@@ -37,16 +43,18 @@ export function useAuthFlow() {
     }, []);
 
     const goToSms = useCallback((phone: string, purpose: SmsPurpose) => {
-        setState({
+        setState((current) => ({
             step: 'sms',
             phone,
+            phoneCountry: current.phoneCountry,
             smsPurpose: purpose,
-        });
+        }));
     }, []);
 
     return {
         ...state,
         setPhone,
+        setPhoneCountry,
         goToStep,
         goToLogin,
         goToRegister,

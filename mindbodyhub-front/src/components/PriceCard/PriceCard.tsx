@@ -146,7 +146,7 @@ function PriceCard({
                             : undefined
                     }
                     onClick={handleConnectClick}
-                    disabled={isSubmitting || isCurrentTariff || isLoading}
+                    disabled={isSubmitting || isCurrentTariff}
                 >
                     {isCurrentTariff
                         ? 'Активен'

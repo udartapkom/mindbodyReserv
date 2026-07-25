@@ -10,7 +10,12 @@ import {
   MaxLength,
   ValidateIf,
 } from 'class-validator';
-import { normalizePhone } from '../../common/utils/phone.util';
+import {
+  normalizePhone,
+  PHONE_E164_MESSAGE,
+  PHONE_E164_REGEX,
+} from '../../common/utils/phone.util';
+import { PhoneCountry } from '../phone-country.enum';
 import { UserRole } from '../user-role.enum';
 import { UserTariff } from '../user-tariff.enum';
 
@@ -35,10 +40,15 @@ export class AdminUpdateUserDto {
       return value;
     }
   })
-  @Matches(/^\+7\d{10}$/, {
-    message: 'Phone must be a valid Russian number, e.g. +79001234567',
+  @Matches(PHONE_E164_REGEX, {
+    message: PHONE_E164_MESSAGE,
   })
   phone?: string;
+
+  @IsOptional()
+  @ValidateIf((_, value) => value !== null)
+  @IsEnum(PhoneCountry)
+  phoneCountry?: PhoneCountry | null;
 
   @IsOptional()
   @IsEnum(UserRole)

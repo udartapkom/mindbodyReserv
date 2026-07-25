@@ -1,13 +1,17 @@
 'use client';
 
 import { useState } from 'react';
-import { PatternFormat } from 'react-number-format';
 import { authCopy } from '@/content/authCopy';
+import { PasswordInput } from '@/shared/ui/PasswordInput';
+import { PhoneField } from '@/shared/ui/PhoneField';
+import type { PhoneCountryId } from '@/utils/phone';
 import styles from '../AuthFlow.module.scss';
 
 type LoginStepProps = {
     phone: string;
+    phoneCountry: PhoneCountryId;
     onPhoneChange: (phone: string) => void;
+    onPhoneCountryChange: (country: PhoneCountryId) => void;
     onSubmit: (phone: string, password: string) => void;
     onRegisterClick: () => void;
     onRecoverClick: () => void;
@@ -15,7 +19,9 @@ type LoginStepProps = {
 
 function LoginStep({
     phone,
+    phoneCountry,
     onPhoneChange,
+    onPhoneCountryChange,
     onSubmit,
     onRegisterClick,
     onRecoverClick,
@@ -30,23 +36,23 @@ function LoginStep({
         <>
             <form className={styles.authFlow__form} onSubmit={handleSubmit}>
                 <span className={styles.authFlow__label}>{authCopy.phoneLabel}</span>
-                <PatternFormat
-                    className={styles.authFlow__input}
+                <PhoneField
                     id="login-telephone"
                     name="telephone"
-                    format="+7 (###) ###-##-##"
-                    mask="_"
-                    placeholder={authCopy.phonePlaceholder}
+                    className={styles.authFlow__phoneField}
                     value={phone}
-                    onValueChange={(values) => onPhoneChange(values.formattedValue)}
+                    country={phoneCountry}
+                    onChange={onPhoneChange}
+                    onCountryChange={onPhoneCountryChange}
                 />
                 <span className={styles.authFlow__label}>{authCopy.passwordLabel}</span>
-                <input
+                <PasswordInput
                     className={styles.authFlow__input}
-                    type="password"
+                    wrapperClassName={styles.authFlow__passwordField}
                     placeholder={authCopy.passwordPlaceholder}
                     value={password}
                     onChange={(event) => setPassword(event.target.value)}
+                    autoComplete="current-password"
                 />
                 <button type="submit" className={styles.authFlow__button}>
                     {authCopy.loginSubmit}
