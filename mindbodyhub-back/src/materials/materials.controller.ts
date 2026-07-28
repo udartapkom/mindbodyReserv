@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Delete,
@@ -14,6 +15,10 @@ import {
 import { CurrentUser, type AuthUser } from '../auth/decorators/current-user.decorator';
 import { Public } from '../auth/decorators/public.decorator';
 import { Roles } from '../auth/decorators/roles.decorator';
+import {
+  canAccessMaterialShelf,
+  isPaidTariffShelf,
+} from '../common/tariff/access.types';
 import { UserRole } from '../users/user-role.enum';
 import { CreateMaterialDto } from './dto/create-material.dto';
 import { UpdateMaterialDto } from './dto/update-material.dto';
@@ -31,22 +36,69 @@ export class MaterialsController {
 
   /**
    * Public catalog.
-   * - anonymous: only free
-   * - authenticated free: free + registered
-   * - authenticated with paid tariff: free + registered + ladder up to user.tariff
+   * - ?tariffType=… — exact shelf (strict). free is always public.
+   * - without tariffType: ladder access
    * - ?forTariff=... optional override (debug / explicit)
    */
   @Public()
   @Get('public')
   async findPublic(
     @Query('forTariff') forTariff?: string,
+    @Query('tariffType') tariffType?: string,
     @CurrentUser() user?: AuthUser | null,
   ): Promise<MaterialDto[]> {
-    const materials = await this.materialsService.findPublishedForAccess({
+    const access = {
       forTariff,
       userTariff: user?.tariff,
       isAuthenticated: Boolean(user),
-    });
+    };
+
+    const exactType = tariffType?.trim();
+    if (exactType) {
+      if (exactType === FREE_ACCESS_TYPE) {
+        const materials =
+          await this.materialsService.findPublishedExact(FREE_ACCESS_TYPE);
+        return materials.map(toMaterialDto);
+      }
+
+      if (!canAccessMaterialShelf(exactType, access)) {
+        throw new ForbiddenException(
+          'Материалы этого раздела доступны по тарифу',
+        );
+      }
+
+      const materials =
+        await this.materialsService.findPublishedExact(exactType);
+      return materials.map(toMaterialDto);
+    }
+
+    const materials = await this.materialsService.findPublishedForAccess(access);
+    return materials.map(toMaterialDto);
+  }
+
+  /** Paid cabinet shelves — exact tariffType only (trial|popular|vip). */
+  @Get('cabinet/:tariffType')
+  async findCabinetShelf(
+    @Param('tariffType') tariffType: string,
+    @CurrentUser() user: AuthUser,
+  ): Promise<MaterialDto[]> {
+    const type = tariffType.trim();
+    if (!isPaidTariffShelf(type)) {
+      throw new BadRequestException(
+        'Раздел материалов: укажите trial, popular или vip',
+      );
+    }
+
+    if (
+      !canAccessMaterialShelf(type, {
+        isAuthenticated: true,
+        userTariff: user.tariff,
+      })
+    ) {
+      throw new ForbiddenException('Раздел доступен на более высоком тарифе');
+    }
+
+    const materials = await this.materialsService.findPublishedExact(type);
     return materials.map(toMaterialDto);
   }
 

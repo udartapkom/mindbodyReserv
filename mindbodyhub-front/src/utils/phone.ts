@@ -6,7 +6,7 @@ export type PhoneCountryOption = {
   code: string;
   label: string;
   dialCode: string;
-  /** PatternFormat mask; null = free E.164 input */
+  /** National PatternFormat mask (without dial code); null = free E.164 input */
   format: string | null;
   placeholder: string;
   /** Digits after dial code expected for masked countries */
@@ -19,8 +19,8 @@ export const PHONE_COUNTRIES: PhoneCountryOption[] = [
     code: 'RU',
     label: 'Россия (+7)',
     dialCode: '7',
-    format: '+7 (###) ###-##-##',
-    placeholder: '+7 (___) ___-__-__',
+    format: '(###) ###-##-##',
+    placeholder: '(___) ___-__-__',
     nationalLength: 10,
   },
   {
@@ -28,8 +28,8 @@ export const PHONE_COUNTRIES: PhoneCountryOption[] = [
     code: 'KZ',
     label: 'Казахстан (+7)',
     dialCode: '7',
-    format: '+7 (###) ###-##-##',
-    placeholder: '+7 (___) ___-__-__',
+    format: '(###) ###-##-##',
+    placeholder: '(___) ___-__-__',
     nationalLength: 10,
   },
   {
@@ -37,8 +37,8 @@ export const PHONE_COUNTRIES: PhoneCountryOption[] = [
     code: 'BY',
     label: 'Беларусь (+375)',
     dialCode: '375',
-    format: '+375 (##) ###-##-##',
-    placeholder: '+375 (__) ___-__-__',
+    format: '(##) ###-##-##',
+    placeholder: '(__) ___-__-__',
     nationalLength: 9,
   },
   {
@@ -59,6 +59,56 @@ export const PHONE_E164_REGEX = /^\+[1-9]\d{7,14}$/;
 
 export function getPhoneCountry(id: PhoneCountryId): PhoneCountryOption {
   return PHONE_COUNTRIES.find((item) => item.id === id) ?? PHONE_COUNTRIES[0];
+}
+
+/** Label for the country select, e.g. "RU +7". */
+export function getPhoneSelectLabel(option: PhoneCountryOption): string {
+  if (!option.dialCode) {
+    return option.code;
+  }
+  return `${option.code} +${option.dialCode}`;
+}
+
+/** Digits after the country dial code, for national mask display. */
+export function extractNationalDigits(
+  phone: string,
+  country: PhoneCountryId,
+): string {
+  const option = getPhoneCountry(country);
+  const digits = phone.replace(/\D/g, '');
+  if (!digits) {
+    return '';
+  }
+  if (!option.dialCode) {
+    return digits;
+  }
+  if (digits.startsWith(option.dialCode)) {
+    return digits.slice(option.dialCode.length);
+  }
+  if (
+    option.dialCode === '7' &&
+    digits.startsWith('8') &&
+    digits.length === 11
+  ) {
+    return digits.slice(1);
+  }
+  return digits;
+}
+
+/** Build E.164-like value from national digits + selected country. */
+export function composeInternationalPhone(
+  nationalDigits: string,
+  country: PhoneCountryId,
+): string {
+  const option = getPhoneCountry(country);
+  const digits = nationalDigits.replace(/\D/g, '');
+  if (!digits) {
+    return '';
+  }
+  if (!option.dialCode) {
+    return `+${digits}`;
+  }
+  return `+${option.dialCode}${digits}`;
 }
 
 export function detectPhoneCountry(phone: string): PhoneCountryId {

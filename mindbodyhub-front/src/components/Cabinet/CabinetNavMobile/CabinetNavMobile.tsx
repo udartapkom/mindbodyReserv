@@ -8,7 +8,7 @@ import styles from './CabinetNavMobile.module.scss';
 
 const shortLabels: Record<string, string> = {
   '/cabinet': 'Главная',
-  '/cabinet/courses': 'Статьи',
+  '/cabinet/materials': 'Материалы',
   '/cabinet/support': 'Помощь',
   '/cabinet/faq': 'FAQ',
   '/cabinet/profile': 'Профиль',

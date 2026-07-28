@@ -1,5 +1,5 @@
-import CoursesPageContent from './CoursesPageContent';
+import { redirect } from 'next/navigation';
 
-export default function CabinetCoursesPage() {
-  return <CoursesPageContent />;
+export default function CabinetCoursesRedirectPage() {
+  redirect('/cabinet/materials');
 }

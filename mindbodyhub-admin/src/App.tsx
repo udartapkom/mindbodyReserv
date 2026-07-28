@@ -9,6 +9,7 @@ import MaterialsPage from '@/pages/MaterialsPage/MaterialsPage';
 import MaterialEditPage from '@/pages/MaterialEditPage/MaterialEditPage';
 import KnowledgePage from '@/pages/KnowledgePage/KnowledgePage';
 import KnowledgeEditPage from '@/pages/KnowledgeEditPage/KnowledgeEditPage';
+import QuotesPage from '@/pages/QuotesPage/QuotesPage';
 import TicketsPage from '@/pages/TicketsPage/TicketsPage';
 import PaymentsPage from '@/pages/PaymentsPage/PaymentsPage';
 import SettingsPage from '@/pages/SettingsPage/SettingsPage';
@@ -27,6 +28,7 @@ function App() {
             <Route path="/materials/:id/edit" element={<MaterialEditPage />} />
             <Route path="/knowledge" element={<KnowledgePage />} />
             <Route path="/knowledge/:id/edit" element={<KnowledgeEditPage />} />
+            <Route path="/quotes" element={<QuotesPage />} />
             <Route path="/tariffs" element={<TariffsPage />} />
             <Route path="/tickets" element={<TicketsPage />} />
             <Route path="/accounting" element={<PaymentsPage />} />

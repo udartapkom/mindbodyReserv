@@ -17,7 +17,7 @@ export const authCopy = {
     passwordLabel: 'Пароль',
     passwordConfirmLabel: 'Подтверждение пароля',
     codeLabel: 'Код из SMS',
-    phonePlaceholder: '+7 (___) ___-__-__',
+    phonePlaceholder: '(___) ___-__-__',
     passwordPlaceholder: 'Пароль',
     passwordConfirmPlaceholder: 'Повторите пароль',
     codePlaceholder: '0000',

@@ -53,7 +53,7 @@ export class MaterialsService {
    * Published materials available for the current visitor:
    * - free — always
    * - registered — when authenticated
-   * - paid ladder — by userTariff / forTariff (vip ⊃ popular ⊃ trial)
+   * - paid — exact user.tariff only (no overlap between trial/popular/vip)
    */
   findPublishedForAccess(options: MaterialAccessOptions = {}): Promise<Material[]> {
     const types = getAccessibleTariffTypes({
@@ -65,6 +65,17 @@ export class MaterialsService {
       where: {
         status: MaterialStatus.PUBLISHED,
         tariffType: In(types),
+      },
+      order: { publishedAt: 'DESC', updatedAt: 'DESC' },
+    });
+  }
+
+  /** Strict shelf: only materials with this exact tariffType. */
+  findPublishedExact(tariffType: string): Promise<Material[]> {
+    return this.materialsRepository.find({
+      where: {
+        status: MaterialStatus.PUBLISHED,
+        tariffType,
       },
       order: { publishedAt: 'DESC', updatedAt: 'DESC' },
     });

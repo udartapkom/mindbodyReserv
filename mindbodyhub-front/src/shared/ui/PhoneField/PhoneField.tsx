@@ -3,9 +3,12 @@
 import { useEffect, useState } from 'react';
 import { PatternFormat } from 'react-number-format';
 import {
+  composeInternationalPhone,
   DEFAULT_PHONE_COUNTRY,
   detectPhoneCountry,
+  extractNationalDigits,
   getPhoneCountry,
+  getPhoneSelectLabel,
   PHONE_COUNTRIES,
   sanitizeInternationalPhoneInput,
   type PhoneCountryId,
@@ -104,7 +107,7 @@ function PhoneField({
       >
         {PHONE_COUNTRIES.map((item) => (
           <option key={item.id} value={item.id} title={item.label}>
-            {item.code}
+            {getPhoneSelectLabel(item)}
           </option>
         ))}
       </select>
@@ -117,11 +120,14 @@ function PhoneField({
           format={option.format}
           mask="_"
           placeholder={option.placeholder}
-          value={value}
+          value={extractNationalDigits(value, country)}
+          valueIsNumericString
           disabled={disabled}
           aria-invalid={ariaInvalid ?? hasError}
           onBlur={onBlur}
-          onValueChange={(values) => onChange(values.formattedValue)}
+          onValueChange={(values) =>
+            onChange(composeInternationalPhone(values.value, country))
+          }
         />
       ) : (
         <input

@@ -31,6 +31,7 @@ export type IconName =
   | "lock"
   | "message"
   | "pencil"
+  | "quote"
   | "question"
   | "rotate-left"
   | "share-alt"

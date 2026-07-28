@@ -210,10 +210,18 @@ const optionalAuthHeaders = (): HeadersInit => {
 };
 
 export const problems = {
-  getProblems: async () => {
-    const data = await fetch(`${getApiBaseUrl()}/materials/public`, {
-      headers: optionalAuthHeaders(),
-    }).then((res) => checkResponse<Problem[]>(res));
+  getProblems: async (tariffType?: string) => {
+    const params = new URLSearchParams();
+    if (tariffType) {
+      params.set("tariffType", tariffType);
+    }
+    const query = params.toString();
+    const data = await fetch(
+      `${getApiBaseUrl()}/materials/public${query ? `?${query}` : ""}`,
+      {
+        headers: optionalAuthHeaders(),
+      },
+    ).then((res) => checkResponse<Problem[]>(res));
     return data;
   },
   getBySlug: async (slug: string) => {
@@ -222,6 +230,11 @@ export const problems = {
       { headers: optionalAuthHeaders() },
     ).then((res) => checkResponse<Material>(res));
     return data;
+  },
+  getCabinetShelf: async (tariffType: string) => {
+    return fetchWithAuth(
+      `${getApiBaseUrl()}/materials/cabinet/${encodeURIComponent(tariffType)}`,
+    ).then((res) => checkResponse<Problem[]>(res));
   },
 };
 
@@ -374,5 +387,41 @@ export const payments = {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ tariffType }),
     }).then((res) => checkResponse<CreatePaymentResponse>(res));
+  },
+};
+
+export type Quote = {
+  id: string;
+  body: string;
+  author: string | null;
+  status: string;
+  publishedAt: string | null;
+  createdAt?: string;
+  updatedAt?: string;
+};
+
+export type QuotesPageResponse = {
+  items: Quote[];
+  total: number;
+  page: number;
+  limit: number;
+  hasMore: boolean;
+};
+
+export const quotes = {
+  getFeed: async (page = 1, limit = 10) => {
+    const params = new URLSearchParams({
+      page: String(page),
+      limit: String(limit),
+    });
+    return fetchWithAuth(`${getApiBaseUrl()}/quotes/cabinet?${params}`).then(
+      (res) => checkResponse<QuotesPageResponse>(res),
+    );
+  },
+
+  getToday: async () => {
+    return fetchWithAuth(`${getApiBaseUrl()}/quotes/cabinet/today`).then((res) =>
+      checkResponse<Quote | null>(res),
+    );
   },
 };

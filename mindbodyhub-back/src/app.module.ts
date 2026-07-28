@@ -8,6 +8,7 @@ import { SeedModule } from './seed/seed.module';
 import { StorageModule } from './storage/storage.module';
 import { MaterialsModule } from './materials/materials.module';
 import { KnowledgeModule } from './knowledge/knowledge.module';
+import { QuotesModule } from './quotes/quotes.module';
 import { TariffsModule } from './tariffs/tariffs.module';
 import { TicketsModule } from './tickets/tickets.module';
 import { PaymentsModule } from './payments/payments.module';
@@ -40,6 +41,7 @@ import { SettingsModule } from './settings/settings.module';
     TariffsModule,
     MaterialsModule,
     KnowledgeModule,
+    QuotesModule,
     TicketsModule,
     PaymentsModule,
     SettingsModule,

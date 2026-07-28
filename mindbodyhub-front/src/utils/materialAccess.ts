@@ -1,6 +1,9 @@
 import { FREE_ACCESS_TYPE, REGISTERED_ACCESS_TYPE } from "@/types/material";
 import { TARIFF_LABELS } from "@/utils/user";
 
+export const PAID_MATERIAL_SHELVES = ["trial", "popular", "vip"] as const;
+export type PaidMaterialShelf = (typeof PAID_MATERIAL_SHELVES)[number];
+
 /** Display order for course groups (paid first). */
 export const MATERIAL_ACCESS_GROUP_ORDER = [
   "vip",
@@ -9,6 +12,28 @@ export const MATERIAL_ACCESS_GROUP_ORDER = [
   REGISTERED_ACCESS_TYPE,
   FREE_ACCESS_TYPE,
 ] as const;
+
+export function isPaidMaterialShelf(value: string): value is PaidMaterialShelf {
+  return (PAID_MATERIAL_SHELVES as readonly string[]).includes(value);
+}
+
+/**
+ * Strict shelf access: paid tariffs do not overlap (vip → only vip shelf).
+ */
+export function canAccessMaterialShelf(
+  shelfTariff: string,
+  userTariff?: string | null,
+): boolean {
+  const tariff = userTariff?.trim() || "free";
+  if (shelfTariff === FREE_ACCESS_TYPE) return true;
+  if (shelfTariff === REGISTERED_ACCESS_TYPE) return tariff !== "free";
+  if (!isPaidMaterialShelf(shelfTariff)) return false;
+  return tariff === shelfTariff;
+}
+
+export function getMaterialShelfLabel(tariffType: string): string {
+  return TARIFF_LABELS[tariffType] ?? tariffType;
+}
 
 export function getMaterialAccessLabel(tariffType: string): string {
   if (tariffType === REGISTERED_ACCESS_TYPE) {

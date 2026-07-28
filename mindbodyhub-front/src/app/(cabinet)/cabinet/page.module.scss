@@ -1,0 +1,25 @@
+@use '../../../styles/mixins' as m;
+@use '../../../styles/variables' as v;
+
+.dashboard {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+
+  &__header {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  &__title {
+    @include m.text32-600;
+    margin: 0;
+  }
+
+  &__lead {
+    @include m.text16-500;
+    margin: 0;
+    color: v.$text-light-color;
+  }
+}

@@ -40,7 +40,7 @@ export function isUserTariff(value: string): value is UserTariff {
 
 /**
  * Resolve which material.tariffType values the visitor may see.
- * Paid tariffs are inclusive down the ladder (vip ⊃ popular ⊃ trial).
+ * Paid tariffs do not overlap: user sees only their own paid shelf (+ free/registered).
  */
 export function getAccessibleTariffTypes(options: {
   isAuthenticated?: boolean;
@@ -57,11 +57,8 @@ export function getAccessibleTariffTypes(options: {
     return [...types];
   }
 
-  const ladderIndex = PAID_TARIFF_LADDER.indexOf(tariff as PaidTariffType);
-  if (ladderIndex >= 0) {
-    for (let i = 0; i <= ladderIndex; i += 1) {
-      types.add(PAID_TARIFF_LADDER[i]);
-    }
+  if (PAID_TARIFF_LADDER.includes(tariff as PaidTariffType)) {
+    types.add(tariff);
     return [...types];
   }
 
@@ -75,4 +72,36 @@ export function isMaterialAccessible(
   options: { isAuthenticated?: boolean; userTariff?: string | null },
 ): boolean {
   return getAccessibleTariffTypes(options).includes(materialTariffType);
+}
+
+/** User may open a paid cabinet shelf (exact tariff match only). */
+export function canAccessMaterialShelf(
+  shelfTariffType: string,
+  options: { isAuthenticated?: boolean; userTariff?: string | null },
+): boolean {
+  const tariff = options.userTariff?.trim() || FREE_ACCESS_TYPE;
+  if (!isPaidTariffShelf(shelfTariffType)) {
+    return isMaterialAccessible(shelfTariffType, options);
+  }
+  return tariff === shelfTariffType;
+}
+
+export function isPaidTariffShelf(value: string): value is PaidTariffType {
+  return (PAID_TARIFF_LADDER as readonly string[]).includes(value);
+}
+
+/** Quotes: any paid tariff (trial, popular, vip); admins always. */
+export function canAccessQuotes(options: {
+  isAuthenticated?: boolean;
+  userTariff?: string | null;
+  userRole?: string | null;
+}): boolean {
+  if (options.userRole === 'admin') {
+    return true;
+  }
+  const tariff = options.userTariff?.trim();
+  if (!tariff || tariff === UserTariff.FREE) {
+    return false;
+  }
+  return PAID_TARIFF_LADDER.includes(tariff as PaidTariffType);
 }

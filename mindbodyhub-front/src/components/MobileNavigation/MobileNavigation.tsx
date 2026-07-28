@@ -7,7 +7,7 @@ import styles from "./MobileNavigation.module.scss";
 import { useAuth } from "@/context/AuthContext";
 
 function MobileNavigation() {
-    const { materials, isLoading } = usePublicMaterials();
+    const { materials, isLoading } = usePublicMaterials({ tariffType: "free" });
     const { isAuthenticated, logout } = useAuth();
     const [isOpen, setIsOpen] = useState(false);
     const [isProblemsOpen, setIsProblemsOpen] = useState(false);

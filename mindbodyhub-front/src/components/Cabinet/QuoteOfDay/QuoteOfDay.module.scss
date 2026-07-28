@@ -1,0 +1,56 @@
+@use '../../../styles/mixins' as m;
+@use '../../../styles/variables' as v;
+
+.quoteOfDay {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 20px;
+  border: 1px solid v.$color-border;
+  border-radius: 16px;
+  background: v.$white-color;
+  box-shadow: v.$block-shadow;
+  max-width: 640px;
+
+  &__header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  &__title {
+    @include m.text22-600;
+    margin: 0;
+  }
+
+  &__body {
+    @include m.text16-400;
+    margin: 0;
+    white-space: pre-wrap;
+    line-height: 1.55;
+  }
+
+  &__author {
+    @include m.text14-400;
+    font-style: normal;
+    color: v.$text-light-color;
+  }
+
+  &__text {
+    @include m.text16-400;
+    margin: 0;
+    color: v.$text-light-color;
+  }
+
+  &__link {
+    @include m.text14-400;
+    color: v.$accent-color;
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}

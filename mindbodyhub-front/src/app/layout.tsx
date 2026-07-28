@@ -42,7 +42,8 @@ export const metadata: Metadata = {
     description: "Психология здоровья и бизнеса",
     images: [
       {
-        url: "/icons/og-image.png",
+        // Cache-bust so messengers re-fetch after logo update
+        url: "/icons/og-image.png?v=20260727",
         width: 1200,
         height: 630,
         alt: "MindBodyHub",
@@ -53,7 +54,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "MindBodyHub",
     description: "Психология здоровья и бизнеса",
-    images: ["/icons/og-image.png"],
+    images: ["/icons/og-image.png?v=20260727"],
   },
 };
 

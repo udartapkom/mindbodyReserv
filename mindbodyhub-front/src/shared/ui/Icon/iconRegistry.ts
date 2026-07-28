@@ -24,6 +24,7 @@ import {
   faLock,
   faMessage,
   faPencil,
+  faQuoteLeft,
   faRotateLeft,
   faShareNodes,
   faShield,
@@ -90,6 +91,7 @@ export const iconRegistry: Record<
     xmark: faXmark,
     home: faHome,
     pencil: faPencil,
+    quote: faQuoteLeft,
     question: faQuestion,
   },
   regular: {

@@ -7,7 +7,7 @@ import { Icon } from "@/shared/ui/Icon";
 import styles from "./ProblemsDropdown.module.scss";
 
 function ProblemsDropdown() {
-  const { materials, isLoading } = usePublicMaterials();
+  const { materials, isLoading } = usePublicMaterials({ tariffType: "free" });
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLLIElement>(null);
 

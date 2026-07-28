@@ -1,0 +1,198 @@
+@use '../../styles/variables' as v;
+@use '../../styles/mixins' as m;
+
+.quotesPage {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+
+  &__header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+  }
+
+  &__title {
+    @include m.text32-600;
+    margin: 0 0 6px;
+  }
+
+  &__subtitle {
+    @include m.text16-500;
+    margin: 0;
+    color: v.$text-light-color;
+  }
+
+  &__error {
+    @include m.text14-400;
+    color: v.$color-error;
+    margin: 0;
+  }
+
+  &__form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 20px;
+    border: 1px solid v.$color-border;
+    border-radius: 16px;
+    background: v.$white-color;
+    box-shadow: v.$block-shadow;
+  }
+
+  &__formHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  &__formTitle {
+    @include m.text22-600;
+    margin: 0;
+  }
+
+  &__label {
+    @include m.text14-400;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    flex: 1;
+  }
+
+  &__row {
+    display: grid;
+    grid-template-columns: 1fr 220px;
+    gap: 12px;
+
+    @media (max-width: 720px) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  &__input,
+  &__textarea {
+    @include m.text16-400;
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid v.$color-border;
+    border-radius: 10px;
+    box-sizing: border-box;
+    font: inherit;
+  }
+
+  &__textarea {
+    resize: vertical;
+    min-height: 96px;
+  }
+
+  &__checkbox {
+    @include m.text14-400;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  &__primaryBtn {
+    @include m.text16-500;
+    align-self: flex-start;
+    height: 44px;
+    padding: 0 18px;
+    border: none;
+    border-radius: 10px;
+    background: v.$accent-color;
+    color: v.$white-color;
+    cursor: pointer;
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+  }
+
+  &__tableCard {
+    background: v.$white-color;
+    border: 1px solid v.$color-border;
+    border-radius: 16px;
+    box-shadow: v.$block-shadow;
+    overflow: auto;
+  }
+
+  &__table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 820px;
+
+    th,
+    td {
+      @include m.text14-400;
+      padding: 14px 16px;
+      text-align: left;
+      border-bottom: 1px solid v.$color-border;
+      vertical-align: top;
+    }
+
+    th {
+      font-weight: 600;
+      background: v.$light-accent-color;
+    }
+  }
+
+  &__empty {
+    text-align: center !important;
+    color: v.$text-light-color;
+  }
+
+  &__bodyCell {
+    max-width: 420px;
+  }
+
+  &__bodyPreview {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    white-space: pre-wrap;
+  }
+
+  &__badge_published,
+  &__badge_draft {
+    @include m.text14-400;
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 999px;
+  }
+
+  &__badge_published {
+    background: rgba(v.$accent-color, 0.12);
+    color: v.$accent-color;
+  }
+
+  &__badge_draft {
+    background: rgba(v.$text-light-color, 0.12);
+    color: v.$text-light-color;
+  }
+
+  &__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  &__linkBtn,
+  &__dangerBtn {
+    @include m.text14-400;
+    padding: 0;
+    border: none;
+    background: none;
+    cursor: pointer;
+  }
+
+  &__linkBtn {
+    color: v.$accent-color;
+  }
+
+  &__dangerBtn {
+    color: v.$color-error;
+  }
+}
