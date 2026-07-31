@@ -2,12 +2,12 @@ import { UserRole } from '@/types/user';
 
 const PAID_TARIFFS = ['trial', 'popular', 'vip'] as const;
 
-/** Quotes: any paid tariff; admins always (for preview). */
+/** Quotes: any paid tariff; staff (admin/editor) always (for preview). */
 export function canAccessQuotes(
   userTariff?: string | null,
   userRole?: string | null,
 ): boolean {
-  if (userRole === UserRole.ADMIN) {
+  if (userRole === UserRole.ADMIN || userRole === UserRole.EDITOR) {
     return true;
   }
   const tariff = userTariff?.trim() || 'free';

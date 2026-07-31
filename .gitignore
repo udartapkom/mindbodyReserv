@@ -9,6 +9,10 @@ mindbodyhub-front/out/
 build/
 dist/
 
+# generated deploy metadata
+mindbodyhub-front/public/version.json
+mindbodyhub-back/dist/version.json
+
 # misc
 .DS_Store
 *.pem

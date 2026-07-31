@@ -10,10 +10,19 @@ const BLOCK_TYPES: KnowledgeBlockType[] = [
   'paragraph',
   'image',
   'link',
+  'list',
+  'quote',
 ];
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
+}
+
+function normalizeListItems(raw: unknown): string[] {
+  if (!Array.isArray(raw)) return [];
+  return raw
+    .map((item) => (typeof item === 'string' ? item : ''))
+    .filter((item) => item.trim().length > 0);
 }
 
 export function normalizeKnowledgeBlocks(raw: unknown): KnowledgeBlock[] {
@@ -66,6 +75,23 @@ export function normalizeKnowledgeBlocks(raw: unknown): KnowledgeBlock[] {
       }
 
       return { id, type: 'link', text: text || url, url };
+    }
+
+    if (type === 'list') {
+      const style = item.style === 'ol' ? 'ol' : 'ul';
+      if (!Array.isArray(item.items)) {
+        throw new BadRequestException(
+          `blocks[${index}] list requires items array`,
+        );
+      }
+      const items = normalizeListItems(item.items);
+      return { id, type: 'list', style, items };
+    }
+
+    if (type === 'quote') {
+      const text = typeof item.text === 'string' ? item.text : '';
+      const variant = item.variant === 'callout' ? 'callout' : 'quote';
+      return { id, type: 'quote', text, variant };
     }
 
     const text = typeof item.text === 'string' ? item.text : '';

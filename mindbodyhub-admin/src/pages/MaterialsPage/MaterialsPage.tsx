@@ -330,6 +330,10 @@ function MaterialsPage() {
                               ? `: ${block.text.slice(0, 60)}${block.text.length > 60 ? '…' : ''}`
                               : ''}
                             {block.type === 'image' ? `: ${block.alt || block.url}` : ''}
+                            {block.type === 'link' ? `: ${block.url}` : ''}
+                            {block.type === 'list'
+                              ? `: ${block.items.filter(Boolean).length} пункт(ов)`
+                              : ''}
                           </span>
                         ))}
                   </p>

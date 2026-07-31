@@ -1,12 +1,13 @@
 import { auth as authStorage } from './auth';
 import { getApiBaseUrl } from './config';
-import type { User } from '@/types/user';
+import { canAccessAdminPanel, type User } from '@/types/user';
 
 type AuthTokensResponse = {
   accessToken: string;
   refreshToken: string;
   user: User;
 };
+
 
 export const checkResponse = async <T>(res: Response): Promise<T> => {
   if (!res.ok) {
@@ -60,6 +61,12 @@ export async function refreshAccessToken(): Promise<boolean> {
       }
 
       const data = (await res.json()) as AuthTokensResponse;
+
+      if (!canAccessAdminPanel(data.user?.role)) {
+        authStorage.removeToken();
+        return false;
+      }
+
       authStorage.setToken(data.accessToken);
       authStorage.setRefreshToken(data.refreshToken);
       authStorage.setUser(normalizeUser(data.user));

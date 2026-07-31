@@ -129,6 +129,15 @@ function MobileNavigation() {
                         <ul
                             className={`${styles.mobileNavigation__subList} ${isProblemsOpen ? styles.mobileNavigation__subList_open : ""}`}
                         >
+                            <li>
+                                <Link
+                                    className={styles.mobileNavigation__subLink}
+                                    href="/problems"
+                                    onClick={closeMenu}
+                                >
+                                    Все готовые решения
+                                </Link>
+                            </li>
                             {isLoading && (
                                 <li>
                                     <span className={styles.mobileNavigation__subLink}>

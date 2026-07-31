@@ -1,9 +1,28 @@
 export const UserRole = {
   ADMIN: 'admin',
+  EDITOR: 'editor',
   USER: 'user',
 } as const;
 
 export type UserRole = (typeof UserRole)[keyof typeof UserRole];
+
+export function canAccessAdminPanel(
+  role: UserRole | string | null | undefined,
+): boolean {
+  return role === UserRole.ADMIN || role === UserRole.EDITOR;
+}
+
+export function isAdminRole(
+  role: UserRole | string | null | undefined,
+): boolean {
+  return role === UserRole.ADMIN;
+}
+
+export function getAdminHomePath(
+  role: UserRole | string | null | undefined,
+): string {
+  return isAdminRole(role) ? '/users' : '/materials';
+}
 
 /** User subscription tariff (registered is material-only access, not stored on user) */
 export const UserTariff = {
@@ -47,6 +66,19 @@ export type User = {
   phoneVerifiedAt?: string | null;
   createdAt?: string;
   updatedAt?: string;
+};
+
+/** Narrow user directory for editors */
+export type UserLookupItem = {
+  id: string;
+  phone: string;
+  firstName: string | null;
+  lastName: string | null;
+  role: UserRole;
+  tariff: UserTariff;
+  isActive: boolean;
+  createdAt: string;
+  name?: string;
 };
 
 export type AdminUpdateUserPayload = {

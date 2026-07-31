@@ -19,6 +19,9 @@ export function normalizeUser(raw: Partial<User> & Pick<User, 'id' | 'phone' | '
     tariffExpiresAt: raw.tariffExpiresAt ?? null,
     isActive: raw.isActive ?? true,
     phoneVerifiedAt: raw.phoneVerifiedAt ?? null,
+    notifySupportReplies: raw.notifySupportReplies ?? true,
+    notifyNewMaterials: raw.notifyNewMaterials ?? false,
+    notifyDailyQuote: raw.notifyDailyQuote ?? false,
     createdAt: raw.createdAt ?? '',
     updatedAt: raw.updatedAt ?? '',
   };

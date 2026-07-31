@@ -78,6 +78,17 @@ ADMIN_PANEL_URL=https://admin.mindbodyhub.pro
 
 (значения из `bots/.env`: `VK_BOT_TOKEN` и `ADMIN_ID` → `VK_ADMIN_ID`)
 
+Web Push (PWA-уведомления пользователям):
+
+```env
+VAPID_PUBLIC_KEY=
+VAPID_PRIVATE_KEY=
+VAPID_SUBJECT=mailto:support@mindbodyhub.pro
+```
+
+Ключи: `npx web-push generate-vapid-keys` (в каталоге `mindbodyhub-back`).
+На проде после миграции: `deploy/migrations/013_push_subscriptions.sql`.
+
 ## Storage module
 
 `StorageService` (global) methods:

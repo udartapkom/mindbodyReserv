@@ -2,13 +2,20 @@ import { useEffect, useRef, useState, type ChangeEvent, type FormEvent } from 'r
 import { usersApi } from '@/api/users';
 import { useAuth } from '@/context/AuthContext';
 import type { AdminUpdateUserPayload, User } from '@/types/user';
-import { PhoneCountry, UserRole, UserTariff, phoneCountryLabels } from '@/types/user';
+import {
+  PhoneCountry,
+  UserRole,
+  UserTariff,
+  isAdminRole,
+  phoneCountryLabels,
+} from '@/types/user';
 import styles from './UsersPage.module.scss';
 
 type DrawerMode = 'view' | 'edit' | null;
 
 const roleLabels: Record<UserRole, string> = {
   admin: 'Админ',
+  editor: 'Редактор',
   user: 'Пользователь',
 };
 
@@ -55,6 +62,7 @@ function getErrorMessage(error: unknown, fallback: string): string {
 
 function UsersPage() {
   const { user: currentUser } = useAuth();
+  const canManage = isAdminRole(currentUser?.role);
   const [users, setUsers] = useState<User[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [listError, setListError] = useState('');
@@ -72,8 +80,24 @@ function UsersPage() {
     setIsLoading(true);
     setListError('');
     try {
-      const data = await usersApi.getAll();
-      setUsers(data);
+      if (canManage) {
+        setUsers(await usersApi.getAll());
+      } else {
+        const items = await usersApi.lookup();
+        setUsers(
+          items.map((item) => ({
+            id: item.id,
+            phone: item.phone,
+            firstName: item.firstName,
+            lastName: item.lastName,
+            name: item.name,
+            role: item.role,
+            tariff: item.tariff,
+            isActive: item.isActive,
+            createdAt: item.createdAt,
+          })),
+        );
+      }
     } catch {
       setListError('Не удалось загрузить список пользователей');
     } finally {
@@ -83,9 +107,12 @@ function UsersPage() {
 
   useEffect(() => {
     void loadUsers();
-  }, []);
+  }, [canManage]);
 
   const openDrawer = (user: User, nextMode: 'view' | 'edit') => {
+    if (nextMode === 'edit' && !canManage) {
+      nextMode = 'view';
+    }
     setSelectedUser(user);
     setMode(nextMode);
     setSaveError('');
@@ -265,29 +292,33 @@ function UsersPage() {
         >
           Просмотр
         </button>
-        <button
-          type="button"
-          className={`${styles.usersPage__actionBtn} ${styles.usersPage__actionBtn_primary}`}
-          onClick={() => openDrawer(user, 'edit')}
-        >
-          Редактировать
-        </button>
-        <button
-          type="button"
-          className={`${styles.usersPage__actionBtn} ${styles.usersPage__actionBtn_warning}`}
-          onClick={() => void handleToggleBlock(user)}
-          disabled={isSelf || isBusy}
-        >
-          {isBusy ? '...' : isBlocked ? 'Разблокировать' : 'Заблокировать'}
-        </button>
-        <button
-          type="button"
-          className={`${styles.usersPage__actionBtn} ${styles.usersPage__actionBtn_danger}`}
-          onClick={() => void handleDelete(user)}
-          disabled={isSelf || isBusy}
-        >
-          {isBusy ? '...' : 'Удалить'}
-        </button>
+        {canManage ? (
+          <>
+            <button
+              type="button"
+              className={`${styles.usersPage__actionBtn} ${styles.usersPage__actionBtn_primary}`}
+              onClick={() => openDrawer(user, 'edit')}
+            >
+              Редактировать
+            </button>
+            <button
+              type="button"
+              className={`${styles.usersPage__actionBtn} ${styles.usersPage__actionBtn_warning}`}
+              onClick={() => void handleToggleBlock(user)}
+              disabled={isSelf || isBusy}
+            >
+              {isBusy ? '...' : isBlocked ? 'Разблокировать' : 'Заблокировать'}
+            </button>
+            <button
+              type="button"
+              className={`${styles.usersPage__actionBtn} ${styles.usersPage__actionBtn_danger}`}
+              onClick={() => void handleDelete(user)}
+              disabled={isSelf || isBusy}
+            >
+              {isBusy ? '...' : 'Удалить'}
+            </button>
+          </>
+        ) : null}
       </div>
     );
   };
@@ -301,7 +332,11 @@ function UsersPage() {
         <div>
           <h1 className={styles.usersPage__title}>Пользователи</h1>
           <p className={styles.usersPage__subtitle}>
-            {isLoading ? 'Загрузка...' : `${users.length} пользователей`}
+            {isLoading
+              ? 'Загрузка...'
+              : canManage
+                ? `${users.length} пользователей`
+                : `${users.length} пользователей · только просмотр`}
           </p>
         </div>
       </header>
@@ -357,7 +392,9 @@ function UsersPage() {
                     className={`${styles.usersPage__badge} ${
                       user.role === UserRole.ADMIN
                         ? styles.usersPage__badge_admin
-                        : styles.usersPage__badge_user
+                        : user.role === UserRole.EDITOR
+                          ? styles.usersPage__badge_admin
+                          : styles.usersPage__badge_user
                     }`}
                   >
                     {roleLabels[user.role]}
@@ -568,6 +605,7 @@ function UsersPage() {
                     }
                   >
                     <option value={UserRole.USER}>Пользователь</option>
+                    <option value={UserRole.EDITOR}>Редактор</option>
                     <option value={UserRole.ADMIN}>Админ</option>
                   </select>
 
@@ -645,7 +683,7 @@ function UsersPage() {
               )}
             </div>
 
-            {mode === 'view' ? (
+            {mode === 'view' && canManage ? (
               <div className={styles.usersPage__drawerFooter}>
                 <button
                   type="button"

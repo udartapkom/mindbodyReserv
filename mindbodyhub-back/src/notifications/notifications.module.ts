@@ -1,9 +1,21 @@
 import { Global, Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { QuotesModule } from '../quotes/quotes.module';
+import { User } from '../users/entities/user.entity';
+import { PushSubscription } from './entities/push-subscription.entity';
+import { PushController } from './push.controller';
+import { PushNotifyService } from './push-notify.service';
+import { QuotePushCronService } from './quote-push-cron.service';
 import { VkNotifyService } from './vk-notify.service';
 
 @Global()
 @Module({
-  providers: [VkNotifyService],
-  exports: [VkNotifyService],
+  imports: [
+    TypeOrmModule.forFeature([PushSubscription, User]),
+    QuotesModule,
+  ],
+  controllers: [PushController],
+  providers: [VkNotifyService, PushNotifyService, QuotePushCronService],
+  exports: [VkNotifyService, PushNotifyService],
 })
 export class NotificationsModule {}

@@ -11,7 +11,7 @@ import { useNavigate } from 'react-router-dom';
 import { auth as authStorage } from '@/api/auth';
 import { auth as authApi } from '@/api/api';
 import type { User } from '@/types/user';
-import { UserRole } from '@/types/user';
+import { canAccessAdminPanel, getAdminHomePath } from '@/types/user';
 
 type AuthContextValue = {
   user: User | null;
@@ -41,7 +41,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       try {
         const profile = await authApi.getProfile();
 
-        if (profile.role !== UserRole.ADMIN) {
+        if (!canAccessAdminPanel(profile.role)) {
           authStorage.removeToken();
           setUser(null);
           return;
@@ -62,8 +62,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const login = useCallback(
     async (phone: string, password: string) => {
       await authApi.login(phone, password);
-      setUser(authStorage.getUser());
-      navigate('/users');
+      const nextUser = authStorage.getUser();
+      setUser(nextUser);
+      navigate(getAdminHomePath(nextUser?.role));
     },
     [navigate],
   );

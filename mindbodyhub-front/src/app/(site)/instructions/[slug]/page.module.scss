@@ -97,6 +97,15 @@
     }
   }
 
+  &__metaRow {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px 16px;
+    margin: 0 0 12px;
+  }
+
   &__summary {
     font-family: v.$font-sans;
     font-weight: 400;
@@ -128,5 +137,9 @@
     @include m.mobile {
       padding: 20px 20px 32px;
     }
+  }
+
+  &__toc {
+    margin-bottom: 24px;
   }
 }

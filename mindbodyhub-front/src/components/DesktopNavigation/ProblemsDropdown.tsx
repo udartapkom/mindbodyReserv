@@ -49,6 +49,16 @@ function ProblemsDropdown() {
       </button>
 
       <ul className={styles.dropdown__menu} role="menu">
+        <li role="none">
+          <Link
+            role="menuitem"
+            className={styles.dropdown__link}
+            href="/problems"
+            onClick={() => setIsOpen(false)}
+          >
+            Все готовые решения
+          </Link>
+        </li>
         {isLoading && (
           <li className={styles.dropdown__empty} role="none">
             Загрузка…

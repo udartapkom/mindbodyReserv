@@ -1,6 +1,6 @@
 import { getApiBaseUrl } from './api';
 import { authHeaders, checkResponse, fetchWithAuth } from './http';
-import type { AdminUpdateUserPayload, User } from '@/types/user';
+import type { AdminUpdateUserPayload, User, UserLookupItem } from '@/types/user';
 
 const normalizeUser = (user: User): User => ({
   ...user,
@@ -11,6 +11,11 @@ const normalizeUser = (user: User): User => ({
   avatar: user.avatar || user.avatarUrl || undefined,
 });
 
+const normalizeLookup = (user: UserLookupItem): UserLookupItem => ({
+  ...user,
+  name: [user.firstName, user.lastName].filter(Boolean).join(' ') || user.phone,
+});
+
 export const usersApi = {
   getAll: async (): Promise<User[]> => {
     const users = await fetchWithAuth(`${getApiBaseUrl()}/users`, {
@@ -18,6 +23,15 @@ export const usersApi = {
     }).then((res) => checkResponse<User[]>(res));
 
     return users.map(normalizeUser);
+  },
+
+  /** Read-only directory for admin + editor */
+  lookup: async (): Promise<UserLookupItem[]> => {
+    const users = await fetchWithAuth(`${getApiBaseUrl()}/users/lookup`, {
+      headers: authHeaders(),
+    }).then((res) => checkResponse<UserLookupItem[]>(res));
+
+    return users.map(normalizeLookup);
   },
 
   getById: async (id: string): Promise<User> => {

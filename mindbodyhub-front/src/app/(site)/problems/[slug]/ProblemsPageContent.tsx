@@ -1,10 +1,23 @@
 "use client";
 
 import Link from "next/link";
+import MaterialAdjacentNav from "@/components/MaterialAdjacentNav/MaterialAdjacentNav";
 import MaterialContent from "@/components/MaterialContent/MaterialContent";
+import MaterialReadingMeta from "@/components/MaterialReadingMeta/MaterialReadingMeta";
+import MaterialScrollAids from "@/components/MaterialScrollAids/MaterialScrollAids";
+import MaterialShareButton from "@/components/MaterialShareButton/MaterialShareButton";
+import MaterialToc from "@/components/MaterialToc/MaterialToc";
 import { useAuth } from "@/context/AuthContext";
 import { useMaterialBySlug } from "@/hooks/useMaterialBySlug";
+import { usePublicMaterials } from "@/hooks/usePublicMaterials";
+import { FREE_ACCESS_TYPE } from "@/types/material";
 import { getMaterialAccessLabel } from "@/utils/materialAccess";
+import { extractMaterialToc, getAdjacentMaterials } from "@/utils/materialToc";
+import {
+  estimateReadingMinutes,
+  formatPublishedAt,
+  formatReadingTimeLabel,
+} from "@/utils/readingTime";
 import styles from "./page.module.scss";
 
 type ProblemsPageContentProps = {
@@ -14,6 +27,7 @@ type ProblemsPageContentProps = {
 function ProblemsPageContent({ slug }: ProblemsPageContentProps) {
   const { isAuthenticated } = useAuth();
   const state = useMaterialBySlug(slug);
+  const { materials } = usePublicMaterials({ tariffType: FREE_ACCESS_TYPE });
 
   if (state.status === "loading") {
     return (
@@ -63,9 +77,25 @@ function ProblemsPageContent({ slug }: ProblemsPageContentProps) {
   }
 
   const { material } = state;
+  const toc = extractMaterialToc(material.blocks);
+  const { prev, next } = getAdjacentMaterials(materials, slug);
+  const readingTimeLabel = formatReadingTimeLabel(
+    estimateReadingMinutes(material.blocks),
+  );
+  const publishedLabel =
+    material.showMetadata !== false
+      ? formatPublishedAt(material.publishedAt)
+      : null;
 
   return (
     <div className={styles.page}>
+      <MaterialScrollAids materialId={material.id} />
+      <div className={styles.page__backWrap}>
+        <Link className={styles.page__back} href="/problems">
+          ← Все готовые решения
+        </Link>
+      </div>
+
       <article className={styles.page__shell}>
         {material.coverUrl ? (
           <div className={styles.page__hero}>
@@ -84,6 +114,17 @@ function ProblemsPageContent({ slug }: ProblemsPageContentProps) {
             </p>
           ) : null}
           <h1 className={styles.page__title}>{material.title}</h1>
+          <div className={styles.page__metaRow}>
+            <MaterialReadingMeta
+              readingTimeLabel={readingTimeLabel}
+              publishedLabel={publishedLabel}
+              publishedDateTime={material.publishedAt}
+            />
+            <MaterialShareButton
+              title={material.title}
+              text={material.summary}
+            />
+          </div>
           {material.showMetadata !== false && material.summary ? (
             <p className={styles.page__summary}>{material.summary}</p>
           ) : null}
@@ -92,7 +133,28 @@ function ProblemsPageContent({ slug }: ProblemsPageContentProps) {
         <div className={styles.page__divider} />
 
         <div className={styles.page__body}>
+          <MaterialToc items={toc} className={styles.page__toc} />
           <MaterialContent blocks={material.blocks} />
+          <MaterialAdjacentNav
+            prev={
+              prev
+                ? {
+                    slug: prev.slug,
+                    title: prev.title,
+                    href: `/problems/${prev.slug}`,
+                  }
+                : null
+            }
+            next={
+              next
+                ? {
+                    slug: next.slug,
+                    title: next.title,
+                    href: `/problems/${next.slug}`,
+                  }
+                : null
+            }
+          />
         </div>
       </article>
     </div>

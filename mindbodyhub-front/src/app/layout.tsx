@@ -1,5 +1,7 @@
 import { AuthProvider } from "@/context/AuthContext";
-import type { Metadata } from "next";
+import PwaRegister from "@/components/Pwa/PwaRegister";
+import PwaPushSync from "@/components/Pwa/PwaPushSync";
+import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import Script from "next/script";
 import "@/shared/config/fontawesome";
@@ -25,7 +27,7 @@ export const metadata: Metadata = {
     default: "MindBodyHub - психология здоровья и бизнеса",
     template: "%s | MindBodyHub",
   },
-  description: "Психология здоровья и бизнеса",
+  description: "MindBodyHub — это пространство для самостоятельной работы с тревогой, выгоранием, отношениями и другими запросами. Мы даём рабочие инструменты психологии и поддержку, а не готовые ответы и быстрые обещания.",
   icons: {
     icon: [
       { url: "/icons/icon.svg", type: "image/svg+xml" },
@@ -56,6 +58,16 @@ export const metadata: Metadata = {
     description: "Психология здоровья и бизнеса",
     images: ["/icons/og-image.png?v=20260727"],
   },
+  appleWebApp: {
+    capable: true,
+    title: "MindBodyHub",
+    statusBarStyle: "default",
+  },
+  applicationName: "MindBodyHub",
+};
+
+export const viewport: Viewport = {
+  themeColor: "#3B82F6",
 };
 
 export default function RootLayout({
@@ -109,6 +121,8 @@ export default function RootLayout({
           </div>
         </noscript>
         <AuthProvider>
+          <PwaRegister />
+          <PwaPushSync />
           {children}
         </AuthProvider>
       </body>

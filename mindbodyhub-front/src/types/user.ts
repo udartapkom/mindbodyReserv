@@ -1,5 +1,6 @@
 export enum UserRole {
   ADMIN = 'admin',
+  EDITOR = 'editor',
   USER = 'user',
 }
 
@@ -19,6 +20,9 @@ export type User = {
   tariffExpiresAt: string | null;
   isActive: boolean;
   phoneVerifiedAt: string | null;
+  notifySupportReplies: boolean;
+  notifyNewMaterials: boolean;
+  notifyDailyQuote: boolean;
   createdAt: string;
   updatedAt: string;
 };
@@ -26,6 +30,9 @@ export type User = {
 export type UpdateProfilePayload = {
   firstName?: string;
   lastName?: string;
+  notifySupportReplies?: boolean;
+  notifyNewMaterials?: boolean;
+  notifyDailyQuote?: boolean;
 };
 
 export type ChangePasswordPayload = {

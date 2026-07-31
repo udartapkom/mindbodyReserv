@@ -1,0 +1,95 @@
+@use '../../../styles/mixins' as m;
+@use '../../../styles/variables' as v;
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 28px 24px;
+  background: v.$white-color;
+  border: 1px solid v.$color-border;
+  border-radius: 16px;
+  box-shadow: v.$block-shadow;
+
+  @include m.mobile {
+    padding: 22px 18px;
+  }
+}
+
+.title {
+  @include m.text22-600;
+  margin: 0;
+}
+
+.hint {
+  @include m.text14-400;
+  margin: -8px 0 0;
+  color: v.$text-light-color;
+}
+
+.status {
+  @include m.text14-400;
+  margin: 0;
+  padding: 12px 16px;
+  border-radius: 10px;
+  background: v.$light-accent-color;
+  color: v.$text-dark-color;
+  border: 1px solid v.$color-border;
+}
+
+.statusOk {
+  background: #ecfdf5;
+  color: v.$color-dark-green;
+  border-color: #a7f3d0;
+}
+
+.button {
+  @include m.text16-500;
+  align-self: flex-start;
+  margin-top: 4px;
+  padding: 12px 24px;
+  height: 48px;
+  border: none;
+  border-radius: 10px;
+  background: v.$accent-color;
+  color: v.$white-color;
+  cursor: pointer;
+  transition: opacity 0.2s ease, translate 0.2s ease;
+
+  &:hover:not(:disabled) {
+    translate: 0 -1px;
+    opacity: 0.95;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.prefsTitle {
+  @include m.text16-500;
+  margin: 8px 0 0;
+}
+
+.prefs {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.toggle {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  @include m.text14-400;
+  color: v.$text-dark-color;
+  cursor: pointer;
+
+  input {
+    width: 18px;
+    height: 18px;
+    accent-color: v.$accent-color;
+    cursor: pointer;
+  }
+}

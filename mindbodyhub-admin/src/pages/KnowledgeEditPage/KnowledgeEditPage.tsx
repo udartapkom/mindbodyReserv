@@ -72,6 +72,15 @@ function KnowledgeEditPage() {
     void load();
   }, [id]);
 
+  const scrollToBlock = (blockId: string) => {
+    window.setTimeout(() => {
+      document.getElementById(`editor-block-${blockId}`)?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center',
+      });
+    }, 50);
+  };
+
   const addBlock = (type: KnowledgeBlock['type']) => {
     const blockId = createBlockId();
 
@@ -80,27 +89,86 @@ function KnowledgeEditPage() {
         ...prev,
         { id: blockId, type: 'image', key: '', url: '', alt: '', showAlt: true },
       ]);
-      return;
-    }
-
-    if (type === 'link') {
+    } else if (type === 'link') {
       setBlocks((prev) => [
         ...prev,
         { id: blockId, type: 'link', text: '', url: '' },
       ]);
-      return;
-    }
-
-    if (type === 'subheading') {
+    } else if (type === 'list') {
+      setBlocks((prev) => [
+        ...prev,
+        { id: blockId, type: 'list', style: 'ul', items: [''] },
+      ]);
+    } else if (type === 'quote') {
+      setBlocks((prev) => [
+        ...prev,
+        { id: blockId, type: 'quote', text: '', variant: 'quote' },
+      ]);
+    } else if (type === 'subheading') {
       setBlocks((prev) => [
         ...prev,
         { id: blockId, type: 'subheading', text: '', level: 3 },
       ]);
-      return;
+    } else {
+      setBlocks((prev) => [...prev, { id: blockId, type, text: '' }]);
     }
 
-    setBlocks((prev) => [...prev, { id: blockId, type, text: '' }]);
+    scrollToBlock(blockId);
   };
+
+  const renderAddBlockToolbar = (className: string) => (
+    <div className={className}>
+      <button
+        type="button"
+        className={styles.knowledgeEditPage__btn}
+        onClick={() => addBlock('heading')}
+      >
+        + Заголовок
+      </button>
+      <button
+        type="button"
+        className={styles.knowledgeEditPage__btn}
+        onClick={() => addBlock('subheading')}
+      >
+        + Подзаголовок
+      </button>
+      <button
+        type="button"
+        className={styles.knowledgeEditPage__btn}
+        onClick={() => addBlock('paragraph')}
+      >
+        + Абзац
+      </button>
+      <button
+        type="button"
+        className={styles.knowledgeEditPage__btn}
+        onClick={() => addBlock('list')}
+      >
+        + Список
+      </button>
+      <button
+        type="button"
+        className={styles.knowledgeEditPage__btn}
+        onClick={() => addBlock('quote')}
+      >
+        + Цитата
+      </button>
+      <button
+        type="button"
+        className={styles.knowledgeEditPage__btn}
+        onClick={() => addBlock('link')}
+      >
+        + Ссылка
+      </button>
+      <button
+        type="button"
+        className={styles.knowledgeEditPage__btn}
+        onClick={() => addBlock('image')}
+      >
+        + Изображение
+      </button>
+    </div>
+  );
 
   const updateBlock = (blockId: string, patch: Partial<KnowledgeBlock>) => {
     setBlocks((prev) =>
@@ -459,43 +527,7 @@ function KnowledgeEditPage() {
       <div className={styles.knowledgeEditPage__card}>
         <h2 className={styles.knowledgeEditPage__sectionTitle}>Контент</h2>
 
-        <div className={styles.knowledgeEditPage__toolbar}>
-          <button
-            type="button"
-            className={styles.knowledgeEditPage__btn}
-            onClick={() => addBlock('heading')}
-          >
-            + Заголовок
-          </button>
-          <button
-            type="button"
-            className={styles.knowledgeEditPage__btn}
-            onClick={() => addBlock('subheading')}
-          >
-            + Подзаголовок
-          </button>
-          <button
-            type="button"
-            className={styles.knowledgeEditPage__btn}
-            onClick={() => addBlock('paragraph')}
-          >
-            + Абзац
-          </button>
-          <button
-            type="button"
-            className={styles.knowledgeEditPage__btn}
-            onClick={() => addBlock('link')}
-          >
-            + Ссылка
-          </button>
-          <button
-            type="button"
-            className={styles.knowledgeEditPage__btn}
-            onClick={() => addBlock('image')}
-          >
-            + Изображение
-          </button>
-        </div>
+        {renderAddBlockToolbar(styles.knowledgeEditPage__toolbar)}
 
         <input
           ref={fileInputRef}
@@ -508,18 +540,23 @@ function KnowledgeEditPage() {
         <div className={styles.knowledgeEditPage__blocks}>
           {blocks.length === 0 ? (
             <p className={styles.knowledgeEditPage__empty}>
-              Добавьте заголовок, абзац, ссылку или изображение
+              Добавьте заголовок, абзац, список, цитату, ссылку или изображение
             </p>
           ) : null}
 
           {blocks.map((block, index) => (
-            <article key={block.id} className={styles.knowledgeEditPage__block}>
-              <div className={styles.knowledgeEditPage__blockHeader}>
+            <article
+              key={block.id}
+              id={`editor-block-${block.id}`}
+              className={styles.knowledgeEditPage__block}
+            >              <div className={styles.knowledgeEditPage__blockHeader}>
                 <div className={styles.knowledgeEditPage__blockTypeRow}>
                   <span className={styles.knowledgeEditPage__blockType}>
                     {block.type === 'heading' && 'Заголовок'}
                     {block.type === 'subheading' && 'Подзаголовок'}
                     {block.type === 'paragraph' && 'Абзац'}
+                    {block.type === 'list' && 'Список'}
+                    {block.type === 'quote' && 'Цитата / callout'}
                     {block.type === 'link' && 'Ссылка'}
                     {block.type === 'image' && 'Изображение'}
                   </span>
@@ -537,6 +574,41 @@ function KnowledgeEditPage() {
                       >
                         <option value={2}>H2 — крупный</option>
                         <option value={3}>H3 — обычный</option>
+                      </select>
+                    </label>
+                  ) : null}
+                  {block.type === 'list' ? (
+                    <label className={styles.knowledgeEditPage__levelLabel}>
+                      Вид
+                      <select
+                        className={styles.knowledgeEditPage__levelSelect}
+                        value={block.style}
+                        onChange={(e) =>
+                          updateBlock(block.id, {
+                            style: e.target.value === 'ol' ? 'ol' : 'ul',
+                          })
+                        }
+                      >
+                        <option value="ul">Маркированный</option>
+                        <option value="ol">Нумерованный</option>
+                      </select>
+                    </label>
+                  ) : null}
+                  {block.type === 'quote' ? (
+                    <label className={styles.knowledgeEditPage__levelLabel}>
+                      Вид
+                      <select
+                        className={styles.knowledgeEditPage__levelSelect}
+                        value={block.variant ?? 'quote'}
+                        onChange={(e) =>
+                          updateBlock(block.id, {
+                            variant:
+                              e.target.value === 'callout' ? 'callout' : 'quote',
+                          })
+                        }
+                      >
+                        <option value="quote">Цитата</option>
+                        <option value="callout">Callout / тезис</option>
                       </select>
                     </label>
                   ) : null}
@@ -606,7 +678,7 @@ function KnowledgeEditPage() {
                     className={styles.knowledgeEditPage__paragraphInput}
                     value={block.text}
                     onChange={(e) => updateBlock(block.id, { text: e.target.value })}
-                    placeholder="Текст абзаца. Ссылки: [текст](https://...)"
+                    placeholder="Текст абзаца. **жирный**, ссылки: [текст](https://...)"
                   />
                   <button
                     type="button"
@@ -616,10 +688,48 @@ function KnowledgeEditPage() {
                     Вставить ссылку в текст
                   </button>
                   <p className={styles.knowledgeEditPage__hint}>
-                    Можно выделить фрагмент текста и нажать кнопку — или вписать вручную
-                    в формате [текст](https://example.com)
+                    Можно выделить фрагмент текста и нажать кнопку — или вписать вручную:
+                    **жирный**, [текст](https://example.com)
                   </p>
                 </>
+              ) : null}
+
+              {block.type === 'list' ? (
+                <>
+                  <label
+                    className={styles.knowledgeEditPage__fieldLabel}
+                    htmlFor={`list-${block.id}`}
+                  >
+                    Пункты (по одному на строку)
+                  </label>
+                  <textarea
+                    id={`list-${block.id}`}
+                    className={styles.knowledgeEditPage__paragraphInput}
+                    value={block.items.join('\n')}
+                    onChange={(e) =>
+                      updateBlock(block.id, {
+                        items: e.target.value.split('\n'),
+                      })
+                    }
+                    placeholder={'Первый пункт\nВторой пункт'}
+                  />
+                  <p className={styles.knowledgeEditPage__hint}>
+                    В пунктах тоже работают **жирный** и [ссылка](url)
+                  </p>
+                </>
+              ) : null}
+
+              {block.type === 'quote' ? (
+                <textarea
+                  className={styles.knowledgeEditPage__paragraphInput}
+                  value={block.text}
+                  onChange={(e) => updateBlock(block.id, { text: e.target.value })}
+                  placeholder={
+                    (block.variant ?? 'quote') === 'callout'
+                      ? 'Важный тезис или подсказка'
+                      : 'Текст цитаты'
+                  }
+                />
               ) : null}
 
               {block.type === 'link' ? (
@@ -710,6 +820,10 @@ function KnowledgeEditPage() {
             </article>
           ))}
         </div>
+
+        {renderAddBlockToolbar(
+          `${styles.knowledgeEditPage__toolbar} ${styles.knowledgeEditPage__toolbar_sticky}`,
+        )}
       </div>
     </section>
   );

@@ -33,23 +33,23 @@ export class AdminSeedService implements OnModuleInit {
     }
 
     const phone = normalizePhone(phoneRaw);
-    const passwordHash = await argon2.hash(password);
     const existingUser = await this.usersService.findByPhone(phone);
 
-    if (existingUser?.role === UserRole.ADMIN) {
-      this.logger.log(`Admin seed skipped: ${phone} is already admin`);
-      return;
-    }
-
+    // Never auto-promote a demoted/non-admin user on restart.
     if (existingUser) {
-      const admin = await this.usersService.promoteToAdmin(
-        existingUser.id,
-        passwordHash,
+      if (existingUser.role === UserRole.ADMIN) {
+        this.logger.log(`Admin seed skipped: ${phone} is already admin`);
+        return;
+      }
+
+      this.logger.warn(
+        `Admin seed skipped: ${phone} exists with role=${existingUser.role}. ` +
+          'Promote via admin panel if needed — will not auto-promote.',
       );
-      this.logger.log(`Admin user promoted: ${admin.phone}`);
       return;
     }
 
+    const passwordHash = await argon2.hash(password);
     const admin = await this.usersService.createUser({
       phone,
       passwordHash,

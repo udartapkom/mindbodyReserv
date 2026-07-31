@@ -15,6 +15,7 @@ import { PaymentsModule } from './payments/payments.module';
 import { NotificationsModule } from './notifications/notifications.module';
 import { UsersModule } from './users/users.module';
 import { SettingsModule } from './settings/settings.module';
+import { SystemModule } from './system/system.module';
 
 @Module({
   imports: [
@@ -45,6 +46,7 @@ import { SettingsModule } from './settings/settings.module';
     TicketsModule,
     PaymentsModule,
     SettingsModule,
+    SystemModule,
     AuthModule,
     SeedModule,
   ],

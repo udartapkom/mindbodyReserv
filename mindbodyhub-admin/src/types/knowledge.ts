@@ -23,7 +23,7 @@ export type KnowledgeSubheadingBlock = {
 export type KnowledgeParagraphBlock = {
   id: string;
   type: 'paragraph';
-  /** Inline links: [label](https://...) */
+  /** Inline: **bold**, [label](url) */
   text: string;
 };
 
@@ -44,12 +44,29 @@ export type KnowledgeLinkBlock = {
   url: string;
 };
 
+export type KnowledgeListBlock = {
+  id: string;
+  type: 'list';
+  style: 'ul' | 'ol';
+  items: string[];
+};
+
+export type KnowledgeQuoteBlock = {
+  id: string;
+  type: 'quote';
+  text: string;
+  /** quote = blockquote; callout = highlighted tip */
+  variant?: 'quote' | 'callout';
+};
+
 export type KnowledgeBlock =
   | KnowledgeHeadingBlock
   | KnowledgeSubheadingBlock
   | KnowledgeParagraphBlock
   | KnowledgeImageBlock
-  | KnowledgeLinkBlock;
+  | KnowledgeLinkBlock
+  | KnowledgeListBlock
+  | KnowledgeQuoteBlock;
 
 export type KnowledgeArticle = {
   id: string;

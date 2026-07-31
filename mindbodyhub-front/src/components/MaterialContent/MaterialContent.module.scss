@@ -21,6 +21,7 @@
     line-height: 128%;
     color: v.$text-dark-color;
     margin: 40px 0 14px;
+    scroll-margin-top: 96px;
 
     &:first-child {
       margin-top: 0;
@@ -29,6 +30,7 @@
     @include m.mobile {
       font-size: 26px;
       margin-top: 32px;
+      scroll-margin-top: 80px;
     }
   }
 
@@ -39,6 +41,7 @@
     line-height: 130%;
     color: v.$text-dark-color;
     margin: 32px 0 12px;
+    scroll-margin-top: 96px;
 
     &:first-child {
       margin-top: 0;
@@ -46,6 +49,7 @@
 
     @include m.mobile {
       font-size: 22px;
+      scroll-margin-top: 80px;
     }
   }
 
@@ -56,6 +60,7 @@
     line-height: 132%;
     color: v.$text-dark-color;
     margin: 28px 0 10px;
+    scroll-margin-top: 96px;
 
     &:first-child {
       margin-top: 0;
@@ -63,6 +68,7 @@
 
     @include m.mobile {
       font-size: 18px;
+      scroll-margin-top: 80px;
     }
   }
 
@@ -110,6 +116,80 @@
 
     &:hover {
       color: v.$text-dark-color;
+    }
+  }
+
+  &__listUl,
+  &__listOl {
+    font-family: v.$font-sans;
+    font-weight: 400;
+    font-size: 18px;
+    line-height: 168%;
+    color: v.$text-light-color;
+    margin: 0 0 18px;
+    padding-left: 1.35em;
+
+    @include m.mobile {
+      font-size: 16px;
+      line-height: 162%;
+    }
+  }
+
+  &__listUl {
+    list-style: disc;
+  }
+
+  &__listOl {
+    list-style: decimal;
+  }
+
+  &__listItem {
+    margin: 0 0 8px;
+    padding-left: 0.15em;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  &__quote {
+    font-family: v.$font-sans;
+    font-weight: 400;
+    font-size: 18px;
+    line-height: 168%;
+    color: v.$text-light-color;
+    margin: 8px 0 22px;
+    padding: 4px 0 4px 18px;
+    border-left: 3px solid v.$accent-color;
+    white-space: pre-wrap;
+
+    @include m.mobile {
+      font-size: 16px;
+      line-height: 162%;
+      padding-left: 14px;
+    }
+  }
+
+  &__callout {
+    font-family: v.$font-sans;
+    font-weight: 400;
+    font-size: 17px;
+    line-height: 162%;
+    color: v.$text-dark-color;
+    margin: 8px 0 22px;
+    padding: 14px 16px;
+    border: 1px solid v.$color-border;
+    border-radius: 12px;
+    background: linear-gradient(
+      135deg,
+      rgba(v.$accent-color, 0.08),
+      rgba(v.$accent-color, 0.02)
+    );
+    white-space: pre-wrap;
+
+    @include m.mobile {
+      font-size: 15px;
+      padding: 12px 14px;
     }
   }
 }

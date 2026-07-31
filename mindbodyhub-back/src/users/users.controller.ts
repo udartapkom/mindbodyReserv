@@ -15,14 +15,18 @@ import {
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { extname } from 'path';
+import { AuthService } from '../auth/auth.service';
 import type { AuthUser } from '../auth/decorators/current-user.decorator';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { AdminUpdateUserDto } from './dto/admin-update-user.dto';
 import { User } from './entities/user.entity';
 import { toPublicProfile } from './user.mapper';
-import { UserRole } from './user-role.enum';
-import { UserPublicProfile } from './user.types';
+import {
+  UserRole,
+  canAccessAdminPanel,
+} from './user-role.enum';
+import { UserLookupItem, UserPublicProfile } from './user.types';
 import { UsersService } from './users.service';
 
 type UploadedImageFile = {
@@ -36,17 +40,38 @@ const ALLOWED_MIME = new Set(['image/jpeg', 'image/png', 'image/webp']);
 const MAX_SIZE_BYTES = 4 * 1024 * 1024;
 
 @Controller('users')
-@Roles(UserRole.ADMIN)
 export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(
+    private readonly usersService: UsersService,
+    private readonly authService: AuthService,
+  ) {}
+
+  /** Narrow read-only directory for admin + editor (support context). */
+  @Get('lookup')
+  @Roles(UserRole.ADMIN, UserRole.EDITOR)
+  async lookup(): Promise<UserLookupItem[]> {
+    const users = await this.usersService.findAll();
+    return users.map((user) => ({
+      id: user.id,
+      phone: user.phone,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      role: user.role,
+      tariff: user.tariff,
+      isActive: user.isActive,
+      createdAt: user.createdAt.toISOString(),
+    }));
+  }
 
   @Get()
+  @Roles(UserRole.ADMIN)
   async findAll(): Promise<UserPublicProfile[]> {
     const users = await this.usersService.findAll();
     return Promise.all(users.map((user) => this.toEnrichedProfile(user)));
   }
 
   @Get(':id')
+  @Roles(UserRole.ADMIN)
   async findOne(
     @Param('id', ParseUUIDPipe) id: string,
   ): Promise<UserPublicProfile> {
@@ -60,6 +85,7 @@ export class UsersController {
   }
 
   @Patch(':id')
+  @Roles(UserRole.ADMIN)
   async update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() dto: AdminUpdateUserDto,
@@ -86,10 +112,19 @@ export class UsersController {
             ? null
             : new Date(dto.tariffExpiresAt),
     });
+
+    const lostPanelAccess =
+      canAccessAdminPanel(existing.role) && !canAccessAdminPanel(user.role);
+    const deactivated = existing.isActive && !user.isActive;
+    if (lostPanelAccess || deactivated) {
+      await this.authService.revokeAllRefreshTokens(id);
+    }
+
     return this.toEnrichedProfile(user);
   }
 
   @Post(':id/avatar')
+  @Roles(UserRole.ADMIN)
   @UseInterceptors(
     FileInterceptor('file', {
       limits: { fileSize: MAX_SIZE_BYTES },
@@ -126,6 +161,7 @@ export class UsersController {
   }
 
   @Patch(':id/block')
+  @Roles(UserRole.ADMIN)
   async block(
     @Param('id', ParseUUIDPipe) id: string,
     @CurrentUser() currentUser: AuthUser,
@@ -141,10 +177,12 @@ export class UsersController {
     }
 
     const user = await this.usersService.setActive(id, false);
+    await this.authService.revokeAllRefreshTokens(id);
     return this.toEnrichedProfile(user);
   }
 
   @Patch(':id/unblock')
+  @Roles(UserRole.ADMIN)
   async unblock(
     @Param('id', ParseUUIDPipe) id: string,
   ): Promise<UserPublicProfile> {
@@ -159,6 +197,7 @@ export class UsersController {
   }
 
   @Delete(':id')
+  @Roles(UserRole.ADMIN)
   async remove(
     @Param('id', ParseUUIDPipe) id: string,
     @CurrentUser() currentUser: AuthUser,

@@ -68,14 +68,14 @@ export class QuotesController {
   }
 
   @Get()
-  @Roles(UserRole.ADMIN)
+  @Roles(UserRole.ADMIN, UserRole.EDITOR)
   async findAll(): Promise<QuoteDto[]> {
     const quotes = await this.quotesService.findAll();
     return quotes.map(toQuoteDto);
   }
 
   @Get(':id')
-  @Roles(UserRole.ADMIN)
+  @Roles(UserRole.ADMIN, UserRole.EDITOR)
   async findOne(@Param('id', ParseUUIDPipe) id: string): Promise<QuoteDto> {
     const quote = await this.quotesService.findById(id);
     if (!quote) {
@@ -85,14 +85,14 @@ export class QuotesController {
   }
 
   @Post()
-  @Roles(UserRole.ADMIN)
+  @Roles(UserRole.ADMIN, UserRole.EDITOR)
   async create(@Body() dto: CreateQuoteDto): Promise<QuoteDto> {
     const quote = await this.quotesService.create(dto);
     return toQuoteDto(quote);
   }
 
   @Patch(':id')
-  @Roles(UserRole.ADMIN)
+  @Roles(UserRole.ADMIN, UserRole.EDITOR)
   async update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() dto: UpdateQuoteDto,
@@ -102,21 +102,21 @@ export class QuotesController {
   }
 
   @Patch(':id/publish')
-  @Roles(UserRole.ADMIN)
+  @Roles(UserRole.ADMIN, UserRole.EDITOR)
   async publish(@Param('id', ParseUUIDPipe) id: string): Promise<QuoteDto> {
     const quote = await this.quotesService.publish(id);
     return toQuoteDto(quote);
   }
 
   @Patch(':id/unpublish')
-  @Roles(UserRole.ADMIN)
+  @Roles(UserRole.ADMIN, UserRole.EDITOR)
   async unpublish(@Param('id', ParseUUIDPipe) id: string): Promise<QuoteDto> {
     const quote = await this.quotesService.unpublish(id);
     return toQuoteDto(quote);
   }
 
   @Delete(':id')
-  @Roles(UserRole.ADMIN)
+  @Roles(UserRole.ADMIN, UserRole.EDITOR)
   async remove(
     @Param('id', ParseUUIDPipe) id: string,
   ): Promise<{ success: true }> {

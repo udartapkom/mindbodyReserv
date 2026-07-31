@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { PushNotifyService } from '../notifications/push-notify.service';
 import { VkNotifyService } from '../notifications/vk-notify.service';
 import { TicketMessage } from './entities/ticket-message.entity';
 import { Ticket } from './entities/ticket.entity';
@@ -31,6 +32,7 @@ export class TicketsService {
     @InjectRepository(TicketMessage)
     private readonly messagesRepository: Repository<TicketMessage>,
     private readonly vkNotify: VkNotifyService,
+    private readonly pushNotify: PushNotifyService,
   ) {}
 
   findAll(): Promise<Ticket[]> {
@@ -188,6 +190,13 @@ export class TicketsService {
 
     ticket.updatedAt = new Date();
     await this.ticketsRepository.save(ticket);
+
+    if (ticket.userId) {
+      void this.pushNotify.notifySupportReply(ticket.userId, {
+        ticketId: ticket.id,
+        preview: body.trim(),
+      });
+    }
 
     return message;
   }

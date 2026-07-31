@@ -72,6 +72,15 @@
     }
   }
 
+  &__metaRow {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px 16px;
+    margin: 0 0 12px;
+  }
+
   &__summary {
     @include m.text16-400;
     margin: 0;
@@ -96,6 +105,10 @@
     @include m.mobile {
       padding: 18px 18px 24px;
     }
+  }
+
+  &__toc {
+    margin-bottom: 20px;
   }
 
   &__status {

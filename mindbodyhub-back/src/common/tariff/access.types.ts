@@ -90,13 +90,13 @@ export function isPaidTariffShelf(value: string): value is PaidTariffType {
   return (PAID_TARIFF_LADDER as readonly string[]).includes(value);
 }
 
-/** Quotes: any paid tariff (trial, popular, vip); admins always. */
+/** Quotes: any paid tariff (trial, popular, vip); staff always. */
 export function canAccessQuotes(options: {
   isAuthenticated?: boolean;
   userTariff?: string | null;
   userRole?: string | null;
 }): boolean {
-  if (options.userRole === 'admin') {
+  if (options.userRole === 'admin' || options.userRole === 'editor') {
     return true;
   }
   const tariff = options.userTariff?.trim();

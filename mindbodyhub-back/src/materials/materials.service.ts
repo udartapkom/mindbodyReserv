@@ -7,6 +7,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { In, Repository } from 'typeorm';
 import { TariffsService } from '../tariffs/tariffs.service';
+import { PushNotifyService } from '../notifications/push-notify.service';
 import { CreateMaterialDto } from './dto/create-material.dto';
 import { UpdateMaterialDto } from './dto/update-material.dto';
 import { Material } from './entities/material.entity';
@@ -34,6 +35,7 @@ export class MaterialsService {
     @InjectRepository(Material)
     private readonly materialsRepository: Repository<Material>,
     private readonly tariffsService: TariffsService,
+    private readonly pushNotify: PushNotifyService,
   ) {}
 
   findAll(): Promise<Material[]> {
@@ -205,9 +207,20 @@ export class MaterialsService {
       throw new NotFoundException('Материал не найден');
     }
 
+    const wasPublished = material.status === MaterialStatus.PUBLISHED;
     material.status = MaterialStatus.PUBLISHED;
     material.publishedAt = material.publishedAt ?? new Date();
-    return this.materialsRepository.save(material);
+    const saved = await this.materialsRepository.save(material);
+
+    if (!wasPublished) {
+      void this.pushNotify.notifyNewMaterial({
+        title: saved.title,
+        slug: saved.slug,
+        tariffType: saved.tariffType,
+      });
+    }
+
+    return saved;
   }
 
   async unpublish(id: string): Promise<Material> {

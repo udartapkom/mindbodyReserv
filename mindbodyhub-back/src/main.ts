@@ -14,13 +14,27 @@ async function bootstrap() {
   );
 
   const isDev = process.env.NODE_ENV !== 'production';
-  const corsOrigin = process.env.CORS_ORIGIN ?? 'http://localhost:3000';
-  const allowedOrigins = corsOrigin.split(',').map((origin) => origin.trim());
+  const corsOrigin =
+    process.env.CORS_ORIGIN ??
+    'http://localhost:3000,http://localhost:5174,http://127.0.0.1:3000,http://127.0.0.1:5174';
+  const allowedOrigins = corsOrigin
+    .split(',')
+    .map((origin) => origin.trim())
+    .filter(Boolean);
 
   app.enableCors({
     origin: isDev
       ? true
-      : allowedOrigins,
+      : (
+          origin: string | undefined,
+          callback: (err: Error | null, allow?: boolean) => void,
+        ) => {
+          if (!origin || allowedOrigins.includes(origin)) {
+            callback(null, true);
+            return;
+          }
+          callback(new Error(`Origin ${origin} not allowed by CORS`), false);
+        },
     credentials: true,
   });
 

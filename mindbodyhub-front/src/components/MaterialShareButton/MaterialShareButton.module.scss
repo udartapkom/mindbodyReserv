@@ -1,0 +1,22 @@
+@use "../../styles/variables" as v;
+@use "../../styles/mixins" as m;
+
+.share {
+  @include m.text14-400;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 36px;
+  padding: 6px 12px;
+  border: 1px solid v.$color-border;
+  border-radius: 999px;
+  background: v.$white-color;
+  color: v.$text-dark-color;
+  cursor: pointer;
+  font-weight: 500;
+
+  &:hover {
+    border-color: v.$accent-color;
+    color: v.$accent-color;
+  }
+}

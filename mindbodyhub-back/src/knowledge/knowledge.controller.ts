@@ -46,14 +46,14 @@ export class KnowledgeController {
   }
 
   @Get()
-  @Roles(UserRole.ADMIN)
+  @Roles(UserRole.ADMIN, UserRole.EDITOR)
   async findAll(): Promise<KnowledgeArticleDto[]> {
     const articles = await this.knowledgeService.findAll();
     return articles.map(toKnowledgeArticleDto);
   }
 
   @Get(':id')
-  @Roles(UserRole.ADMIN)
+  @Roles(UserRole.ADMIN, UserRole.EDITOR)
   async findOne(
     @Param('id', ParseUUIDPipe) id: string,
   ): Promise<KnowledgeArticleDto> {
@@ -65,7 +65,7 @@ export class KnowledgeController {
   }
 
   @Post()
-  @Roles(UserRole.ADMIN)
+  @Roles(UserRole.ADMIN, UserRole.EDITOR)
   async create(
     @Body() dto: CreateKnowledgeArticleDto,
   ): Promise<KnowledgeArticleDto> {
@@ -74,7 +74,7 @@ export class KnowledgeController {
   }
 
   @Patch(':id')
-  @Roles(UserRole.ADMIN)
+  @Roles(UserRole.ADMIN, UserRole.EDITOR)
   async update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() dto: UpdateKnowledgeArticleDto,
@@ -84,7 +84,7 @@ export class KnowledgeController {
   }
 
   @Patch(':id/publish')
-  @Roles(UserRole.ADMIN)
+  @Roles(UserRole.ADMIN, UserRole.EDITOR)
   async publish(
     @Param('id', ParseUUIDPipe) id: string,
   ): Promise<KnowledgeArticleDto> {
@@ -93,7 +93,7 @@ export class KnowledgeController {
   }
 
   @Patch(':id/unpublish')
-  @Roles(UserRole.ADMIN)
+  @Roles(UserRole.ADMIN, UserRole.EDITOR)
   async unpublish(
     @Param('id', ParseUUIDPipe) id: string,
   ): Promise<KnowledgeArticleDto> {
@@ -102,7 +102,7 @@ export class KnowledgeController {
   }
 
   @Delete(':id')
-  @Roles(UserRole.ADMIN)
+  @Roles(UserRole.ADMIN, UserRole.EDITOR)
   async remove(
     @Param('id', ParseUUIDPipe) id: string,
   ): Promise<{ success: true }> {

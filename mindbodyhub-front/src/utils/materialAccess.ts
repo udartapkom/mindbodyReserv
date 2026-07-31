@@ -48,6 +48,20 @@ export function getMaterialAccessLabel(tariffType: string): string {
   return `Тариф: ${tariffType}`;
 }
 
+/** Reader URL for a published material (public vs cabinet shelf). */
+export function getMaterialReaderHref(material: {
+  slug: string;
+  tariffType: string;
+}): string {
+  if (
+    material.tariffType === FREE_ACCESS_TYPE ||
+    material.tariffType === REGISTERED_ACCESS_TYPE
+  ) {
+    return `/problems/${material.slug}`;
+  }
+  return `/cabinet/materials/${material.tariffType}/${material.slug}`;
+}
+
 export function getMaterialAccessGroupLabel(tariffType: string): string {
   if (tariffType === REGISTERED_ACCESS_TYPE) {
     return "Для зарегистрированных";

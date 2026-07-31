@@ -1,0 +1,45 @@
+@use "../../styles/variables" as v;
+@use "../../styles/mixins" as m;
+
+.materialToc {
+  margin: 8px 0 8px;
+  padding: 16px 18px;
+  border: 1px solid v.$color-border;
+  border-radius: 12px;
+  background: rgba(239, 246, 255, 0.55);
+
+  &__title {
+    @include m.text14-400;
+    margin: 0 0 10px;
+    font-weight: 600;
+    color: v.$text-dark-color;
+  }
+
+  &__list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  &__item {
+    margin: 0;
+  }
+
+  &__item_nested {
+    padding-left: 14px;
+  }
+
+  &__link {
+    @include m.text14-400;
+    color: v.$accent-color;
+    text-decoration: none;
+    line-height: 1.4;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}

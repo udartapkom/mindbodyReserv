@@ -33,7 +33,7 @@ export class MaterialsUploadController {
   constructor(private readonly storageService: StorageService) {}
 
   @Post('upload')
-  @Roles(UserRole.ADMIN)
+  @Roles(UserRole.ADMIN, UserRole.EDITOR)
   @UseInterceptors(
     FileInterceptor('file', {
       limits: { fileSize: MAX_SIZE_BYTES },

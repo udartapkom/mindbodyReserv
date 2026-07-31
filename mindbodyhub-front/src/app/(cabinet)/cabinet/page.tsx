@@ -1,4 +1,5 @@
 import PaymentResultNotice from '@/components/PaymentResultNotice/PaymentResultNotice';
+import ContinueReading from '@/components/Cabinet/ContinueReading/ContinueReading';
 import QuoteOfDay from '@/components/Cabinet/QuoteOfDay/QuoteOfDay';
 import styles from './page.module.scss';
 
@@ -12,6 +13,7 @@ export default function CabinetDashboardPage() {
         </p>
       </header>
       <PaymentResultNotice />
+      <ContinueReading />
       <QuoteOfDay />
     </section>
   );

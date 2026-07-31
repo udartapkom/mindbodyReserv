@@ -2,6 +2,7 @@ import { useState, type FormEvent } from 'react';
 import { PatternFormat } from 'react-number-format';
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
+import { getAdminHomePath } from '@/types/user';
 import styles from './LoginPage.module.scss';
 
 function getErrorMessage(error: unknown): string {
@@ -14,14 +15,14 @@ function getErrorMessage(error: unknown): string {
 }
 
 function LoginPage() {
-  const { login, isAuthenticated, isLoading } = useAuth();
+  const { login, isAuthenticated, isLoading, user } = useAuth();
   const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   if (!isLoading && isAuthenticated) {
-    return <Navigate to="/users" replace />;
+    return <Navigate to={getAdminHomePath(user?.role)} replace />;
   }
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {

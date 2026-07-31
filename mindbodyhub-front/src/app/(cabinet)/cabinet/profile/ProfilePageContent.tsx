@@ -4,6 +4,8 @@ import { FormEvent, useEffect, useState } from 'react';
 import AvatarField from '@/components/Cabinet/AvatarField/AvatarField';
 import Popup from '@/components/Popup/Popup';
 import ErrorPopup from '@/components/ErrorPopup/ErrorPopup';
+import PwaInstallCard from '@/components/Pwa/PwaInstallCard/PwaInstallCard';
+import PwaPushCard from '@/components/Pwa/PwaPushCard/PwaPushCard';
 import { useAuth } from '@/context/AuthContext';
 import type { IconName } from '@/shared/ui/Icon';
 import { PasswordInput } from '@/shared/ui/PasswordInput';
@@ -259,6 +261,9 @@ function ProfilePageContent() {
           {isPasswordSaving ? 'Сохранение…' : 'Изменить пароль'}
         </button>
       </form>
+
+      <PwaInstallCard />
+      <PwaPushCard />
 
       <Popup
         title={popup?.title ?? 'Уведомление'}

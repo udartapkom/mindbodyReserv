@@ -10,6 +10,7 @@ import {
   ParseUUIDPipe,
   Patch,
   Post,
+  Put,
   Query,
 } from '@nestjs/common';
 import { CurrentUser, type AuthUser } from '../auth/decorators/current-user.decorator';
@@ -21,6 +22,7 @@ import {
 } from '../common/tariff/access.types';
 import { UserRole } from '../users/user-role.enum';
 import { CreateMaterialDto } from './dto/create-material.dto';
+import { UpsertReadingProgressDto } from './dto/upsert-reading-progress.dto';
 import { UpdateMaterialDto } from './dto/update-material.dto';
 import {
   FREE_ACCESS_TYPE,
@@ -29,10 +31,45 @@ import {
 } from './material.types';
 import { MaterialDto, toMaterialDto } from './material.mapper';
 import { MaterialsService } from './materials.service';
+import {
+  ReadingProgressDto,
+  ReadingProgressService,
+} from './reading-progress.service';
 
 @Controller('materials')
 export class MaterialsController {
-  constructor(private readonly materialsService: MaterialsService) {}
+  constructor(
+    private readonly materialsService: MaterialsService,
+    private readonly readingProgressService: ReadingProgressService,
+  ) {}
+
+  /** Recent unfinished reading positions for the current user. */
+  @Get('reading-progress')
+  async listReadingProgress(
+    @CurrentUser() user: AuthUser,
+  ): Promise<ReadingProgressDto[]> {
+    return this.readingProgressService.listRecent(user.id);
+  }
+
+  @Get('reading-progress/:materialId')
+  async getReadingProgress(
+    @Param('materialId', ParseUUIDPipe) materialId: string,
+    @CurrentUser() user: AuthUser,
+  ): Promise<ReadingProgressDto | null> {
+    return this.readingProgressService.getOne(user.id, materialId);
+  }
+
+  @Put('reading-progress')
+  async upsertReadingProgress(
+    @Body() dto: UpsertReadingProgressDto,
+    @CurrentUser() user: AuthUser,
+  ): Promise<ReadingProgressDto> {
+    return this.readingProgressService.upsert(
+      user.id,
+      dto.materialId,
+      dto.scrollRatio,
+    );
+  }
 
   /**
    * Public catalog.
@@ -138,14 +175,14 @@ export class MaterialsController {
   }
 
   @Get()
-  @Roles(UserRole.ADMIN)
+  @Roles(UserRole.ADMIN, UserRole.EDITOR)
   async findAll(): Promise<MaterialDto[]> {
     const materials = await this.materialsService.findAll();
     return materials.map(toMaterialDto);
   }
 
   @Get(':id')
-  @Roles(UserRole.ADMIN)
+  @Roles(UserRole.ADMIN, UserRole.EDITOR)
   async findOne(@Param('id', ParseUUIDPipe) id: string): Promise<MaterialDto> {
     const material = await this.materialsService.findById(id);
     if (!material) {
@@ -155,14 +192,14 @@ export class MaterialsController {
   }
 
   @Post()
-  @Roles(UserRole.ADMIN)
+  @Roles(UserRole.ADMIN, UserRole.EDITOR)
   async create(@Body() dto: CreateMaterialDto): Promise<MaterialDto> {
     const material = await this.materialsService.create(dto);
     return toMaterialDto(material);
   }
 
   @Patch(':id')
-  @Roles(UserRole.ADMIN)
+  @Roles(UserRole.ADMIN, UserRole.EDITOR)
   async update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() dto: UpdateMaterialDto,
@@ -172,21 +209,21 @@ export class MaterialsController {
   }
 
   @Patch(':id/publish')
-  @Roles(UserRole.ADMIN)
+  @Roles(UserRole.ADMIN, UserRole.EDITOR)
   async publish(@Param('id', ParseUUIDPipe) id: string): Promise<MaterialDto> {
     const material = await this.materialsService.publish(id);
     return toMaterialDto(material);
   }
 
   @Patch(':id/unpublish')
-  @Roles(UserRole.ADMIN)
+  @Roles(UserRole.ADMIN, UserRole.EDITOR)
   async unpublish(@Param('id', ParseUUIDPipe) id: string): Promise<MaterialDto> {
     const material = await this.materialsService.unpublish(id);
     return toMaterialDto(material);
   }
 
   @Delete(':id')
-  @Roles(UserRole.ADMIN)
+  @Roles(UserRole.ADMIN, UserRole.EDITOR)
   async remove(
     @Param('id', ParseUUIDPipe) id: string,
   ): Promise<{ success: true }> {

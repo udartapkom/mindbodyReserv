@@ -3,7 +3,9 @@ export type KnowledgeBlockType =
   | 'subheading'
   | 'paragraph'
   | 'image'
-  | 'link';
+  | 'link'
+  | 'list'
+  | 'quote';
 
 export type KnowledgeHeadingBlock = {
   id: string;
@@ -22,7 +24,7 @@ export type KnowledgeSubheadingBlock = {
 export type KnowledgeParagraphBlock = {
   id: string;
   type: 'paragraph';
-  /** Plain text; inline links as markdown: [label](https://...) */
+  /** Plain text; inline: **bold**, [label](url) */
   text: string;
 };
 
@@ -43,12 +45,29 @@ export type KnowledgeLinkBlock = {
   url: string;
 };
 
+export type KnowledgeListBlock = {
+  id: string;
+  type: 'list';
+  style: 'ul' | 'ol';
+  items: string[];
+};
+
+export type KnowledgeQuoteBlock = {
+  id: string;
+  type: 'quote';
+  text: string;
+  /** quote = blockquote; callout = highlighted tip */
+  variant?: 'quote' | 'callout';
+};
+
 export type KnowledgeBlock =
   | KnowledgeHeadingBlock
   | KnowledgeSubheadingBlock
   | KnowledgeParagraphBlock
   | KnowledgeImageBlock
-  | KnowledgeLinkBlock;
+  | KnowledgeLinkBlock
+  | KnowledgeListBlock
+  | KnowledgeQuoteBlock;
 
 export enum KnowledgeStatus {
   DRAFT = 'draft',

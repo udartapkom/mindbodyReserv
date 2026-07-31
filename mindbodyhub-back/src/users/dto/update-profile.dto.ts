@@ -1,4 +1,5 @@
 import {
+  IsBoolean,
   IsOptional,
   IsString,
   IsUrl,
@@ -23,4 +24,16 @@ export class UpdateProfileDto {
   @IsUrl({}, { message: 'avatarUrl must be a valid URL' })
   @MaxLength(2048)
   avatarUrl?: string | null;
+
+  @IsOptional()
+  @IsBoolean()
+  notifySupportReplies?: boolean;
+
+  @IsOptional()
+  @IsBoolean()
+  notifyNewMaterials?: boolean;
+
+  @IsOptional()
+  @IsBoolean()
+  notifyDailyQuote?: boolean;
 }

@@ -106,14 +106,14 @@ export class TicketsController {
   }
 
   @Get()
-  @Roles(UserRole.ADMIN)
+  @Roles(UserRole.ADMIN, UserRole.EDITOR)
   async findAll(): Promise<TicketDto[]> {
     const tickets = await this.ticketsService.findAll();
     return tickets.map((ticket) => toTicketDto(ticket));
   }
 
   @Get(':id')
-  @Roles(UserRole.ADMIN)
+  @Roles(UserRole.ADMIN, UserRole.EDITOR)
   async findOne(
     @Param('id', ParseUUIDPipe) id: string,
   ): Promise<TicketDto> {
@@ -128,7 +128,7 @@ export class TicketsController {
   }
 
   @Get(':id/messages')
-  @Roles(UserRole.ADMIN)
+  @Roles(UserRole.ADMIN, UserRole.EDITOR)
   async findMessages(
     @Param('id', ParseUUIDPipe) id: string,
   ): Promise<TicketMessageDto[]> {
@@ -141,7 +141,7 @@ export class TicketsController {
   }
 
   @Post(':id/messages')
-  @Roles(UserRole.ADMIN)
+  @Roles(UserRole.ADMIN, UserRole.EDITOR)
   async addAdminMessage(
     @CurrentUser() user: AuthUser,
     @Param('id', ParseUUIDPipe) id: string,
@@ -156,7 +156,7 @@ export class TicketsController {
   }
 
   @Patch(':id')
-  @Roles(UserRole.ADMIN)
+  @Roles(UserRole.ADMIN, UserRole.EDITOR)
   async update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() dto: UpdateTicketDto,
@@ -170,7 +170,7 @@ export class TicketsController {
   }
 
   @Delete(':id')
-  @Roles(UserRole.ADMIN)
+  @Roles(UserRole.ADMIN, UserRole.EDITOR)
   async remove(
     @Param('id', ParseUUIDPipe) id: string,
   ): Promise<{ success: true }> {

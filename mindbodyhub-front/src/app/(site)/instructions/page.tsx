@@ -3,6 +3,9 @@ import Link from "next/link";
 import { knowledge as knowledgeApi } from "@/api/api";
 import styles from "./page.module.scss";
 
+/** Admin may publish articles anytime — do not bake an empty list at build. */
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "База знаний",
   description: "Инструкции и полезные материалы MindBodyHub",

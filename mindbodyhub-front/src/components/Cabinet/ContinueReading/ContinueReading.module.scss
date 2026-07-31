@@ -1,0 +1,106 @@
+@use "../../../styles/variables" as v;
+@use "../../../styles/mixins" as m;
+
+.continue {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 20px;
+  border: 1px solid v.$color-border;
+  border-radius: 16px;
+  background: v.$white-color;
+
+  &__header {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  &__title {
+    @include m.text22-600;
+    margin: 0;
+  }
+
+  &__lead {
+    @include m.text14-400;
+    margin: 0;
+    color: v.$color-text-muted;
+  }
+
+  &__list {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+
+    @include m.mobile {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  &__card {
+    display: grid;
+    grid-template-columns: 72px 1fr;
+    gap: 12px;
+    align-items: center;
+    padding: 10px;
+    border: 1px solid v.$color-border;
+    border-radius: 12px;
+    text-decoration: none;
+    color: inherit;
+    transition: border-color 0.2s ease;
+
+    &:hover {
+      border-color: v.$accent-color;
+    }
+  }
+
+  &__cover,
+  &__coverPlaceholder {
+    width: 72px;
+    height: 72px;
+    border-radius: 10px;
+    object-fit: cover;
+  }
+
+  &__coverPlaceholder {
+    background: v.$light-accent-color;
+  }
+
+  &__body {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  &__cardTitle {
+    @include m.text16-400;
+    margin: 0;
+    font-weight: 600;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__meta {
+    @include m.text14-400;
+    margin: 0;
+    color: v.$color-text-muted;
+  }
+
+  &__bar {
+    height: 4px;
+    border-radius: 999px;
+    background: v.$color-border;
+    overflow: hidden;
+
+    span {
+      display: block;
+      height: 100%;
+      background: v.$accent-color;
+    }
+  }
+}

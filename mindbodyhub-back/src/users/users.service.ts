@@ -23,6 +23,9 @@ export type UpdateUserProfileData = {
   firstName?: string | null;
   lastName?: string | null;
   avatarUrl?: string | null;
+  notifySupportReplies?: boolean;
+  notifyNewMaterials?: boolean;
+  notifyDailyQuote?: boolean;
 };
 
 export type AdminUpdateUserData = {
@@ -98,6 +101,18 @@ export class UsersService {
 
     if (data.avatarUrl !== undefined) {
       user.avatarUrl = data.avatarUrl;
+    }
+
+    if (data.notifySupportReplies !== undefined) {
+      user.notifySupportReplies = data.notifySupportReplies;
+    }
+
+    if (data.notifyNewMaterials !== undefined) {
+      user.notifyNewMaterials = data.notifyNewMaterials;
+    }
+
+    if (data.notifyDailyQuote !== undefined) {
+      user.notifyDailyQuote = data.notifyDailyQuote;
     }
 
     return this.usersRepository.save(user);

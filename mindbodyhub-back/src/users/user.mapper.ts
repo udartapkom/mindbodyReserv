@@ -14,6 +14,9 @@ export function toPublicProfile(user: User): UserPublicProfile {
     avatarUrl: user.avatarUrl,
     isActive: user.isActive,
     phoneVerifiedAt: user.phoneVerifiedAt?.toISOString() ?? null,
+    notifySupportReplies: user.notifySupportReplies,
+    notifyNewMaterials: user.notifyNewMaterials,
+    notifyDailyQuote: user.notifyDailyQuote,
     createdAt: user.createdAt.toISOString(),
     updatedAt: user.updatedAt.toISOString(),
   };

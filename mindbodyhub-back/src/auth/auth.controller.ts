@@ -27,6 +27,12 @@ export class AuthController {
   }
 
   @Public()
+  @Post('admin/login')
+  adminLogin(@Body() dto: LoginDto): Promise<AuthTokensResponse> {
+    return this.authService.adminLogin(dto);
+  }
+
+  @Public()
   @Post('refresh')
   refresh(@Body() dto: RefreshTokenDto): Promise<AuthTokensResponse> {
     return this.authService.refresh(dto.refreshToken);

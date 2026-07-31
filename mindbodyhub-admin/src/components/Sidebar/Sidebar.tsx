@@ -1,6 +1,7 @@
 import { NavLink } from 'react-router-dom';
-import { adminNav } from '@/content/nav';
+import { filterAdminNav } from '@/content/nav';
 import { useAuth } from '@/context/AuthContext';
+import { isAdminRole } from '@/types/user';
 import styles from './Sidebar.module.scss';
 
 function Sidebar() {
@@ -9,17 +10,25 @@ function Sidebar() {
     user?.name?.trim() ||
     [user?.firstName, user?.lastName].filter(Boolean).join(' ') ||
     user?.phone ||
-    'Админ';
+    'Сотрудник';
+  const roleLabel = isAdminRole(user?.role)
+    ? 'Админ'
+    : user?.role === 'editor'
+      ? 'Редактор'
+      : null;
+  const navItems = filterAdminNav(user?.role);
 
   return (
     <aside className={styles.sidebar}>
       <div className={styles.sidebar__brand}>
         <span className={styles.sidebar__logo}>MindBodyHub</span>
-        <span className={styles.sidebar__subtitle}>Админ-панель</span>
+        <span className={styles.sidebar__subtitle}>
+          {roleLabel ? `Админ-панель · ${roleLabel}` : 'Админ-панель'}
+        </span>
       </div>
 
       <nav className={styles.sidebar__nav}>
-        {adminNav.map((item) => (
+        {navItems.map((item) => (
           <NavLink
             key={item.href}
             to={item.href}
@@ -36,7 +45,14 @@ function Sidebar() {
 
       <div className={styles.sidebar__footer}>
         <p className={styles.sidebar__user}>{displayName}</p>
-        <button type="button" className={styles.sidebar__logout} onClick={() => void logout()}>
+        {user?.phone ? (
+          <p className={styles.sidebar__phone}>{user.phone}</p>
+        ) : null}
+        <button
+          type="button"
+          className={styles.sidebar__logout}
+          onClick={() => void logout()}
+        >
           Выйти
         </button>
       </div>

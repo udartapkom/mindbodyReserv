@@ -1,5 +1,6 @@
 import {
   ConflictException,
+  ForbiddenException,
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
@@ -13,7 +14,7 @@ import { ChangePasswordDto } from '../users/dto/change-password.dto';
 import { UpdateProfileDto } from '../users/dto/update-profile.dto';
 import { User } from '../users/entities/user.entity';
 import { toAuthUserSummary, toPublicProfile } from '../users/user.mapper';
-import { UserRole } from '../users/user-role.enum';
+import { UserRole, canAccessAdminPanel } from '../users/user-role.enum';
 import { UsersService } from '../users/users.service';
 import { AuthTokensResponse, UserProfileResponse } from './auth.types';
 import { LoginDto } from './dto/login.dto';
@@ -57,6 +58,22 @@ export class AuthService {
   }
 
   async login(dto: LoginDto): Promise<AuthTokensResponse> {
+    const user = await this.authenticateByPhonePassword(dto);
+    return this.issueTokens(user);
+  }
+
+  /** Admin panel only — admin and editor may sign in. */
+  async adminLogin(dto: LoginDto): Promise<AuthTokensResponse> {
+    const user = await this.authenticateByPhonePassword(dto);
+
+    if (!canAccessAdminPanel(user.role)) {
+      throw new ForbiddenException('Доступ только для сотрудников');
+    }
+
+    return this.issueTokens(user);
+  }
+
+  private async authenticateByPhonePassword(dto: LoginDto): Promise<User> {
     const user = await this.usersService.findByPhone(dto.phone);
 
     if (!user || !user.isActive) {
@@ -72,7 +89,7 @@ export class AuthService {
       throw new UnauthorizedException('Invalid phone or password');
     }
 
-    return this.issueTokens(user);
+    return user;
   }
 
   async refresh(refreshToken: string): Promise<AuthTokensResponse> {
@@ -111,6 +128,19 @@ export class AuthService {
     await this.refreshTokensRepository.save(storedToken);
   }
 
+  /** Invalidate all sessions (e.g. after role demotion or block). */
+  async revokeAllRefreshTokens(userId: string): Promise<number> {
+    const result = await this.refreshTokensRepository
+      .createQueryBuilder()
+      .update(RefreshToken)
+      .set({ revokedAt: () => 'NOW()' })
+      .where('user_id = :userId', { userId })
+      .andWhere('revoked_at IS NULL')
+      .execute();
+
+    return result.affected ?? 0;
+  }
+
   async getProfile(userId: string): Promise<UserProfileResponse> {
     const user = await this.usersService.findById(userId);
 
@@ -129,6 +159,9 @@ export class AuthService {
       firstName: dto.firstName,
       lastName: dto.lastName,
       avatarUrl: dto.avatarUrl,
+      notifySupportReplies: dto.notifySupportReplies,
+      notifyNewMaterials: dto.notifyNewMaterials,
+      notifyDailyQuote: dto.notifyDailyQuote,
     });
 
     return this.enrichPublicProfile(user);

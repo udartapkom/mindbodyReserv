@@ -15,6 +15,7 @@ export type MaterialSubheadingBlock = {
 export type MaterialParagraphBlock = {
   id: string;
   type: "paragraph";
+  /** Plain text; inline: **bold**, [label](url) */
   text: string;
 };
 
@@ -28,11 +29,36 @@ export type MaterialImageBlock = {
   showAlt?: boolean;
 };
 
+export type MaterialListBlock = {
+  id: string;
+  type: "list";
+  style: "ul" | "ol";
+  items: string[];
+};
+
+export type MaterialQuoteBlock = {
+  id: string;
+  type: "quote";
+  text: string;
+  /** quote = blockquote; callout = highlighted tip */
+  variant?: "quote" | "callout";
+};
+
+export type MaterialLinkBlock = {
+  id: string;
+  type: "link";
+  text: string;
+  url: string;
+};
+
 export type MaterialBlock =
   | MaterialHeadingBlock
   | MaterialSubheadingBlock
   | MaterialParagraphBlock
-  | MaterialImageBlock;
+  | MaterialImageBlock
+  | MaterialListBlock
+  | MaterialQuoteBlock
+  | MaterialLinkBlock;
 
 export type Material = {
   id: string;

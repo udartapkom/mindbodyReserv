@@ -1,5 +1,9 @@
 import { auth as authStorage } from "./auth";
-import type { AuthTokensResponse, Problem } from "./responsesTypes";
+import type {
+  AuthTokensResponse,
+  Problem,
+  ReadingProgressItem,
+} from "./responsesTypes";
 import type { KnowledgeArticle } from "@/types/knowledge";
 import type { Material } from "@/types/material";
 import type { PriceComparison } from "@/types/PriceComparison";
@@ -236,6 +240,23 @@ export const problems = {
       `${getApiBaseUrl()}/materials/cabinet/${encodeURIComponent(tariffType)}`,
     ).then((res) => checkResponse<Problem[]>(res));
   },
+  getReadingProgressList: async () => {
+    return fetchWithAuth(`${getApiBaseUrl()}/materials/reading-progress`).then(
+      (res) => checkResponse<ReadingProgressItem[]>(res),
+    );
+  },
+  getReadingProgress: async (materialId: string) => {
+    return fetchWithAuth(
+      `${getApiBaseUrl()}/materials/reading-progress/${encodeURIComponent(materialId)}`,
+    ).then((res) => checkResponse<ReadingProgressItem | null>(res));
+  },
+  saveReadingProgress: async (materialId: string, scrollRatio: number) => {
+    return fetchWithAuth(`${getApiBaseUrl()}/materials/reading-progress`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ materialId, scrollRatio }),
+    }).then((res) => checkResponse<ReadingProgressItem>(res));
+  },
 };
 
 export const knowledge = {
@@ -423,5 +444,38 @@ export const quotes = {
     return fetchWithAuth(`${getApiBaseUrl()}/quotes/cabinet/today`).then((res) =>
       checkResponse<Quote | null>(res),
     );
+  },
+};
+
+export const pushApi = {
+  getVapidPublicKey: async () => {
+    const res = await fetch(`${getApiBaseUrl()}/push/vapid-public-key`);
+    return checkResponse<{ publicKey: string | null }>(res);
+  },
+
+  getStatus: async () => {
+    return fetchWithAuth(`${getApiBaseUrl()}/push/status`).then((res) =>
+      checkResponse<{ configured: boolean; subscribed: boolean }>(res),
+    );
+  },
+
+  subscribe: async (payload: {
+    endpoint: string;
+    keys: { p256dh: string; auth: string };
+    userAgent?: string;
+  }) => {
+    return fetchWithAuth(`${getApiBaseUrl()}/push/subscribe`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    }).then((res) => checkResponse<{ success: true }>(res));
+  },
+
+  unsubscribe: async (endpoint: string) => {
+    return fetchWithAuth(`${getApiBaseUrl()}/push/subscribe`, {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ endpoint }),
+    }).then((res) => checkResponse<{ success: true }>(res));
   },
 };

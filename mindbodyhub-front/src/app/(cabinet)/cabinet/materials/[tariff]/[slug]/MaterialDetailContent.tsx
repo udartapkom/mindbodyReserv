@@ -1,7 +1,15 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { problems } from '@/api/api';
+import type { Problem } from '@/api/responsesTypes';
+import MaterialAdjacentNav from '@/components/MaterialAdjacentNav/MaterialAdjacentNav';
 import MaterialContent from '@/components/MaterialContent/MaterialContent';
+import MaterialReadingMeta from '@/components/MaterialReadingMeta/MaterialReadingMeta';
+import MaterialScrollAids from '@/components/MaterialScrollAids/MaterialScrollAids';
+import MaterialShareButton from '@/components/MaterialShareButton/MaterialShareButton';
+import MaterialToc from '@/components/MaterialToc/MaterialToc';
 import { useAuth } from '@/context/AuthContext';
 import { useMaterialBySlug } from '@/hooks/useMaterialBySlug';
 import {
@@ -9,6 +17,12 @@ import {
   getMaterialShelfLabel,
   type PaidMaterialShelf,
 } from '@/utils/materialAccess';
+import { extractMaterialToc, getAdjacentMaterials } from '@/utils/materialToc';
+import {
+  estimateReadingMinutes,
+  formatPublishedAt,
+  formatReadingTimeLabel,
+} from '@/utils/readingTime';
 import styles from './page.module.scss';
 
 type MaterialDetailContentProps = {
@@ -21,6 +35,24 @@ function MaterialDetailContent({ tariff, slug }: MaterialDetailContentProps) {
   const state = useMaterialBySlug(slug);
   const shelfLabel = getMaterialShelfLabel(tariff);
   const backHref = `/cabinet/materials/${tariff}`;
+  const [shelfMaterials, setShelfMaterials] = useState<Problem[]>([]);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    void problems
+      .getCabinetShelf(tariff)
+      .then((data) => {
+        if (!cancelled) setShelfMaterials(data);
+      })
+      .catch(() => {
+        if (!cancelled) setShelfMaterials([]);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [tariff]);
 
   if (state.status === 'loading') {
     return (
@@ -93,8 +125,19 @@ function MaterialDetailContent({ tariff, slug }: MaterialDetailContentProps) {
     );
   }
 
+  const toc = extractMaterialToc(material.blocks);
+  const { prev, next } = getAdjacentMaterials(shelfMaterials, slug);
+  const readingTimeLabel = formatReadingTimeLabel(
+    estimateReadingMinutes(material.blocks),
+  );
+  const publishedLabel =
+    material.showMetadata !== false
+      ? formatPublishedAt(material.publishedAt)
+      : null;
+
   return (
     <div className={styles.material}>
+      <MaterialScrollAids offsetForCabinetNav materialId={material.id} />
       <Link className={styles.material__back} href={backHref}>
         ← К разделу «{shelfLabel}»
       </Link>
@@ -113,6 +156,17 @@ function MaterialDetailContent({ tariff, slug }: MaterialDetailContentProps) {
             </p>
           ) : null}
           <h1 className={styles.material__title}>{material.title}</h1>
+          <div className={styles.material__metaRow}>
+            <MaterialReadingMeta
+              readingTimeLabel={readingTimeLabel}
+              publishedLabel={publishedLabel}
+              publishedDateTime={material.publishedAt}
+            />
+            <MaterialShareButton
+              title={material.title}
+              text={material.summary}
+            />
+          </div>
           {material.showMetadata !== false && material.summary ? (
             <p className={styles.material__summary}>{material.summary}</p>
           ) : null}
@@ -121,7 +175,28 @@ function MaterialDetailContent({ tariff, slug }: MaterialDetailContentProps) {
         <div className={styles.material__divider} />
 
         <div className={styles.material__body}>
+          <MaterialToc items={toc} className={styles.material__toc} />
           <MaterialContent blocks={material.blocks} />
+          <MaterialAdjacentNav
+            prev={
+              prev
+                ? {
+                    slug: prev.slug,
+                    title: prev.title,
+                    href: `/cabinet/materials/${tariff}/${prev.slug}`,
+                  }
+                : null
+            }
+            next={
+              next
+                ? {
+                    slug: next.slug,
+                    title: next.title,
+                    href: `/cabinet/materials/${tariff}/${next.slug}`,
+                  }
+                : null
+            }
+          />
         </div>
       </article>
     </div>

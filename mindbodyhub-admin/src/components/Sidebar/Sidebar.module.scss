@@ -70,6 +70,14 @@
     padding: 0 12px;
   }
 
+  &__phone {
+    @include m.text14-400;
+    margin: -8px 0 0;
+    padding: 0 12px;
+    color: v.$text-light-color;
+    opacity: 0.85;
+  }
+
   &__logout {
     @include m.text16-500;
     padding: 10px 14px;

@@ -52,6 +52,15 @@ export class User {
   @Column({ name: 'is_active', default: true })
   isActive: boolean;
 
+  @Column({ name: 'notify_support_replies', default: true })
+  notifySupportReplies: boolean;
+
+  @Column({ name: 'notify_new_materials', default: false })
+  notifyNewMaterials: boolean;
+
+  @Column({ name: 'notify_daily_quote', default: false })
+  notifyDailyQuote: boolean;
+
   @CreateDateColumn({ name: 'created_at', type: 'timestamptz' })
   createdAt: Date;
 

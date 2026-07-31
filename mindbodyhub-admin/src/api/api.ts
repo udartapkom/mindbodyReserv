@@ -2,7 +2,7 @@ import { auth as authStorage } from './auth';
 import { getApiBaseUrl } from './config';
 import { checkResponse, fetchWithAuth } from './http';
 import type { User } from '@/types/user';
-import { UserRole } from '@/types/user';
+import { canAccessAdminPanel } from '@/types/user';
 
 export { getApiBaseUrl } from './config';
 
@@ -30,7 +30,8 @@ const saveAuthSession = (data: AuthTokensResponse) => {
 
 export const auth = {
   login: async (phone: string, password: string) => {
-    const data = await fetch(`${getApiBaseUrl()}/auth/login`, {
+    // Server-side admin gate — non-admins never receive tokens for this route.
+    const data = await fetch(`${getApiBaseUrl()}/auth/admin/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ phone, password }),
@@ -38,8 +39,9 @@ export const auth = {
 
     const user = normalizeUser(data.user);
 
-    if (user.role !== UserRole.ADMIN) {
-      throw { message: 'Доступ только для администраторов' };
+    if (!canAccessAdminPanel(user.role)) {
+      authStorage.removeToken();
+      throw { message: 'Доступ только для сотрудников' };
     }
 
     saveAuthSession({ ...data, user });

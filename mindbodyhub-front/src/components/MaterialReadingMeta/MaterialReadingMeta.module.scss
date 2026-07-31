@@ -1,0 +1,16 @@
+@use "../../styles/variables" as v;
+@use "../../styles/mixins" as m;
+
+.meta {
+  @include m.text14-400;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+  color: v.$color-text-muted;
+
+  &__sep {
+    opacity: 0.7;
+  }
+}
