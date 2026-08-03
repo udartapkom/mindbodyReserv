@@ -100,7 +100,8 @@
 | P0 | Ответ поддержки | `TicketsService.addAdminMessage` | title, body, `url: /cabinet/support?...` |
 | P1 | Новый материал | `MaterialsService.publish` | title материала, url карточки |
 | P2 | Цитата дня | cron 09:00 МСК или `QuotesService.publish` | короткий текст + `/cabinet` |
-| Later | Оплата / тариф | рядом с текущим VK | по желанию |
+| P2 | Окончание тарифа | cron 10:00 МСК (`TariffExpiryPushCronService`) | за 3/1/0 дней, `url: /price` |
+| Later | Оплата | рядом с текущим VK | по желанию |
 
 ### Правила
 
@@ -110,7 +111,7 @@
 
 ### Статус
 
-**Сделано:** P0 support reply, P1 material publish (только при переходе draft→published, аудитория по `isMaterialAccessible`), P2 cron `0 6 * * *` UTC (= 09:00 МСК).
+**Сделано:** P0 support reply, P1 material publish (только при переходе draft→published, аудитория по `isMaterialAccessible`), P2 cron quote `0 6 * * *` UTC (= 09:00 МСК), P2 tariff expiry `0 7 * * *` UTC (= 10:00 МСК) с дедупом.
 
 ---
 
@@ -121,12 +122,13 @@
 - `notifySupportReplies: true` (default on при подписке)
 - `notifyNewMaterials: false|true`
 - `notifyDailyQuote: false`
+- `notifyTariffExpiry: true` (default on)
 
 Без этого цитаты и материалы лучше не включать в MVP.
 
 ### Статус
 
-**Сделано:** колонки на `users`, PATCH `/auth/me`, чекбоксы в профиле.
+**Сделано:** колонки на `users`, PATCH `/auth/me`, чекбоксы в профиле (включая окончание тарифа).
 
 ---
 

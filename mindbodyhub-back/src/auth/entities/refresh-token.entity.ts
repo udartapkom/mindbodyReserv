@@ -20,7 +20,7 @@ export class RefreshToken {
   @JoinColumn({ name: 'user_id' })
   user: User;
 
-  @Column({ name: 'token_hash' })
+  @Column({ name: 'token_hash', unique: true })
   tokenHash: string;
 
   @Column({ name: 'expires_at', type: 'timestamptz' })

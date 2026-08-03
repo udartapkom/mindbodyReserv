@@ -1,29 +1,19 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import Link from 'next/link';
-import { problems } from '@/api/api';
-import type { Problem } from '@/api/responsesTypes';
-import MaterialAdjacentNav from '@/components/MaterialAdjacentNav/MaterialAdjacentNav';
-import MaterialContent from '@/components/MaterialContent/MaterialContent';
-import MaterialReadingMeta from '@/components/MaterialReadingMeta/MaterialReadingMeta';
-import MaterialScrollAids from '@/components/MaterialScrollAids/MaterialScrollAids';
-import MaterialShareButton from '@/components/MaterialShareButton/MaterialShareButton';
-import MaterialToc from '@/components/MaterialToc/MaterialToc';
-import { useAuth } from '@/context/AuthContext';
-import { useMaterialBySlug } from '@/hooks/useMaterialBySlug';
+import { useEffect, useState } from "react";
+import Link from "next/link";
+import { problems } from "@/api/api";
+import type { Problem } from "@/api/responsesTypes";
+import MaterialReaderShell from "@/components/MaterialReaderShell/MaterialReaderShell";
+import { useAuth } from "@/context/AuthContext";
+import { useMaterialBySlug } from "@/hooks/useMaterialBySlug";
 import {
   getMaterialAccessLabel,
   getMaterialShelfLabel,
   type PaidMaterialShelf,
-} from '@/utils/materialAccess';
-import { extractMaterialToc, getAdjacentMaterials } from '@/utils/materialToc';
-import {
-  estimateReadingMinutes,
-  formatPublishedAt,
-  formatReadingTimeLabel,
-} from '@/utils/readingTime';
-import styles from './page.module.scss';
+} from "@/utils/materialAccess";
+import { getAdjacentMaterials } from "@/utils/materialToc";
+import styles from "./page.module.scss";
 
 type MaterialDetailContentProps = {
   tariff: PaidMaterialShelf;
@@ -54,7 +44,7 @@ function MaterialDetailContent({ tariff, slug }: MaterialDetailContentProps) {
     };
   }, [tariff]);
 
-  if (state.status === 'loading') {
+  if (state.status === "loading") {
     return (
       <div className={styles.material}>
         <p className={styles.material__status}>Загрузка материала…</p>
@@ -62,7 +52,7 @@ function MaterialDetailContent({ tariff, slug }: MaterialDetailContentProps) {
     );
   }
 
-  if (state.status === 'forbidden') {
+  if (state.status === "forbidden") {
     return (
       <div className={styles.material}>
         <Link className={styles.material__back} href={backHref}>
@@ -86,7 +76,7 @@ function MaterialDetailContent({ tariff, slug }: MaterialDetailContentProps) {
     );
   }
 
-  if (state.status === 'not-found') {
+  if (state.status === "not-found") {
     return (
       <div className={styles.material}>
         <Link className={styles.material__back} href={backHref}>
@@ -125,81 +115,47 @@ function MaterialDetailContent({ tariff, slug }: MaterialDetailContentProps) {
     );
   }
 
-  const toc = extractMaterialToc(material.blocks);
   const { prev, next } = getAdjacentMaterials(shelfMaterials, slug);
-  const readingTimeLabel = formatReadingTimeLabel(
-    estimateReadingMinutes(material.blocks),
-  );
-  const publishedLabel =
-    material.showMetadata !== false
-      ? formatPublishedAt(material.publishedAt)
-      : null;
 
   return (
-    <div className={styles.material}>
-      <MaterialScrollAids offsetForCabinetNav materialId={material.id} />
-      <Link className={styles.material__back} href={backHref}>
-        ← К разделу «{shelfLabel}»
-      </Link>
-
-      <article className={styles.material__shell}>
-        {material.coverUrl ? (
-          <div className={styles.material__hero}>
-            <img className={styles.material__cover} src={material.coverUrl} alt="" />
-          </div>
-        ) : null}
-
-        <header className={styles.material__header}>
-          {material.showMetadata !== false ? (
-            <p className={styles.material__eyebrow}>
-              {getMaterialAccessLabel(material.tariffType)}
-            </p>
-          ) : null}
-          <h1 className={styles.material__title}>{material.title}</h1>
-          <div className={styles.material__metaRow}>
-            <MaterialReadingMeta
-              readingTimeLabel={readingTimeLabel}
-              publishedLabel={publishedLabel}
-              publishedDateTime={material.publishedAt}
-            />
-            <MaterialShareButton
-              title={material.title}
-              text={material.summary}
-            />
-          </div>
-          {material.showMetadata !== false && material.summary ? (
-            <p className={styles.material__summary}>{material.summary}</p>
-          ) : null}
-        </header>
-
-        <div className={styles.material__divider} />
-
-        <div className={styles.material__body}>
-          <MaterialToc items={toc} className={styles.material__toc} />
-          <MaterialContent blocks={material.blocks} />
-          <MaterialAdjacentNav
-            prev={
-              prev
-                ? {
-                    slug: prev.slug,
-                    title: prev.title,
-                    href: `/cabinet/materials/${tariff}/${prev.slug}`,
-                  }
-                : null
+    <MaterialReaderShell
+      key={material.id}
+      layout="cabinet"
+      document={{
+        id: material.id,
+        title: material.title,
+        summary: material.summary,
+        coverUrl: material.coverUrl,
+        blocks: material.blocks,
+        showMetadata: material.showMetadata,
+        publishedAt: material.publishedAt,
+      }}
+      back={{
+        href: backHref,
+        label: `← К разделу «${shelfLabel}»`,
+      }}
+      eyebrow={getMaterialAccessLabel(material.tariffType)}
+      adjacent={{
+        prev: prev
+          ? {
+              slug: prev.slug,
+              title: prev.title,
+              href: `/cabinet/materials/${tariff}/${prev.slug}`,
             }
-            next={
-              next
-                ? {
-                    slug: next.slug,
-                    title: next.title,
-                    href: `/cabinet/materials/${tariff}/${next.slug}`,
-                  }
-                : null
+          : null,
+        next: next
+          ? {
+              slug: next.slug,
+              title: next.title,
+              href: `/cabinet/materials/${tariff}/${next.slug}`,
             }
-          />
-        </div>
-      </article>
-    </div>
+          : null,
+      }}
+      scrollAids={{
+        materialId: material.id,
+        offsetForCabinetNav: true,
+      }}
+    />
   );
 }
 

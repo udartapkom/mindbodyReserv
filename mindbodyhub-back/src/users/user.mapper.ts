@@ -17,6 +17,7 @@ export function toPublicProfile(user: User): UserPublicProfile {
     notifySupportReplies: user.notifySupportReplies,
     notifyNewMaterials: user.notifyNewMaterials,
     notifyDailyQuote: user.notifyDailyQuote,
+    notifyTariffExpiry: user.notifyTariffExpiry,
     createdAt: user.createdAt.toISOString(),
     updatedAt: user.updatedAt.toISOString(),
   };

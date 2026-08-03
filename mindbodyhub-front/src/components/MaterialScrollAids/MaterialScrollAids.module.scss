@@ -9,12 +9,12 @@
   width: 100%;
   height: 3px;
   pointer-events: none;
-  background: transparent;
+  background: rgba(226, 232, 248, 0.65);
 }
 
 .progress__bar {
   height: 100%;
-  background: v.$accent-color;
+  background: linear-gradient(90deg, v.$accent-color, #60a5fa);
   transition: width 0.05s linear;
 }
 

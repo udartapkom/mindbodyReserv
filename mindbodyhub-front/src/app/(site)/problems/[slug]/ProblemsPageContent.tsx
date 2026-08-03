@@ -1,23 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import MaterialAdjacentNav from "@/components/MaterialAdjacentNav/MaterialAdjacentNav";
-import MaterialContent from "@/components/MaterialContent/MaterialContent";
-import MaterialReadingMeta from "@/components/MaterialReadingMeta/MaterialReadingMeta";
-import MaterialScrollAids from "@/components/MaterialScrollAids/MaterialScrollAids";
-import MaterialShareButton from "@/components/MaterialShareButton/MaterialShareButton";
-import MaterialToc from "@/components/MaterialToc/MaterialToc";
+import MaterialReaderShell from "@/components/MaterialReaderShell/MaterialReaderShell";
 import { useAuth } from "@/context/AuthContext";
 import { useMaterialBySlug } from "@/hooks/useMaterialBySlug";
 import { usePublicMaterials } from "@/hooks/usePublicMaterials";
 import { FREE_ACCESS_TYPE } from "@/types/material";
 import { getMaterialAccessLabel } from "@/utils/materialAccess";
-import { extractMaterialToc, getAdjacentMaterials } from "@/utils/materialToc";
-import {
-  estimateReadingMinutes,
-  formatPublishedAt,
-  formatReadingTimeLabel,
-} from "@/utils/readingTime";
+import { getAdjacentMaterials } from "@/utils/materialToc";
 import styles from "./page.module.scss";
 
 type ProblemsPageContentProps = {
@@ -77,87 +67,41 @@ function ProblemsPageContent({ slug }: ProblemsPageContentProps) {
   }
 
   const { material } = state;
-  const toc = extractMaterialToc(material.blocks);
   const { prev, next } = getAdjacentMaterials(materials, slug);
-  const readingTimeLabel = formatReadingTimeLabel(
-    estimateReadingMinutes(material.blocks),
-  );
-  const publishedLabel =
-    material.showMetadata !== false
-      ? formatPublishedAt(material.publishedAt)
-      : null;
 
   return (
-    <div className={styles.page}>
-      <MaterialScrollAids materialId={material.id} />
-      <div className={styles.page__backWrap}>
-        <Link className={styles.page__back} href="/problems">
-          ← Все готовые решения
-        </Link>
-      </div>
-
-      <article className={styles.page__shell}>
-        {material.coverUrl ? (
-          <div className={styles.page__hero}>
-            <img
-              className={styles.page__cover}
-              src={material.coverUrl}
-              alt=""
-            />
-          </div>
-        ) : null}
-
-        <header className={styles.page__header}>
-          {material.showMetadata !== false ? (
-            <p className={styles.page__eyebrow}>
-              {getMaterialAccessLabel(material.tariffType)}
-            </p>
-          ) : null}
-          <h1 className={styles.page__title}>{material.title}</h1>
-          <div className={styles.page__metaRow}>
-            <MaterialReadingMeta
-              readingTimeLabel={readingTimeLabel}
-              publishedLabel={publishedLabel}
-              publishedDateTime={material.publishedAt}
-            />
-            <MaterialShareButton
-              title={material.title}
-              text={material.summary}
-            />
-          </div>
-          {material.showMetadata !== false && material.summary ? (
-            <p className={styles.page__summary}>{material.summary}</p>
-          ) : null}
-        </header>
-
-        <div className={styles.page__divider} />
-
-        <div className={styles.page__body}>
-          <MaterialToc items={toc} className={styles.page__toc} />
-          <MaterialContent blocks={material.blocks} />
-          <MaterialAdjacentNav
-            prev={
-              prev
-                ? {
-                    slug: prev.slug,
-                    title: prev.title,
-                    href: `/problems/${prev.slug}`,
-                  }
-                : null
+    <MaterialReaderShell
+      key={material.id}
+      layout="site"
+      document={{
+        id: material.id,
+        title: material.title,
+        summary: material.summary,
+        coverUrl: material.coverUrl,
+        blocks: material.blocks,
+        showMetadata: material.showMetadata,
+        publishedAt: material.publishedAt,
+      }}
+      back={{ href: "/problems", label: "← Все готовые решения" }}
+      eyebrow={getMaterialAccessLabel(material.tariffType)}
+      adjacent={{
+        prev: prev
+          ? {
+              slug: prev.slug,
+              title: prev.title,
+              href: `/problems/${prev.slug}`,
             }
-            next={
-              next
-                ? {
-                    slug: next.slug,
-                    title: next.title,
-                    href: `/problems/${next.slug}`,
-                  }
-                : null
+          : null,
+        next: next
+          ? {
+              slug: next.slug,
+              title: next.title,
+              href: `/problems/${next.slug}`,
             }
-          />
-        </div>
-      </article>
-    </div>
+          : null,
+      }}
+      scrollAids={{ materialId: material.id }}
+    />
   );
 }
 

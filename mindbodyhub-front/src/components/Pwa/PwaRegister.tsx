@@ -8,6 +8,16 @@ function PwaRegister() {
       return;
     }
 
+    // Dev: SW + Turbopack HMR fight and look like a full-page remount loop.
+    if (process.env.NODE_ENV === "development") {
+      void navigator.serviceWorker.getRegistrations().then((regs) => {
+        for (const reg of regs) {
+          void reg.unregister();
+        }
+      });
+      return;
+    }
+
     const register = () => {
       void navigator.serviceWorker.register("/sw.js").catch(() => {
         // Install still works without SW on some browsers; ignore registration errors.

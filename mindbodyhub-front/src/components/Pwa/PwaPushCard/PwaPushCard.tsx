@@ -102,7 +102,11 @@ function PwaPushCard() {
   };
 
   const handlePrefChange = async (
-    key: "notifySupportReplies" | "notifyNewMaterials" | "notifyDailyQuote",
+    key:
+      | "notifySupportReplies"
+      | "notifyNewMaterials"
+      | "notifyDailyQuote"
+      | "notifyTariffExpiry",
     value: boolean,
   ) => {
     setError(null);
@@ -213,6 +217,17 @@ function PwaPushCard() {
             }}
           />
           {pwaPushCopy.notifyQuote}
+        </label>
+        <label className={styles.toggle}>
+          <input
+            type="checkbox"
+            checked={user.notifyTariffExpiry}
+            disabled={isSavingPrefs}
+            onChange={(event) => {
+              void handlePrefChange("notifyTariffExpiry", event.target.checked);
+            }}
+          />
+          {pwaPushCopy.notifyTariffExpiry}
         </label>
       </div>
 

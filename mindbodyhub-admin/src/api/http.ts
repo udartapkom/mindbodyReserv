@@ -8,7 +8,6 @@ type AuthTokensResponse = {
   user: User;
 };
 
-
 export const checkResponse = async <T>(res: Response): Promise<T> => {
   if (!res.ok) {
     const json = await res.json().catch(() => ({}));
@@ -38,41 +37,103 @@ const normalizeUser = (user: User): User => ({
 
 let refreshPromise: Promise<boolean> | null = null;
 
+function isAccessTokenFresh(skewMs = 10_000): boolean {
+  const token = authStorage.getToken();
+  if (!token) {
+    return false;
+  }
+
+  try {
+    const payloadPart = token.split('.')[1];
+    if (!payloadPart) {
+      return false;
+    }
+    const json = atob(payloadPart.replace(/-/g, '+').replace(/_/g, '/'));
+    const payload = JSON.parse(json) as { exp?: number };
+    if (typeof payload.exp !== 'number') {
+      return false;
+    }
+    return payload.exp * 1000 > Date.now() + skewMs;
+  } catch {
+    return false;
+  }
+}
+
+async function performRefresh(): Promise<boolean> {
+  // Another tab may have already refreshed while we waited for the lock.
+  if (isAccessTokenFresh()) {
+    return true;
+  }
+
+  const refreshToken = authStorage.getRefreshToken();
+  if (!refreshToken) {
+    return false;
+  }
+
+  try {
+    const res = await fetch(`${getApiBaseUrl()}/auth/refresh`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ refreshToken }),
+    });
+
+    if (!res.ok) {
+      // Race: other tab rotated the token — retry once with latest storage value.
+      if (isAccessTokenFresh()) {
+        return true;
+      }
+      const latest = authStorage.getRefreshToken();
+      if (latest && latest !== refreshToken) {
+        const retry = await fetch(`${getApiBaseUrl()}/auth/refresh`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ refreshToken: latest }),
+        });
+        if (!retry.ok) {
+          return false;
+        }
+        const retryData = (await retry.json()) as AuthTokensResponse;
+        if (!canAccessAdminPanel(retryData.user?.role)) {
+          authStorage.removeToken();
+          return false;
+        }
+        authStorage.setToken(retryData.accessToken);
+        authStorage.setRefreshToken(retryData.refreshToken);
+        authStorage.setUser(normalizeUser(retryData.user));
+        return true;
+      }
+      return false;
+    }
+
+    const data = (await res.json()) as AuthTokensResponse;
+
+    if (!canAccessAdminPanel(data.user?.role)) {
+      authStorage.removeToken();
+      return false;
+    }
+
+    authStorage.setToken(data.accessToken);
+    authStorage.setRefreshToken(data.refreshToken);
+    authStorage.setUser(normalizeUser(data.user));
+    return true;
+  } catch {
+    return isAccessTokenFresh();
+  }
+}
+
 export async function refreshAccessToken(): Promise<boolean> {
   if (refreshPromise) {
     return refreshPromise;
   }
 
   refreshPromise = (async () => {
-    const refreshToken = authStorage.getRefreshToken();
-    if (!refreshToken) {
-      return false;
-    }
-
     try {
-      const res = await fetch(`${getApiBaseUrl()}/auth/refresh`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ refreshToken }),
-      });
-
-      if (!res.ok) {
-        return false;
+      if (typeof navigator !== 'undefined' && 'locks' in navigator) {
+        return await navigator.locks.request('mbh-admin-auth-refresh', () =>
+          performRefresh(),
+        );
       }
-
-      const data = (await res.json()) as AuthTokensResponse;
-
-      if (!canAccessAdminPanel(data.user?.role)) {
-        authStorage.removeToken();
-        return false;
-      }
-
-      authStorage.setToken(data.accessToken);
-      authStorage.setRefreshToken(data.refreshToken);
-      authStorage.setUser(normalizeUser(data.user));
-      return true;
-    } catch {
-      return false;
+      return await performRefresh();
     } finally {
       refreshPromise = null;
     }
@@ -85,8 +146,7 @@ export async function fetchWithAuth(
   url: string,
   init: RequestInit = {},
 ): Promise<Response> {
-  const token = authStorage.getToken();
-  if (!token) {
+  if (!authStorage.getToken() && !authStorage.getRefreshToken()) {
     throw new Error('Unauthorized');
   }
 
@@ -100,7 +160,14 @@ export async function fetchWithAuth(
     return { ...init, headers };
   };
 
-  let response = await fetch(url, makeInit());
+  // Refresh proactively before the access JWT expires (~15m).
+  if (!isAccessTokenFresh(60_000) && authStorage.getRefreshToken()) {
+    await refreshAccessToken();
+  }
+
+  let response = authStorage.getToken()
+    ? await fetch(url, makeInit())
+    : new Response(null, { status: 401 });
 
   if (response.status === 401) {
     const refreshed = await refreshAccessToken();

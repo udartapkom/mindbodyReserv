@@ -69,7 +69,8 @@ services:
         condition: service_healthy
       minio-init:
         condition: service_completed_successfully
-    command: npm run start:dev
+    # Named volume keeps node_modules; reinstall so new deps (e.g. web-push) appear after package.json changes.
+    command: sh -c "npm ci && npm run start:dev"
 
 volumes:
   postgres_data:

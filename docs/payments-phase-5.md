@@ -10,16 +10,20 @@
 
 ## 1. Срок тарифа (`tariffExpiresAt`) и напоминания
 
-**Сделано (без напоминаний):**
+**Сделано:**
 
 - `users.tariff_expires_at`;
 - `tariffs.duration_days` (trial=7, popular/vip=30);
 - при webhook `CONFIRMED` выставляется/продлевается дата (тот же тариф с будущей датой — от `expiresAt`, иначе от `now`);
 - cron ежедневно 03:00 UTC: истёк → `tariff = free`, `tariff_expires_at = null`;
-- в кабинете (UserBar) и админке Users — «действует до …».
+- в кабинете (UserBar) и админке Users — «действует до …»;
+- **напоминания (retention):**
+  - UserBar: полоска при ≤3 днях / в день истечения / после истечения + CTA «Продлить» → `/price`;
+  - Web Push за 3, 1 и 0 календарных дней (UTC) до `tariffExpiresAt` (cron 07:00 UTC);
+  - преф `notifyTariffExpiry` (default `true`), тогл в профиле / PWA push card;
+  - дедуп в `tariff_expiry_reminders` (миграция `015_notify_tariff_expiry.sql`).
 
-**Ещё не сделано:** напоминания за N дней (канал — позже).
-
+Email-напоминания — не в этой итерации.
 ---
 
 ## 2. Рекуррентные СБП-подписки Platega
@@ -95,7 +99,7 @@ Telegram (`TG_BOT_TOKEN`) пока не подключён — исключен�
 
 ## Чеклист
 
-- [x] Срок действия тарифа (`tariffExpiresAt`) + cron сброса в `free` + UI «действует до» (напоминания — позже)
+- [x] Срок действия тарифа (`tariffExpiresAt`) + cron сброса в `free` + UI «действует до» + напоминания (UserBar + Web Push)
 - [ ] Рекуррентные СБП-подписки Platega (если нужны автопродления)
 - [x] Возвраты через Platega API
 - [x] Выгрузка транзакций / сверка в «Бухгалтерии» (фильтры, суммы, CSV)

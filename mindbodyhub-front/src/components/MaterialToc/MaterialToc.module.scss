@@ -2,17 +2,26 @@
 @use "../../styles/mixins" as m;
 
 .materialToc {
-  margin: 8px 0 8px;
-  padding: 16px 18px;
-  border: 1px solid v.$color-border;
+  margin: 0;
+  padding: 14px 16px;
+  border: 1px solid rgba(v.$color-border, 0.9);
   border-radius: 12px;
-  background: rgba(239, 246, 255, 0.55);
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(6px);
+
+  @media (min-width: v.$container-min-desktop) {
+    padding: 12px 12px 14px;
+    background: rgba(248, 250, 253, 0.92);
+  }
 
   &__title {
     @include m.text14-400;
     margin: 0 0 10px;
     font-weight: 600;
-    color: v.$text-dark-color;
+    color: v.$reader-heading-color;
+    font-size: 12px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
   }
 
   &__list {
@@ -21,25 +30,40 @@
     list-style: none;
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: 2px;
   }
 
   &__item {
     margin: 0;
+    border-left: 2px solid transparent;
+    padding-left: 8px;
+    transition: border-color 0.15s ease;
   }
 
   &__item_nested {
-    padding-left: 14px;
+    padding-left: 18px;
+  }
+
+  &__item_active {
+    border-left-color: v.$accent-color;
   }
 
   &__link {
     @include m.text14-400;
-    color: v.$accent-color;
+    display: block;
+    padding: 5px 0;
+    color: v.$color-text-muted;
     text-decoration: none;
     line-height: 1.4;
+    transition: color 0.15s ease;
 
     &:hover {
-      text-decoration: underline;
+      color: v.$accent-color;
     }
+  }
+
+  &__link_active {
+    color: v.$reader-heading-color;
+    font-weight: 500;
   }
 }

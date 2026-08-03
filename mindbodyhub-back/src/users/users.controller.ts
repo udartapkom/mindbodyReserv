@@ -14,11 +14,11 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { extname } from 'path';
 import { AuthService } from '../auth/auth.service';
 import type { AuthUser } from '../auth/decorators/current-user.decorator';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { Roles } from '../auth/decorators/roles.decorator';
+import { detectImageFromBuffer } from '../common/utils/image-magic.util';
 import { AdminUpdateUserDto } from './dto/admin-update-user.dto';
 import { User } from './entities/user.entity';
 import { toPublicProfile } from './user.mapper';
@@ -144,17 +144,17 @@ export class UsersController {
       throw new BadRequestException('Файл не передан');
     }
 
-    if (!ALLOWED_MIME.has(file.mimetype)) {
+    const detected = detectImageFromBuffer(file.buffer);
+    if (!detected || !ALLOWED_MIME.has(detected.mime)) {
       throw new BadRequestException(
         'Допустимы только изображения: jpeg, png, webp',
       );
     }
 
-    const extension = extname(file.originalname).toLowerCase() || '.jpg';
     const user = await this.usersService.uploadAvatar(id, {
       buffer: file.buffer,
-      contentType: file.mimetype,
-      extension,
+      contentType: detected.mime,
+      extension: detected.extension,
     });
 
     return this.toEnrichedProfile(user);

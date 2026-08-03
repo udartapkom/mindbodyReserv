@@ -68,6 +68,27 @@ echo "==> Remote install + restart"
 ssh $SSH_OPTS "$HOST" 'bash -s' <<'REMOTE'
 set -euo pipefail
 cd /opt/mindbodyhub/back
+
+echo "==> Apply pending SQL migrations (idempotent)"
+# Load DB_* from .env without sourcing the whole file into the shell.
+DB_NAME="$(grep -E '^DB_NAME=' .env | head -1 | cut -d= -f2- | tr -d '"' | tr -d "'")"
+DB_USER="$(grep -E '^DB_USER=' .env | head -1 | cut -d= -f2- | tr -d '"' | tr -d "'")"
+DB_NAME="${DB_NAME:-mindbodyhub}"
+DB_USER="${DB_USER:-mindbodyhub}"
+for migration in \
+  deploy/migrations/014_refresh_token_hash_unique.sql \
+  deploy/migrations/015_notify_tariff_expiry.sql
+do
+  if [[ -f "$migration" ]]; then
+    echo "    applying $migration"
+    sudo -u postgres psql -v ON_ERROR_STOP=1 -d "$DB_NAME" -f "$migration"
+  fi
+done
+
+echo "==> Install nginx site config"
+install -m 644 deploy/nginx/mindbodyhub.pro.conf /etc/nginx/sites-available/mindbodyhub.pro.conf
+ln -sfn /etc/nginx/sites-available/mindbodyhub.pro.conf /etc/nginx/sites-enabled/mindbodyhub.pro.conf
+
 npm ci --omit=dev
 # Prefer ecosystem so front stays on :3000 and API on :4000
 if [[ -f /opt/mindbodyhub/ecosystem.config.cjs ]]; then
@@ -79,6 +100,7 @@ nginx -t && systemctl reload nginx
 sleep 2
 curl -fsS https://api.mindbodyhub.pro/health
 echo
+curl -fsSI https://api.mindbodyhub.pro/health | head -n 15 || true
 REMOTE
 
 echo "Deploy done."

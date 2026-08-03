@@ -36,10 +36,8 @@ type PriceCardsGridProps = {
   showPaymentResult?: boolean;
 };
 
-function PriceCardsGrid({ className, showPaymentResult = false }: PriceCardsGridProps) {
-  const searchParams = useSearchParams();
+function usePublicTariffCards() {
   const [cards, setCards] = useState<CardData[]>(cardData);
-  const [popup, setPopup] = useState<FormPopup | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -59,21 +57,48 @@ function PriceCardsGrid({ className, showPaymentResult = false }: PriceCardsGrid
     };
   }, []);
 
-  useEffect(() => {
-    if (!showPaymentResult) return;
+  return cards;
+}
 
+function PaymentFailNotice() {
+  const searchParams = useSearchParams();
+  const [popup, setPopup] = useState<FormPopup | null>(null);
+
+  useEffect(() => {
     const payment = searchParams.get('payment');
     if (payment === 'fail') {
       setPopup({
         title: 'Оплата не завершена',
-        description: 'Платёж отменён или не прошёл. Можете выбрать тариф и попробовать снова.',
+        description:
+          'Платёж отменён или не прошёл. Можете выбрать тариф и попробовать снова.',
         icon: 'times-circle-o',
         tone: 'error',
       });
     }
-  }, [searchParams, showPaymentResult]);
+  }, [searchParams]);
 
   const closePopup = () => setPopup(null);
+
+  return (
+    <Popup
+      title={popup?.title ?? 'Уведомление'}
+      isOpen={popup !== null}
+      onClose={closePopup}
+    >
+      <ErrorPopup
+        title={popup?.title ?? 'Уведомление'}
+        description={popup?.description ?? ''}
+        icon={popup?.icon ?? 'info-circle'}
+        variant="regular"
+        tone={popup?.tone ?? 'info'}
+        submit={closePopup}
+      />
+    </Popup>
+  );
+}
+
+function PriceCardsGrid({ className, showPaymentResult = false }: PriceCardsGridProps) {
+  const cards = usePublicTariffCards();
 
   return (
     <>
@@ -82,21 +107,7 @@ function PriceCardsGrid({ className, showPaymentResult = false }: PriceCardsGrid
           <PriceCard key={card.type} {...card} />
         ))}
       </div>
-
-      <Popup
-        title={popup?.title ?? 'Уведомление'}
-        isOpen={popup !== null}
-        onClose={closePopup}
-      >
-        <ErrorPopup
-          title={popup?.title ?? 'Уведомление'}
-          description={popup?.description ?? ''}
-          icon={popup?.icon ?? 'info-circle'}
-          variant="regular"
-          tone={popup?.tone ?? 'info'}
-          submit={closePopup}
-        />
-      </Popup>
+      {showPaymentResult ? <PaymentFailNotice /> : null}
     </>
   );
 }

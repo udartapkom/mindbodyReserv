@@ -1,4 +1,5 @@
 import { Body, Controller, Get, Patch, Post } from '@nestjs/common';
+import { Throttle } from '@nestjs/throttler';
 import { ChangePasswordDto } from '../users/dto/change-password.dto';
 import { UpdateProfileDto } from '../users/dto/update-profile.dto';
 import type { AuthUser } from './decorators/current-user.decorator';
@@ -10,35 +11,44 @@ import { LoginDto } from './dto/login.dto';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
 import { RegisterDto } from './dto/register.dto';
 
+/** Per-IP limits for credential endpoints (overrides global 120/min). */
+const AUTH_STRICT = { default: { limit: 10, ttl: 60_000 } } as const;
+const AUTH_REFRESH = { default: { limit: 30, ttl: 60_000 } } as const;
+
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Public()
+  @Throttle(AUTH_STRICT)
   @Post('register')
   register(@Body() dto: RegisterDto): Promise<AuthTokensResponse> {
     return this.authService.register(dto);
   }
 
   @Public()
+  @Throttle(AUTH_STRICT)
   @Post('login')
   login(@Body() dto: LoginDto): Promise<AuthTokensResponse> {
     return this.authService.login(dto);
   }
 
   @Public()
+  @Throttle(AUTH_STRICT)
   @Post('admin/login')
   adminLogin(@Body() dto: LoginDto): Promise<AuthTokensResponse> {
     return this.authService.adminLogin(dto);
   }
 
   @Public()
+  @Throttle(AUTH_REFRESH)
   @Post('refresh')
   refresh(@Body() dto: RefreshTokenDto): Promise<AuthTokensResponse> {
     return this.authService.refresh(dto.refreshToken);
   }
 
   @Public()
+  @Throttle(AUTH_REFRESH)
   @Post('logout')
   logout(@Body() dto: RefreshTokenDto): Promise<{ success: true }> {
     return this.authService.logout(dto.refreshToken).then(() => ({
@@ -59,6 +69,7 @@ export class AuthController {
     return this.authService.updateProfile(user.id, dto);
   }
 
+  @Throttle({ default: { limit: 5, ttl: 60_000 } })
   @Patch('me/password')
   changePassword(
     @CurrentUser() user: AuthUser,

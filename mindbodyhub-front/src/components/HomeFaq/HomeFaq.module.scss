@@ -1,0 +1,23 @@
+@use "../../styles/variables" as v;
+@use "../../styles/mixins" as m;
+
+.section {
+  width: 100%;
+  padding: 60px 0;
+
+  @include m.mobile {
+    padding: 40px 0;
+  }
+
+  &__inner {
+    max-width: v.$container-max;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+
+  &__title {
+    @include m.text32-600;
+    margin: 0 0 32px;
+    text-align: center;
+  }
+}

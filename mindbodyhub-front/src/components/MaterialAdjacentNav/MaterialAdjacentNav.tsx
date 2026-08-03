@@ -25,7 +25,12 @@ function MaterialAdjacentNav({ prev, next, className }: MaterialAdjacentNavProps
     >
       {prev ? (
         <Link className={styles.adjacentNav__link} href={prev.href}>
-          <span className={styles.adjacentNav__label}>← Предыдущий</span>
+          <span className={styles.adjacentNav__label}>
+            <span className={styles.adjacentNav__arrow} aria-hidden>
+              ←
+            </span>
+            Предыдущий
+          </span>
           <span className={styles.adjacentNav__title}>{prev.title}</span>
         </Link>
       ) : (
@@ -37,7 +42,12 @@ function MaterialAdjacentNav({ prev, next, className }: MaterialAdjacentNavProps
           className={`${styles.adjacentNav__link} ${styles.adjacentNav__link_next}`}
           href={next.href}
         >
-          <span className={styles.adjacentNav__label}>Следующий →</span>
+          <span className={styles.adjacentNav__label}>
+            Следующий
+            <span className={styles.adjacentNav__arrow} aria-hidden>
+              →
+            </span>
+          </span>
           <span className={styles.adjacentNav__title}>{next.title}</span>
         </Link>
       ) : (

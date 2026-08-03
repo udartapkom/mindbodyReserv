@@ -6,10 +6,9 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { extname } from 'path';
-import { randomUUID } from 'crypto';
 import type { AuthUser } from './decorators/current-user.decorator';
 import { CurrentUser } from './decorators/current-user.decorator';
+import { detectImageFromBuffer } from '../common/utils/image-magic.util';
 import { AuthService } from './auth.service';
 import { UserProfileResponse } from './auth.types';
 
@@ -20,11 +19,7 @@ type UploadedImageFile = {
   size: number;
 };
 
-const ALLOWED_MIME = new Set([
-  'image/jpeg',
-  'image/png',
-  'image/webp',
-]);
+const ALLOWED_MIME = new Set(['image/jpeg', 'image/png', 'image/webp']);
 
 const MAX_SIZE_BYTES = 4 * 1024 * 1024;
 
@@ -46,18 +41,17 @@ export class AuthUploadController {
       throw new BadRequestException('Файл не передан');
     }
 
-    if (!ALLOWED_MIME.has(file.mimetype)) {
+    const detected = detectImageFromBuffer(file.buffer);
+    if (!detected || !ALLOWED_MIME.has(detected.mime)) {
       throw new BadRequestException(
         'Допустимы только изображения: jpeg, png, webp',
       );
     }
 
-    const extension = extname(file.originalname).toLowerCase() || '.jpg';
-
     return this.authService.uploadAvatar(user.id, {
       buffer: file.buffer,
-      contentType: file.mimetype,
-      extension,
+      contentType: detected.mime,
+      extension: detected.extension,
     });
   }
 }

@@ -21,9 +21,14 @@ function PriceCardsFallback({ className }: { className?: string }) {
 }
 
 function PriceCardsClient({ className, showPaymentResult }: PriceCardsClientProps) {
+  // Home path: no useSearchParams → no Suspense bailout / hydration flash.
+  if (!showPaymentResult) {
+    return <PriceCardsGrid className={className} />;
+  }
+
   return (
     <Suspense fallback={<PriceCardsFallback className={className} />}>
-      <PriceCardsGrid className={className} showPaymentResult={showPaymentResult} />
+      <PriceCardsGrid className={className} showPaymentResult />
     </Suspense>
   );
 }

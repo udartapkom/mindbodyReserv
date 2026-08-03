@@ -17,6 +17,7 @@ export type UserPublicProfile = {
   notifySupportReplies: boolean;
   notifyNewMaterials: boolean;
   notifyDailyQuote: boolean;
+  notifyTariffExpiry: boolean;
   createdAt: string;
   updatedAt: string;
 };

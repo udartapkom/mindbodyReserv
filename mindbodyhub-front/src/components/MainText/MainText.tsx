@@ -2,8 +2,11 @@ import styles from './MainText.module.scss';
 
 function MainText() {
     return (
-        <section className={styles.mainText}>
+        <section className={styles.mainText} aria-labelledby="home-main-title">
             <article className={styles.mainText__article}>
+                <h2 id="home-main-title" className={styles.mainText__title}>
+                    Пространство для самостоятельной работы
+                </h2>
                 <p className={styles.mainText__text}> 
                     <span className={styles.mainText__span}>MindBodyHub</span> — это не каталог готовых ответов 
                     и не очередная «волшебная таблетка» для сложных состояний. 

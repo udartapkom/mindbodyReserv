@@ -1,8 +1,9 @@
 import { AuthProvider } from "@/context/AuthContext";
+import SiteJsonLd from "@/components/JsonLd/SiteJsonLd";
 import PwaRegister from "@/components/Pwa/PwaRegister";
 import PwaPushSync from "@/components/Pwa/PwaPushSync";
 import type { Metadata, Viewport } from "next";
-import { Inter } from "next/font/google";
+import { Inter, Source_Serif_4 } from "next/font/google";
 import Script from "next/script";
 import "@/shared/config/fontawesome";
 import "@/global/globals.scss";
@@ -14,6 +15,10 @@ const siteUrl =
 const GA_MEASUREMENT_ID = "G-Y1885LZS96";
 const YANDEX_METRIKA_ID = 110318322;
 
+/** ~160 chars: УТП для сниппета в выдаче и шаринга. */
+const siteDescription =
+  "MindBodyHub — пространство для самостоятельной работы с тревогой, выгоранием и отношениями. Готовые решения, база знаний и поддержка без обещаний быстрых чудес.";
+
 const inter = Inter({
   variable: "--font-inter",
   subsets: ["latin", "cyrillic"],
@@ -21,13 +26,20 @@ const inter = Inter({
   display: "swap",
 });
 
+const sourceSerif = Source_Serif_4({
+  variable: "--font-reader",
+  subsets: ["latin", "cyrillic"],
+  weight: ["400", "600", "700"],
+  display: "swap",
+});
+
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "MindBodyHub - психология здоровья и бизнеса",
+    default: "MindBodyHub — психология здоровья и бизнеса",
     template: "%s | MindBodyHub",
   },
-  description: "MindBodyHub — это пространство для самостоятельной работы с тревогой, выгоранием, отношениями и другими запросами. Мы даём рабочие инструменты психологии и поддержку, а не готовые ответы и быстрые обещания.",
+  description: siteDescription,
   icons: {
     icon: [
       { url: "/icons/icon.svg", type: "image/svg+xml" },
@@ -40,8 +52,8 @@ export const metadata: Metadata = {
     type: "website",
     locale: "ru_RU",
     siteName: "MindBodyHub",
-    title: "MindBodyHub",
-    description: "Психология здоровья и бизнеса",
+    title: "MindBodyHub — психология здоровья и бизнеса",
+    description: siteDescription,
     images: [
       {
         // Cache-bust so messengers re-fetch after logo update
@@ -54,8 +66,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "MindBodyHub",
-    description: "Психология здоровья и бизнеса",
+    title: "MindBodyHub — психология здоровья и бизнеса",
+    description: siteDescription,
     images: ["/icons/og-image.png?v=20260727"],
   },
   appleWebApp: {
@@ -76,7 +88,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ru" className={inter.variable}>
+    <html lang="ru" className={`${inter.variable} ${sourceSerif.variable}`}>
       <body className={styles.body}>
         <Script
           src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
@@ -120,6 +132,7 @@ export default function RootLayout({
             />
           </div>
         </noscript>
+        <SiteJsonLd />
         <AuthProvider>
           <PwaRegister />
           <PwaPushSync />

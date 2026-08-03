@@ -1,71 +1,43 @@
 @use "../../../../styles/variables" as v;
 @use "../../../../styles/mixins" as m;
 
+/** Status / error states only — success UI is MaterialReaderShell. */
 .page {
   width: 100%;
   padding: 40px v.$margin-page-x 88px;
   background:
-    radial-gradient(ellipse 80% 50% at 50% -10%, rgba(59, 130, 246, 0.1), transparent 55%),
-    linear-gradient(180deg, #f8fbff 0%, v.$white-color 42%, v.$white-color 100%);
+    radial-gradient(
+      ellipse 70% 40% at 50% -8%,
+      rgba(59, 130, 246, 0.07),
+      transparent 55%
+    ),
+    linear-gradient(180deg, #eef2f8 0%, v.$reader-page-bg 28%, v.$reader-page-bg 100%);
 
   @include m.mobile {
     padding-top: 24px;
     padding-bottom: 56px;
   }
 
-  &__backWrap {
+  &__statusShell {
     width: 100%;
-    max-width: 880px;
-    margin: 0 auto 16px;
-  }
-
-  &__back {
-    @include m.text14-400;
-    color: v.$accent-color;
-    text-decoration: none;
-
-    &:hover {
-      text-decoration: underline;
-    }
-  }
-
-  &__toc {
-    margin-bottom: 24px;
-  }
-
-  &__shell {
-    width: 100%;
-    max-width: 880px;
+    max-width: 560px;
     margin: 0 auto;
-    overflow: hidden;
-    background: v.$white-color;
+    padding: 40px 36px;
+    text-align: center;
+    background: v.$reader-paper;
     border: 1px solid v.$color-border;
-    border-radius: 20px;
-    box-shadow: 0 16px 40px -20px rgba(26, 42, 74, 0.18);
-  }
-
-  &__hero {
-    position: relative;
-    width: 100%;
-    aspect-ratio: 16 / 9;
-    max-height: 420px;
-    background: v.$section-gradient;
-    overflow: hidden;
-  }
-
-  &__cover {
-    display: block;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-
-  &__header {
-    padding: 36px 40px 8px;
+    border-radius: 16px;
+    box-shadow: 0 10px 28px -22px rgba(26, 42, 74, 0.22);
 
     @include m.mobile {
-      padding: 24px 20px 4px;
+      padding: 28px 20px;
     }
+  }
+
+  &__status {
+    @include m.text16-400;
+    margin: 0;
+    color: v.$text-light-color;
   }
 
   &__eyebrow {
@@ -79,87 +51,21 @@
     color: v.$accent-color;
     font-weight: 500;
     font-size: 12px;
-    letter-spacing: 0.02em;
   }
 
   &__title {
     font-family: v.$font-sans;
     font-weight: 700;
-    font-size: 40px;
-    line-height: 118%;
-    color: v.$text-dark-color;
-    margin: 0 0 14px;
-    letter-spacing: -0.02em;
-
-    @include m.mobile {
-      font-size: 28px;
-    }
-  }
-
-  &__metaRow {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: space-between;
-    gap: 10px 16px;
+    font-size: 32px;
+    line-height: 120%;
+    color: v.$reader-heading-color;
     margin: 0 0 12px;
   }
 
   &__summary {
-    font-family: v.$font-sans;
-    font-weight: 400;
-    font-size: 18px;
-    line-height: 150%;
-    margin: 0;
-    color: v.$text-light-color;
-    max-width: 40em;
-
-    @include m.mobile {
-      font-size: 16px;
-    }
-  }
-
-  &__body {
-    padding: 28px 40px 44px;
-    border-top: 1px solid transparent;
-    background: linear-gradient(180deg, transparent, rgba(239, 246, 255, 0.35) 0%);
-
-    @include m.mobile {
-      padding: 20px 20px 32px;
-    }
-  }
-
-  &__divider {
-    height: 1px;
-    margin: 24px 40px 0;
-    background: v.$color-border;
-
-    @include m.mobile {
-      margin-left: 20px;
-      margin-right: 20px;
-    }
-  }
-
-  &__statusShell {
-    width: 100%;
-    max-width: 560px;
-    margin: 0 auto;
-    padding: 40px 36px;
-    text-align: center;
-    background: v.$white-color;
-    border: 1px solid v.$color-border;
-    border-radius: 20px;
-    box-shadow: 0 16px 40px -20px rgba(26, 42, 74, 0.18);
-
-    @include m.mobile {
-      padding: 28px 20px;
-    }
-  }
-
-  &__status {
     @include m.text16-400;
     margin: 0;
-    color: v.$text-light-color;
+    color: v.$reader-body-color;
   }
 
   &__actions {
@@ -177,11 +83,9 @@
     background: v.$accent-color;
     color: v.$white-color;
     text-decoration: none;
-    transition: opacity 0.2s ease, translate 0.2s ease;
 
     &:hover {
       opacity: 0.94;
-      translate: 0 -1px;
     }
   }
 

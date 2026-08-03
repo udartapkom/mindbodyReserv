@@ -1,0 +1,133 @@
+@use "./variables" as v;
+@use "./mixins" as m;
+
+/// Shared reader page background (paper, not SaaS card chrome).
+@mixin page-surface {
+  width: 100%;
+  background:
+    radial-gradient(
+      ellipse 70% 40% at 50% -8%,
+      rgba(59, 130, 246, 0.07),
+      transparent 55%
+    ),
+    linear-gradient(180deg, #eef2f8 0%, v.$reader-page-bg 28%, v.$reader-page-bg 100%);
+}
+
+/// Soft paper shell — light border, minimal shadow.
+@mixin shell {
+  width: 100%;
+  max-width: v.$reader-shell-max;
+  margin: 0 auto;
+  overflow: hidden;
+  background: v.$reader-paper;
+  border: 1px solid rgba(v.$color-border, 0.85);
+  border-radius: 16px;
+  box-shadow: 0 10px 28px -22px rgba(26, 42, 74, 0.22);
+}
+
+/// Shorter cover with fade into paper.
+@mixin hero {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 21 / 9;
+  max-height: 420px;
+  //max-height: 260px;
+  overflow: hidden;
+  background: v.$section-gradient;
+
+  @include m.mobile {
+    aspect-ratio: 16 / 9;
+    max-height: 180px;
+  }
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: auto 0 0;
+    height: 42%;
+    background: linear-gradient(
+      180deg,
+      transparent 0%,
+      v.$reader-paper 100%
+    );
+    pointer-events: none;
+  }
+}
+
+@mixin hero-image {
+  display: block;
+  width: 100%;
+  height: 110%;
+  object-fit: cover;
+}
+
+/// Body grid: content + sticky TOC on wide screens.
+@mixin body-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 28px 40px 44px;
+
+  @include m.mobile {
+    padding: 20px 18px 32px;
+    gap: 20px;
+  }
+
+  @media (min-width: v.$container-min-desktop) {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 200px;
+    column-gap: 36px;
+    row-gap: 0;
+    align-items: start;
+  }
+}
+
+@mixin body-main {
+  min-width: 0;
+
+  @media (min-width: v.$container-min-desktop) {
+    grid-column: 1;
+    grid-row: 1;
+  }
+}
+
+@mixin body-toc {
+  @media (min-width: v.$container-min-desktop) {
+    grid-column: 2;
+    grid-row: 1;
+    position: sticky;
+    top: 96px;
+    max-height: calc(100vh - 120px);
+    overflow: auto;
+    margin-bottom: 0;
+  }
+}
+
+@mixin title {
+  font-family: v.$font-sans;
+  font-weight: 700;
+  font-size: 40px;
+  line-height: 118%;
+  color: v.$reader-heading-color;
+  margin: 0 0 14px;
+  letter-spacing: -0.025em;
+
+  @include m.mobile {
+    font-size: 28px;
+  }
+}
+
+@mixin summary {
+  font-family: v.$font-reader;
+  font-weight: 400;
+  font-size: 18px;
+  line-height: 158%;
+  margin: 0;
+  color: v.$reader-body-color;
+  max-width: 38em;
+
+  @include m.mobile {
+    font-size: 17px;
+    line-height: 155%;
+  }
+}

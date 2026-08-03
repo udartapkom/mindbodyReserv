@@ -9,6 +9,7 @@ import {
   Patch,
   Post,
 } from '@nestjs/common';
+import { Throttle } from '@nestjs/throttler';
 import type { AuthUser } from '../auth/decorators/current-user.decorator';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { Public } from '../auth/decorators/public.decorator';
@@ -20,6 +21,7 @@ import { CreateTicketMessageDto } from './dto/create-ticket-message.dto';
 import { CreateTicketDto } from './dto/create-ticket.dto';
 import { UpdateTicketDto } from './dto/update-ticket.dto';
 import { toTicketDto, toTicketMessageDto } from './ticket.mapper';
+import { TicketRateService } from './ticket-rate.service';
 import {
   TicketDto,
   TicketMessageDto,
@@ -32,14 +34,18 @@ export class TicketsController {
   constructor(
     private readonly ticketsService: TicketsService,
     private readonly usersService: UsersService,
+    private readonly ticketRate: TicketRateService,
   ) {}
 
   @Public()
+  @Throttle({ default: { limit: 5, ttl: 60_000 } })
   @Post()
   async create(
     @Body() dto: CreateTicketDto,
     @CurrentUser() user?: AuthUser | null,
   ): Promise<TicketDto> {
+    this.ticketRate.assertAllowed(dto.phone);
+
     const ticket = await this.ticketsService.create({
       name: dto.name,
       phone: dto.phone,
@@ -58,11 +64,14 @@ export class TicketsController {
     return tickets.map((ticket) => toTicketDto(ticket));
   }
 
+  @Throttle({ default: { limit: 10, ttl: 60_000 } })
   @Post('me')
   async createMine(
     @CurrentUser() user: AuthUser,
     @Body() dto: CreateCabinetTicketDto,
   ): Promise<TicketDto> {
+    this.ticketRate.assertAllowed(user.phone);
+
     const profile = await this.usersService.findById(user.id);
     const nameFromProfile = [profile?.firstName, profile?.lastName]
       .filter(Boolean)

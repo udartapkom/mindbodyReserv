@@ -19,7 +19,7 @@ function Accordion({ items }: AccordionProps) {
         <ul className={styles.accordion} >
             {items.map(({ id, title, answer, color }) => (
                 <li
-                    key={id}
+                    key={`faq-${id}`}
                     className={`${styles.accordion__item} ${activeItem === id ? styles.accordion__item_active : ''}`}
                     onClick={() => handleItemClick(id)}
                 >

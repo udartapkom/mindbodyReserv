@@ -7,8 +7,8 @@ import {
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { randomUUID } from 'crypto';
-import { extname } from 'path';
 import { Roles } from '../auth/decorators/roles.decorator';
+import { detectImageFromBuffer } from '../common/utils/image-magic.util';
 import { StorageService } from '../storage/storage.service';
 import { UserRole } from '../users/user-role.enum';
 
@@ -46,28 +46,28 @@ export class KnowledgeUploadController {
       throw new BadRequestException('Файл не передан');
     }
 
-    if (!ALLOWED_MIME.has(file.mimetype)) {
+    const detected = detectImageFromBuffer(file.buffer);
+    if (!detected || !ALLOWED_MIME.has(detected.mime)) {
       throw new BadRequestException(
         'Допустимы только изображения: jpeg, png, webp, gif',
       );
     }
 
-    const extension = extname(file.originalname).toLowerCase() || '.bin';
-    const key = `knowledge/${randomUUID()}${extension}`;
+    const key = `knowledge/${randomUUID()}${detected.extension}`;
     const bucket = this.storageService.getMaterialsBucket();
 
     const url = await this.storageService.uploadFile({
       bucket,
       key,
       body: file.buffer,
-      contentType: file.mimetype,
+      contentType: detected.mime,
       isPublic: true,
     });
 
     return {
       key,
       url,
-      contentType: file.mimetype,
+      contentType: detected.mime,
     };
   }
 }

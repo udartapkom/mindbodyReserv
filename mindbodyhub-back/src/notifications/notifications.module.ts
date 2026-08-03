@@ -3,19 +3,26 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { QuotesModule } from '../quotes/quotes.module';
 import { User } from '../users/entities/user.entity';
 import { PushSubscription } from './entities/push-subscription.entity';
+import { TariffExpiryReminder } from './entities/tariff-expiry-reminder.entity';
 import { PushController } from './push.controller';
 import { PushNotifyService } from './push-notify.service';
 import { QuotePushCronService } from './quote-push-cron.service';
+import { TariffExpiryPushCronService } from './tariff-expiry-push-cron.service';
 import { VkNotifyService } from './vk-notify.service';
 
 @Global()
 @Module({
   imports: [
-    TypeOrmModule.forFeature([PushSubscription, User]),
+    TypeOrmModule.forFeature([PushSubscription, TariffExpiryReminder, User]),
     QuotesModule,
   ],
   controllers: [PushController],
-  providers: [VkNotifyService, PushNotifyService, QuotePushCronService],
+  providers: [
+    VkNotifyService,
+    PushNotifyService,
+    QuotePushCronService,
+    TariffExpiryPushCronService,
+  ],
   exports: [VkNotifyService, PushNotifyService],
 })
 export class NotificationsModule {}

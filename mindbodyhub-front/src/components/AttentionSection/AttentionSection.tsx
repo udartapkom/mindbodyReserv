@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import styles from './AttentionSection.module.scss';
 import { Icon } from '@/shared/ui/Icon';
 
@@ -12,7 +13,10 @@ function AttentionSection() {
                    <div className={styles.attentionSection__cardContent}>
                     <h3 className={styles.attentionSection__cardTitle}>Базовый тариф уже активен</h3>
                     <p className={styles.attentionSection__text}>
-                        Бесплатный доступ навсегда — подробнее о тарифах
+                        Бесплатный доступ навсегда —{' '}
+                        <Link href="/price" className={styles.attentionSection__link}>
+                            подробнее о тарифах
+                        </Link>
                     </p>
                    </div>
                 </div>

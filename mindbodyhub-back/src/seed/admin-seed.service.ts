@@ -39,6 +39,15 @@ export class AdminSeedService implements OnModuleInit {
     if (existingUser) {
       if (existingUser.role === UserRole.ADMIN) {
         this.logger.log(`Admin seed skipped: ${phone} is already admin`);
+        if (
+          this.config.get<string>('NODE_ENV') === 'production' &&
+          password
+        ) {
+          this.logger.warn(
+            'ADMIN_PASSWORD is still set in production after admin exists. ' +
+              'Remove it from .env and restart — see docs/security-runbook.md',
+          );
+        }
         return;
       }
 
@@ -59,5 +68,11 @@ export class AdminSeedService implements OnModuleInit {
     });
 
     this.logger.log(`Admin user created: ${admin.phone}`);
+    if (this.config.get<string>('NODE_ENV') === 'production') {
+      this.logger.warn(
+        'Remove ADMIN_PASSWORD from production .env after first login ' +
+          'and password change — see docs/security-runbook.md',
+      );
+    }
   }
 }

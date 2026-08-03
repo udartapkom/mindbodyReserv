@@ -21,7 +21,8 @@ docker compose version
 ```bash
 cd mindbodyhub-back
 cp .env.example .env
-# Отредактируйте ADMIN_PHONE и ADMIN_PASSWORD
+# Для первого админа задайте ADMIN_PHONE и ADMIN_PASSWORD
+# После seed в prod удалите ADMIN_PASSWORD — см. docs/security-runbook.md
 
 docker compose up --build
 ```
@@ -64,9 +65,14 @@ export DEPLOY_HOST=root@89.108.71.23
 
 ### Env на сервере
 
-`/opt/mindbodyhub/back/.env` — секреты только на сервере, не в git.
+`/opt/mindbodyhub/back/.env` — секреты только на сервере, не в git.  
+Шаблон: `.env.example`. Операции (ротация, admin seed): `docs/security-runbook.md`.
 
-`NODE_ENV=production` → TypeORM `synchronize: false`.
+`NODE_ENV=production` → TypeORM `synchronize: false`; без сильных `JWT_ACCESS_SECRET` / `DB_PASSWORD` / MinIO ключей API не стартует.
+
+**Не задавайте `JWT_REFRESH_SECRET`** — refresh не JWT, переменная не используется.
+
+**`ADMIN_PASSWORD`** нужен только для первого создания админа; после seed уберите из prod `.env`.
 
 VK-оповещения админу (оплаты + тикеты):
 

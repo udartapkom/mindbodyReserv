@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { problems as problemsApi } from "@/api/api";
 import { useAuth } from "@/context/AuthContext";
 import type { Material } from "@/types/material";
@@ -35,6 +35,7 @@ function getErrorMessage(error: unknown, fallback: string): string {
 export function useMaterialBySlug(slug: string): MaterialLoadState {
   const { isAuthenticated, isLoading: isAuthLoading } = useAuth();
   const [state, setState] = useState<MaterialLoadState>({ status: "loading" });
+  const loadedSlugRef = useRef<string | null>(null);
 
   useEffect(() => {
     if (isAuthLoading) {
@@ -42,12 +43,22 @@ export function useMaterialBySlug(slug: string): MaterialLoadState {
     }
 
     let cancelled = false;
-    setState({ status: "loading" });
+    const slugChanged = loadedSlugRef.current !== slug;
+
+    // Keep showing the current article while auth/session refetch runs.
+    // Only flash loading when the slug changes or we have nothing to show yet.
+    setState((prev) => {
+      if (!slugChanged && prev.status === "ready") {
+        return prev;
+      }
+      return { status: "loading" };
+    });
 
     problemsApi
       .getBySlug(slug)
       .then((material) => {
         if (!cancelled) {
+          loadedSlugRef.current = slug;
           setState({ status: "ready", material });
         }
       })
@@ -56,6 +67,7 @@ export function useMaterialBySlug(slug: string): MaterialLoadState {
           return;
         }
 
+        loadedSlugRef.current = slug;
         const statusCode = getErrorStatus(error);
         if (statusCode === 403) {
           setState({
@@ -76,7 +88,7 @@ export function useMaterialBySlug(slug: string): MaterialLoadState {
     };
   }, [slug, isAuthenticated, isAuthLoading]);
 
-  if (isAuthLoading) {
+  if (isAuthLoading && state.status !== "ready") {
     return { status: "loading" };
   }
 

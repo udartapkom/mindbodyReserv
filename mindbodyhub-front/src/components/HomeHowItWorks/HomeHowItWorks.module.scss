@@ -1,0 +1,100 @@
+@use "../../styles/variables" as v;
+@use "../../styles/mixins" as m;
+
+.section {
+  width: 100%;
+  padding: 60px v.$margin-page-x;
+  background: v.$white-color;
+
+  @include m.mobile {
+    padding: 40px 24px;
+  }
+
+  &__inner {
+    max-width: v.$container-max;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  &__title {
+    @include m.text32-600;
+    margin: 0 0 12px;
+    text-align: center;
+  }
+
+  &__lead {
+    @include m.text18-400;
+    margin: 0 0 32px;
+    max-width: 640px;
+    text-align: center;
+    color: v.$color-text-muted;
+  }
+
+  &__list {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+
+    @include m.mobile {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  &__item {
+    display: flex;
+    gap: 16px;
+    padding: 20px;
+    background: v.$section-gradient;
+    border: 1px solid v.$color-border;
+    border-radius: 14px;
+  }
+
+  &__num {
+    flex-shrink: 0;
+    width: 36px;
+    height: 36px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    background: v.$accent-color;
+    color: v.$white-color;
+    font-weight: 600;
+    font-size: 16px;
+  }
+
+  &__content {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 0;
+  }
+
+  &__itemTitle {
+    @include m.text22-600;
+    margin: 0;
+  }
+
+  &__itemText {
+    @include m.text16-400;
+    margin: 0;
+    color: v.$text-dark-color;
+  }
+
+  &__link {
+    @include m.text16-400;
+    font-weight: 600;
+    color: v.$accent-color;
+    text-decoration: none;
+    margin-top: 4px;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}

@@ -14,6 +14,10 @@
         border: 1px solid v.$color-border;
         box-shadow: v.$block-shadow;
     }
+    &__title {
+        @include m.text32-600;
+        margin: 0 0 8px;
+    }
     &__text {
         margin: 0;
         @include m.text18-400;

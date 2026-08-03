@@ -26,6 +26,7 @@ export type UpdateUserProfileData = {
   notifySupportReplies?: boolean;
   notifyNewMaterials?: boolean;
   notifyDailyQuote?: boolean;
+  notifyTariffExpiry?: boolean;
 };
 
 export type AdminUpdateUserData = {
@@ -113,6 +114,10 @@ export class UsersService {
 
     if (data.notifyDailyQuote !== undefined) {
       user.notifyDailyQuote = data.notifyDailyQuote;
+    }
+
+    if (data.notifyTariffExpiry !== undefined) {
+      user.notifyTariffExpiry = data.notifyTariffExpiry;
     }
 
     return this.usersRepository.save(user);

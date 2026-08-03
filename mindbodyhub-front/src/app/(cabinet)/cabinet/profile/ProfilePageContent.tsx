@@ -105,7 +105,8 @@ function ProfilePageContent() {
       setOldPassword('');
       setNewPassword('');
       setConfirmPassword('');
-      setSuccessMessage('Пароль изменён');
+      // changePassword clears session and redirects to login
+      return;
     } catch (error) {
       const message =
         typeof error === 'object' &&

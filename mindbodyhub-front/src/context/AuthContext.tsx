@@ -111,7 +111,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const changePassword = useCallback(async (payload: ChangePasswordPayload) => {
     await authApi.changePassword(payload);
-  }, []);
+    // Server revokes all refresh sessions; force re-login.
+    authStorage.removeToken();
+    setUser(null);
+    router.push("/login");
+  }, [router]);
 
   const uploadAvatar = useCallback(async (file: File) => {
     const profile = await authApi.uploadAvatar(file);

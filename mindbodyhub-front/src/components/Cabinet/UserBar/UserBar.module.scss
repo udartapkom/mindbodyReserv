@@ -3,13 +3,18 @@
 
 .userBar {
     display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 24px;
-    height: 100%;
-    padding: 20px 28px;
+    flex-direction: column;
+    gap: 0;
     background: v.$section-gradient;
     border-bottom: 1px solid v.$color-border;
+
+    &__main {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 24px;
+        padding: 20px 28px;
+    }
 
     &__identity {
         display: flex;
@@ -94,6 +99,11 @@
         border: 1px solid v.$color-border;
         border-radius: 12px;
         box-shadow: 0 1px 2px rgba(26, 42, 74, 0.04);
+
+        &_warn {
+            border-color: #f59e0b;
+            background: #fffbeb;
+        }
     }
 
     &__metaLabel {
@@ -154,10 +164,64 @@
         }
     }
 
-    @include m.until-tablet {
-        flex-wrap: wrap;
-        padding: 16px 20px;
+    &__reminder {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
         gap: 16px;
+        padding: 14px 28px;
+        border-top: 1px solid v.$color-border;
+
+        &_soon {
+            background: #fffbeb;
+        }
+
+        &_expired {
+            background: #fef2f2;
+        }
+    }
+
+    &__reminderText {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        min-width: 0;
+    }
+
+    &__reminderTitle {
+        @include m.text16-500;
+        margin: 0;
+        color: v.$text-dark-color;
+    }
+
+    &__reminderBody {
+        @include m.text14-400;
+        margin: 0;
+        color: v.$text-light-color;
+    }
+
+    &__reminderCta {
+        @include m.text14-400;
+        flex-shrink: 0;
+        font-weight: 600;
+        padding: 10px 16px;
+        border-radius: 10px;
+        background: v.$accent-color;
+        color: v.$white-color;
+        text-decoration: none;
+        transition: opacity 0.2s ease;
+
+        &:hover {
+            opacity: 0.92;
+        }
+    }
+
+    @include m.until-tablet {
+        &__main {
+            flex-wrap: wrap;
+            padding: 16px 20px;
+            gap: 16px;
+        }
 
         &__meta {
             width: 100%;
@@ -166,6 +230,16 @@
         &__metaItem {
             flex: 1;
             min-width: 0;
+        }
+
+        &__reminder {
+            flex-direction: column;
+            align-items: stretch;
+            padding: 14px 20px;
+        }
+
+        &__reminderCta {
+            text-align: center;
         }
     }
 

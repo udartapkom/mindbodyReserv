@@ -3,6 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsersModule } from '../users/users.module';
 import { TicketMessage } from './entities/ticket-message.entity';
 import { Ticket } from './entities/ticket.entity';
+import { TicketRateService } from './ticket-rate.service';
 import { TicketsController } from './tickets.controller';
 import { TicketsService } from './tickets.service';
 
@@ -12,7 +13,7 @@ import { TicketsService } from './tickets.service';
     UsersModule,
   ],
   controllers: [TicketsController],
-  providers: [TicketsService],
+  providers: [TicketsService, TicketRateService],
   exports: [TicketsService],
 })
 export class TicketsModule {}

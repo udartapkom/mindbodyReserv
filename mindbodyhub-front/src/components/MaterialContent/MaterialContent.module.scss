@@ -5,7 +5,8 @@
   display: flex;
   flex-direction: column;
   gap: 0;
-  max-width: 720px;
+  max-width: v.$reader-content-max;
+  color: v.$reader-body-color;
 
   &__empty {
     @include m.text16-400;
@@ -14,81 +15,109 @@
     color: v.$color-text-muted;
   }
 
-  &__heading {
+  &__heading,
+  &__subheadingH2 {
+    position: relative;
     font-family: v.$font-sans;
-    font-weight: 700;
-    font-size: 30px;
-    line-height: 128%;
-    color: v.$text-dark-color;
-    margin: 40px 0 14px;
+    color: v.$reader-heading-color;
+    letter-spacing: -0.02em;
     scroll-margin-top: 96px;
+
+    &::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      bottom: -6px;
+      width: 36px;
+      height: 3px;
+      border-radius: 2px;
+      background: v.$accent-color;
+      opacity: 0.85;
+    }
 
     &:first-child {
       margin-top: 0;
     }
 
     @include m.mobile {
-      font-size: 26px;
-      margin-top: 32px;
       scroll-margin-top: 80px;
     }
   }
 
-  &__subheadingH2 {
-    font-family: v.$font-sans;
-    font-weight: 600;
-    font-size: 24px;
-    line-height: 130%;
-    color: v.$text-dark-color;
-    margin: 32px 0 12px;
-    scroll-margin-top: 96px;
-
-    &:first-child {
-      margin-top: 0;
-    }
+  &__heading {
+    font-weight: 700;
+    font-size: 28px;
+    line-height: 128%;
+    margin: 44px 0 18px;
+    padding-bottom: 8px;
 
     @include m.mobile {
-      font-size: 22px;
-      scroll-margin-top: 80px;
+      font-size: 24px;
+      margin-top: 36px;
+    }
+  }
+
+  &__subheadingH2 {
+    font-weight: 600;
+    font-size: 22px;
+    line-height: 130%;
+    margin: 36px 0 14px;
+    padding-bottom: 6px;
+
+    @include m.mobile {
+      font-size: 20px;
     }
   }
 
   &__subheading {
     font-family: v.$font-sans;
     font-weight: 600;
-    font-size: 20px;
-    line-height: 132%;
-    color: v.$text-dark-color;
-    margin: 28px 0 10px;
+    font-size: 18px;
+    line-height: 134%;
+    color: v.$reader-heading-color;
+    margin: 28px 0 12px;
     scroll-margin-top: 96px;
+    letter-spacing: -0.01em;
 
     &:first-child {
       margin-top: 0;
     }
 
     @include m.mobile {
-      font-size: 18px;
+      font-size: 17px;
       scroll-margin-top: 80px;
     }
   }
 
   &__paragraph {
-    font-family: v.$font-sans;
+    font-family: v.$font-reader;
     font-weight: 400;
     font-size: 18px;
-    line-height: 168%;
-    color: v.$text-light-color;
-    margin: 0 0 18px;
+    line-height: 172%;
+    color: v.$reader-body-color;
+    margin: 0 0 1.15em;
     white-space: pre-wrap;
 
     @include m.mobile {
-      font-size: 16px;
-      line-height: 162%;
+      font-size: 17px;
+      line-height: 168%;
+    }
+  }
+
+  &__paragraph_lead {
+    font-size: 19px;
+    line-height: 168%;
+    color: v.$reader-heading-color;
+    margin-bottom: 1.35em;
+
+    @include m.mobile {
+      font-size: 18px;
+      line-height: 165%;
     }
   }
 
   &__figure {
-    margin: 12px 0 28px;
+    margin: 8px 0 1.6em;
   }
 
   &__image {
@@ -96,9 +125,9 @@
     width: 100%;
     max-width: 100%;
     height: auto;
-    border-radius: 14px;
+    border-radius: 12px;
     border: 1px solid v.$color-border;
-    box-shadow: 0 8px 24px -12px rgba(26, 42, 74, 0.18);
+    box-shadow: 0 8px 24px -14px rgba(26, 42, 74, 0.16);
   }
 
   &__caption {
@@ -115,81 +144,148 @@
     transition: color 0.2s ease;
 
     &:hover {
-      color: v.$text-dark-color;
+      color: v.$reader-heading-color;
     }
   }
 
   &__listUl,
   &__listOl {
-    font-family: v.$font-sans;
+    font-family: v.$font-reader;
     font-weight: 400;
     font-size: 18px;
     line-height: 168%;
-    color: v.$text-light-color;
-    margin: 0 0 18px;
-    padding-left: 1.35em;
+    color: v.$reader-body-color;
+    margin: 0 0 1.25em;
+    padding-left: 0;
+    list-style: none;
 
     @include m.mobile {
-      font-size: 16px;
-      line-height: 162%;
+      font-size: 17px;
+      line-height: 165%;
     }
   }
 
-  &__listUl {
-    list-style: disc;
-  }
-
-  &__listOl {
-    list-style: decimal;
-  }
-
   &__listItem {
-    margin: 0 0 8px;
-    padding-left: 0.15em;
+    margin: 0 0 0.55em;
 
     &:last-child {
       margin-bottom: 0;
     }
   }
 
+  &__listUl &__listItem {
+    position: relative;
+    padding-left: 1.35em;
+
+    &::before {
+      content: "";
+      position: absolute;
+      left: 0.15em;
+      top: 0.62em;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: v.$accent-color;
+    }
+  }
+
+  &__listOl {
+    counter-reset: reader-ol;
+  }
+
+  &__listOl &__listItem {
+    position: relative;
+    padding-left: 1.75em;
+    counter-increment: reader-ol;
+
+    &::before {
+      content: counter(reader-ol);
+      position: absolute;
+      left: 0;
+      top: 0.08em;
+      min-width: 1.35em;
+      font-family: v.$font-sans;
+      font-size: 0.82em;
+      font-weight: 600;
+      line-height: 1.5;
+      color: v.$accent-color;
+    }
+  }
+
   &__quote {
-    font-family: v.$font-sans;
+    font-family: v.$font-reader;
     font-weight: 400;
-    font-size: 18px;
+    font-style: italic;
+    font-size: 19px;
     line-height: 168%;
-    color: v.$text-light-color;
-    margin: 8px 0 22px;
-    padding: 4px 0 4px 18px;
+    color: v.$reader-heading-color;
+    margin: 4px 0 1.4em;
+    padding: 6px 0 6px 18px;
     border-left: 3px solid v.$accent-color;
     white-space: pre-wrap;
 
     @include m.mobile {
-      font-size: 16px;
-      line-height: 162%;
+      font-size: 18px;
+      line-height: 165%;
       padding-left: 14px;
     }
   }
 
   &__callout {
-    font-family: v.$font-sans;
+    font-family: v.$font-reader;
     font-weight: 400;
     font-size: 17px;
     line-height: 162%;
-    color: v.$text-dark-color;
-    margin: 8px 0 22px;
-    padding: 14px 16px;
-    border: 1px solid v.$color-border;
+    color: v.$reader-heading-color;
+    margin: 4px 0 1.4em;
+    padding: 14px 16px 14px 16px;
+    border: 1px solid rgba(59, 130, 246, 0.22);
     border-radius: 12px;
     background: linear-gradient(
       135deg,
-      rgba(v.$accent-color, 0.08),
+      rgba(v.$accent-color, 0.09),
       rgba(v.$accent-color, 0.02)
     );
     white-space: pre-wrap;
 
     @include m.mobile {
-      font-size: 15px;
+      font-size: 16px;
       padding: 12px 14px;
     }
+  }
+
+  &__calloutLabel {
+    display: block;
+    font-family: v.$font-sans;
+    font-style: normal;
+    font-weight: 600;
+    font-size: 12px;
+    line-height: 1.2;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: v.$accent-color;
+    margin: 0 0 8px;
+  }
+
+  // Vertical rhythm: heading after dense blocks
+  &__listUl + &__heading,
+  &__listOl + &__heading,
+  &__listUl + &__subheadingH2,
+  &__listOl + &__subheadingH2,
+  &__quote + &__heading,
+  &__callout + &__heading,
+  &__figure + &__heading,
+  &__listUl + &__subheading,
+  &__listOl + &__subheading,
+  &__quote + &__subheading,
+  &__callout + &__subheading,
+  &__figure + &__subheading {
+    margin-top: 40px;
+  }
+
+  &__quote + &__paragraph,
+  &__callout + &__paragraph,
+  &__figure + &__paragraph {
+    margin-top: 0.15em;
   }
 }

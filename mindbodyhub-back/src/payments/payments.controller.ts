@@ -10,6 +10,7 @@ import {
   Post,
   UnauthorizedException,
 } from '@nestjs/common';
+import { Throttle } from '@nestjs/throttler';
 import type { AuthUser } from '../auth/decorators/current-user.decorator';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { Public } from '../auth/decorators/public.decorator';
@@ -33,6 +34,21 @@ export class PaymentsController {
     private readonly plategaClient: PlategaClient,
   ) {}
 
+  /** Limit payment spam per authenticated user (fallback: IP). */
+  @Throttle({
+    default: {
+      limit: 5,
+      ttl: 60_000,
+      getTracker: (req: Record<string, unknown>) => {
+        const user = req.user as { id?: string } | undefined;
+        if (user?.id) {
+          return `pay:${user.id}`;
+        }
+        const ip = typeof req.ip === 'string' ? req.ip : 'unknown';
+        return `pay:ip:${ip}`;
+      },
+    },
+  })
   @Post('create')
   create(
     @CurrentUser() user: AuthUser,
@@ -66,7 +82,11 @@ export class PaymentsController {
     return this.paymentsService.toDto(payment);
   }
 
+  /**
+   * Soft limit so retries from Platega still pass, but bulk abuse is capped.
+   */
   @Public()
+  @Throttle({ default: { limit: 60, ttl: 60_000 } })
   @Post('webhook/platega')
   async plategaWebhook(
     @Body() dto: PlategaCallbackDto,

@@ -36,4 +36,8 @@ export class UpdateProfileDto {
   @IsOptional()
   @IsBoolean()
   notifyDailyQuote?: boolean;
+
+  @IsOptional()
+  @IsBoolean()
+  notifyTariffExpiry?: boolean;
 }

@@ -96,4 +96,14 @@
         max-width: 480px;
         text-align: center;
     }
+
+    &__link {
+        color: v.$accent-color;
+        font-weight: 600;
+        text-decoration: none;
+
+        &:hover {
+            text-decoration: underline;
+        }
+    }
 }

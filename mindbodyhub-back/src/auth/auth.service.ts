@@ -1,6 +1,5 @@
 import {
   ConflictException,
-  ForbiddenException,
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
@@ -16,6 +15,7 @@ import { User } from '../users/entities/user.entity';
 import { toAuthUserSummary, toPublicProfile } from '../users/user.mapper';
 import { UserRole, canAccessAdminPanel } from '../users/user-role.enum';
 import { UsersService } from '../users/users.service';
+import { AuthAttemptService } from './auth-attempt.service';
 import { AuthTokensResponse, UserProfileResponse } from './auth.types';
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
@@ -28,24 +28,35 @@ type AccessTokenPayload = {
   type: 'access';
 };
 
+const INVALID_CREDENTIALS = 'Invalid phone or password';
+
 @Injectable()
 export class AuthService {
+  /** Argon2 hash used when user is missing — keeps verify timing similar. */
+  private readonly dummyPasswordHashPromise: Promise<string>;
+
   constructor(
     private readonly usersService: UsersService,
     private readonly jwtService: JwtService,
     private readonly config: ConfigService,
+    private readonly authAttempts: AuthAttemptService,
     @InjectRepository(RefreshToken)
     private readonly refreshTokensRepository: Repository<RefreshToken>,
-  ) {}
+  ) {
+    this.dummyPasswordHashPromise = argon2.hash(
+      randomBytes(32).toString('hex'),
+    );
+  }
 
   async register(dto: RegisterDto): Promise<AuthTokensResponse> {
     const existingUser = await this.usersService.findByPhone(dto.phone);
+    // Always hash so timing is similar whether the phone is new or taken.
+    const passwordHash = await argon2.hash(dto.password);
 
     if (existingUser) {
       throw new ConflictException('User with this phone already exists');
     }
 
-    const passwordHash = await argon2.hash(dto.password);
     const user = await this.usersService.createUser({
       phone: dto.phone,
       passwordHash,
@@ -59,34 +70,45 @@ export class AuthService {
 
   async login(dto: LoginDto): Promise<AuthTokensResponse> {
     const user = await this.authenticateByPhonePassword(dto);
+    this.authAttempts.recordSuccess(dto.phone);
     return this.issueTokens(user);
   }
 
-  /** Admin panel only — admin and editor may sign in. */
+  /**
+   * Admin panel login. Credential and role failures both return the same 401
+   * so a correct password for a non-staff user is not distinguishable.
+   */
   async adminLogin(dto: LoginDto): Promise<AuthTokensResponse> {
-    const user = await this.authenticateByPhonePassword(dto);
+    this.authAttempts.assertNotLocked(dto.phone);
 
-    if (!canAccessAdminPanel(user.role)) {
-      throw new ForbiddenException('Доступ только для сотрудников');
+    const user = await this.usersService.findByPhone(dto.phone);
+    const hash = user?.passwordHash ?? (await this.dummyPasswordHashPromise);
+    const isPasswordValid = await argon2.verify(hash, dto.password);
+
+    if (
+      !user ||
+      !user.isActive ||
+      !isPasswordValid ||
+      !canAccessAdminPanel(user.role)
+    ) {
+      this.authAttempts.recordFailure(dto.phone);
+      throw new UnauthorizedException(INVALID_CREDENTIALS);
     }
 
+    this.authAttempts.recordSuccess(dto.phone);
     return this.issueTokens(user);
   }
 
   private async authenticateByPhonePassword(dto: LoginDto): Promise<User> {
+    this.authAttempts.assertNotLocked(dto.phone);
+
     const user = await this.usersService.findByPhone(dto.phone);
+    const hash = user?.passwordHash ?? (await this.dummyPasswordHashPromise);
+    const isPasswordValid = await argon2.verify(hash, dto.password);
 
-    if (!user || !user.isActive) {
-      throw new UnauthorizedException('Invalid phone or password');
-    }
-
-    const isPasswordValid = await argon2.verify(
-      user.passwordHash,
-      dto.password,
-    );
-
-    if (!isPasswordValid) {
-      throw new UnauthorizedException('Invalid phone or password');
+    if (!user || !user.isActive || !isPasswordValid) {
+      this.authAttempts.recordFailure(dto.phone);
+      throw new UnauthorizedException(INVALID_CREDENTIALS);
     }
 
     return user;
@@ -99,12 +121,22 @@ export class AuthService {
       relations: { user: true },
     });
 
-    if (
-      !storedToken ||
-      storedToken.revokedAt ||
-      storedToken.expiresAt < new Date() ||
-      !storedToken.user.isActive
-    ) {
+    if (!storedToken) {
+      throw new UnauthorizedException('Invalid refresh token');
+    }
+
+    if (storedToken.revokedAt) {
+      // Concurrent tabs often refresh the same token within seconds.
+      // Only treat reuse as theft if the token was revoked a while ago.
+      const revokedAgeMs = Date.now() - storedToken.revokedAt.getTime();
+      const REUSE_GRACE_MS = 60_000;
+      if (revokedAgeMs >= REUSE_GRACE_MS) {
+        await this.revokeAllRefreshTokens(storedToken.userId);
+      }
+      throw new UnauthorizedException('Invalid refresh token');
+    }
+
+    if (storedToken.expiresAt < new Date() || !storedToken.user?.isActive) {
       throw new UnauthorizedException('Invalid refresh token');
     }
 
@@ -128,7 +160,7 @@ export class AuthService {
     await this.refreshTokensRepository.save(storedToken);
   }
 
-  /** Invalidate all sessions (e.g. after role demotion or block). */
+  /** Invalidate all sessions (e.g. after role demotion, block, or password change). */
   async revokeAllRefreshTokens(userId: string): Promise<number> {
     const result = await this.refreshTokensRepository
       .createQueryBuilder()
@@ -162,6 +194,7 @@ export class AuthService {
       notifySupportReplies: dto.notifySupportReplies,
       notifyNewMaterials: dto.notifyNewMaterials,
       notifyDailyQuote: dto.notifyDailyQuote,
+      notifyTariffExpiry: dto.notifyTariffExpiry,
     });
 
     return this.enrichPublicProfile(user);
@@ -212,6 +245,7 @@ export class AuthService {
 
     const passwordHash = await argon2.hash(dto.newPassword);
     await this.usersService.updatePassword(userId, passwordHash);
+    await this.revokeAllRefreshTokens(userId);
 
     return { success: true };
   }

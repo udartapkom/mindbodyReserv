@@ -31,6 +31,12 @@ function formatDate(value?: string | null) {
   return new Date(value).toLocaleDateString('ru-RU');
 }
 
+/** Calendar date of tariff expiry (stored as UTC end-of-day). */
+function formatTariffDate(value?: string | null) {
+  if (!value) return '—';
+  return new Date(value).toLocaleDateString('ru-RU', { timeZone: 'UTC' });
+}
+
 function toDateInputValue(iso?: string | null) {
   if (!iso) return '';
   const date = new Date(iso);
@@ -40,6 +46,7 @@ function toDateInputValue(iso?: string | null) {
 
 function fromDateInputValue(value: string): string | null {
   if (!value.trim()) return null;
+  // End of chosen UTC calendar day — display must use timeZone: 'UTC'.
   return new Date(`${value}T23:59:59.000Z`).toISOString();
 }
 
@@ -401,7 +408,7 @@ function UsersPage() {
                   </span>
                 </td>
                 <td>{tariffLabels[user.tariff ?? UserTariff.FREE]}</td>
-                <td>{formatDate(user.tariffExpiresAt)}</td>
+                <td>{formatTariffDate(user.tariffExpiresAt)}</td>
                 <td>
                   <span
                     className={`${styles.usersPage__badge} ${
@@ -519,7 +526,7 @@ function UsersPage() {
                   <div className={styles.usersPage__field}>
                     <span className={styles.usersPage__fieldLabel}>Действует до</span>
                     <p className={styles.usersPage__fieldValue}>
-                      {formatDate(selectedUser.tariffExpiresAt)}
+                      {formatTariffDate(selectedUser.tariffExpiresAt)}
                     </p>
                   </div>
                   <div className={styles.usersPage__field}>

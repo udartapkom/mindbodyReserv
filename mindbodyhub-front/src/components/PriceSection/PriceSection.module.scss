@@ -16,8 +16,26 @@
         line-height: 122%;
         color: v.$text-dark-color;
         text-align: center;
-        margin-bottom: 40px;
+        margin-bottom: 12px;
         margin-top: 40px;
+    }
+
+    &__lead {
+        @include m.text16-400;
+        margin: 0 0 32px;
+        text-align: center;
+        color: v.$color-text-muted;
+        max-width: 520px;
+    }
+
+    &__link {
+        color: v.$accent-color;
+        font-weight: 600;
+        text-decoration: none;
+
+        &:hover {
+            text-decoration: underline;
+        }
     }
     &__cardWrapper {
         display: grid;

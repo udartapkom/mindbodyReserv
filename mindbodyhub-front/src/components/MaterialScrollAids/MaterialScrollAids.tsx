@@ -16,46 +16,104 @@ type MaterialScrollAidsProps = {
   offsetForCabinetNav?: boolean;
   /** When set and user is logged in, persist / restore scroll via profile. */
   materialId?: string;
+  /** CSS selector for the reading article (progress is relative to it). */
+  articleSelector?: string;
 };
 
-function getScrollRatio(): number {
+function clamp01(value: number): number {
+  return Math.min(1, Math.max(0, value));
+}
+
+/** Progress through the article element, falling back to document scroll. */
+function getScrollRatio(articleSelector: string): number {
+  const article = document.querySelector(articleSelector);
+  if (article instanceof HTMLElement) {
+    const rect = article.getBoundingClientRect();
+    const articleTop = window.scrollY + rect.top;
+    const articleHeight = article.offsetHeight;
+    const viewport = window.innerHeight;
+    const start = articleTop;
+    const end = articleTop + articleHeight - viewport;
+    if (end <= start) {
+      return window.scrollY > start ? 1 : 0;
+    }
+    return clamp01((window.scrollY - start) / (end - start));
+  }
+
   const doc = document.documentElement;
   const scrollable = doc.scrollHeight - doc.clientHeight;
   if (scrollable <= 0) return 0;
-  return Math.min(1, Math.max(0, window.scrollY / scrollable));
+  return clamp01(window.scrollY / scrollable);
+}
+
+function scrollToRatio(ratio: number, articleSelector: string) {
+  const article = document.querySelector(articleSelector);
+  if (article instanceof HTMLElement) {
+    const rect = article.getBoundingClientRect();
+    const articleTop = window.scrollY + rect.top;
+    const articleHeight = article.offsetHeight;
+    const viewport = window.innerHeight;
+    const start = articleTop;
+    const end = articleTop + articleHeight - viewport;
+    if (end <= start) {
+      window.scrollTo({ top: start, behavior: 'auto' });
+      return;
+    }
+    window.scrollTo({ top: start + (end - start) * ratio, behavior: 'auto' });
+    return;
+  }
+
+  const doc = document.documentElement;
+  const scrollable = doc.scrollHeight - doc.clientHeight;
+  window.scrollTo({ top: scrollable * ratio, behavior: 'auto' });
 }
 
 function MaterialScrollAids({
   offsetForCabinetNav = false,
   materialId,
+  articleSelector = "article[data-reader-article]",
 }: MaterialScrollAidsProps) {
   const { isAuthenticated, isLoading: authLoading } = useAuth();
   const [progress, setProgress] = useState(0);
   const [showTop, setShowTop] = useState(false);
-  const restoredRef = useRef(false);
+  const restoredForIdRef = useRef<string | null>(null);
   const lastSavedRef = useRef(-1);
   const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const latestRatioRef = useRef(0);
+  const restoreDoneRef = useRef(!materialId);
 
   useEffect(() => {
     const update = () => {
-      const ratio = getScrollRatio();
+      const ratio = getScrollRatio(articleSelector);
       latestRatioRef.current = ratio;
-      setProgress(ratio * 100);
-      setShowTop(window.scrollY > SHOW_TOP_AFTER_PX);
+      const nextProgress = Math.round(ratio * 1000) / 10;
+      setProgress((prev) => (prev === nextProgress ? prev : nextProgress));
+      const nextShowTop = window.scrollY > SHOW_TOP_AFTER_PX;
+      setShowTop((prev) => (prev === nextShowTop ? prev : nextShowTop));
     };
 
     update();
-    window.addEventListener('scroll', update, { passive: true });
-    window.addEventListener('resize', update);
+    window.addEventListener("scroll", update, { passive: true });
+    window.addEventListener("resize", update);
     return () => {
-      window.removeEventListener('scroll', update);
-      window.removeEventListener('resize', update);
+      window.removeEventListener("scroll", update);
+      window.removeEventListener("resize", update);
     };
-  }, []);
+  }, [articleSelector]);
 
   useEffect(() => {
-    if (!materialId || authLoading || !isAuthenticated || restoredRef.current) {
+    restoreDoneRef.current = !materialId;
+    if (!materialId) {
+      restoredForIdRef.current = null;
+      return;
+    }
+
+    if (authLoading || !isAuthenticated) {
+      return;
+    }
+
+    if (restoredForIdRef.current === materialId) {
+      restoreDoneRef.current = true;
       return;
     }
 
@@ -64,8 +122,13 @@ function MaterialScrollAids({
     const restore = async () => {
       try {
         const saved = await problems.getReadingProgress(materialId);
-        if (cancelled || !saved || saved.scrollRatio < RESTORE_MIN_RATIO) {
-          restoredRef.current = true;
+        if (cancelled) {
+          return;
+        }
+
+        if (!saved || saved.scrollRatio < RESTORE_MIN_RATIO) {
+          restoredForIdRef.current = materialId;
+          restoreDoneRef.current = true;
           return;
         }
 
@@ -73,20 +136,27 @@ function MaterialScrollAids({
 
         const tryScroll = (attempt: number) => {
           if (cancelled) return;
-          const doc = document.documentElement;
-          const scrollable = doc.scrollHeight - doc.clientHeight;
-          if (scrollable < 120 && attempt < 12) {
+          const article = document.querySelector(articleSelector);
+          const height =
+            article instanceof HTMLElement
+              ? article.offsetHeight
+              : document.documentElement.scrollHeight;
+          if (height < 200 && attempt < 12) {
             window.setTimeout(() => tryScroll(attempt + 1), 80);
             return;
           }
-          window.scrollTo({ top: scrollable * ratio, behavior: 'auto' });
+          scrollToRatio(ratio, articleSelector);
           lastSavedRef.current = ratio;
-          restoredRef.current = true;
+          restoredForIdRef.current = materialId;
+          restoreDoneRef.current = true;
         };
 
         tryScroll(0);
       } catch {
-        restoredRef.current = true;
+        if (!cancelled) {
+          restoredForIdRef.current = materialId;
+          restoreDoneRef.current = true;
+        }
       }
     };
 
@@ -94,7 +164,7 @@ function MaterialScrollAids({
     return () => {
       cancelled = true;
     };
-  }, [materialId, isAuthenticated, authLoading]);
+  }, [materialId, isAuthenticated, authLoading, articleSelector]);
 
   useEffect(() => {
     if (!materialId || authLoading || !isAuthenticated) {
@@ -102,6 +172,7 @@ function MaterialScrollAids({
     }
 
     const persist = (ratio: number) => {
+      if (!restoreDoneRef.current) return;
       if (ratio < MIN_SAVE_RATIO) return;
       if (Math.abs(ratio - lastSavedRef.current) < 0.02) return;
       lastSavedRef.current = ratio;
@@ -117,10 +188,10 @@ function MaterialScrollAids({
       }, SAVE_DEBOUNCE_MS);
     };
 
-    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener("scroll", onScroll, { passive: true });
 
     return () => {
-      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener("scroll", onScroll);
       if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
       persist(latestRatioRef.current);
     };
@@ -147,8 +218,8 @@ function MaterialScrollAids({
             offsetForCabinetNav ? styles.topButton_cabinet : null,
           ]
             .filter(Boolean)
-            .join(' ')}
-          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+            .join(" ")}
+          onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
           aria-label="Наверх"
         >
           ↑ Наверх

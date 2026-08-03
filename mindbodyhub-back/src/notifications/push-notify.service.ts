@@ -158,6 +158,40 @@ export class PushNotifyService {
     );
   }
 
+  async notifyTariffExpiry(
+    userId: string,
+    payload: { daysLeft: number; tariff: UserTariff; expiresAt: Date },
+  ): Promise<void> {
+    const user = await this.usersRepository.findOne({ where: { id: userId } });
+    if (!user?.isActive || !user.notifyTariffExpiry) {
+      return;
+    }
+
+    const dateLabel = payload.expiresAt.toLocaleDateString('ru-RU', {
+      timeZone: 'UTC',
+    });
+
+    let title: string;
+    let body: string;
+
+    if (payload.daysLeft === 0) {
+      title = 'Сегодня последний день тарифа';
+      body = `Доступ действует до ${dateLabel}. Продлите, чтобы не потерять материалы.`;
+    } else if (payload.daysLeft === 1) {
+      title = 'Тариф истекает завтра';
+      body = `Действует до ${dateLabel}. Продлите доступ заранее.`;
+    } else {
+      title = `Тариф истекает через ${payload.daysLeft} дня`;
+      body = `Действует до ${dateLabel}. Продлите доступ, чтобы ничего не прерывалось.`;
+    }
+
+    await this.sendToUser(userId, {
+      title,
+      body,
+      url: '/price',
+    });
+  }
+
   async notifyDailyQuote(quote: { body: string }): Promise<void> {
     if (!this.isConfigured()) {
       return;

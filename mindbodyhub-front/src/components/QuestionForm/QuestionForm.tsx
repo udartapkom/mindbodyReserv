@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import WriteWeSocial from '../WriteWeSocial/WriteWeSocial';
 import ContactForm from '../ContactForm/ContactForm';
 import { contactFormCopy } from '@/content/contactFormCopy';
@@ -16,6 +17,13 @@ function QuestionForm() {
                             {paragraph}
                         </p>
                     ))}
+                    <p className={styles.questionForm__support}>
+                        Больше способов связаться и FAQ — на странице{' '}
+                        <Link href="/support" className={styles.questionForm__link}>
+                            поддержки
+                        </Link>
+                        .
+                    </p>
                     <WriteWeSocial />
                 </div>
 

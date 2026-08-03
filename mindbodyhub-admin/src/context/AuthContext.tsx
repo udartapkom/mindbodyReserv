@@ -10,6 +10,7 @@ import {
 import { useNavigate } from 'react-router-dom';
 import { auth as authStorage } from '@/api/auth';
 import { auth as authApi } from '@/api/api';
+import { refreshAccessToken } from '@/api/http';
 import type { User } from '@/types/user';
 import { canAccessAdminPanel, getAdminHomePath } from '@/types/user';
 
@@ -49,6 +50,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
         setUser(profile);
       } catch {
+        // Access may be expired — try refresh once before logging out.
+        const refreshed = await refreshAccessToken();
+        if (refreshed) {
+          try {
+            const profile = await authApi.getProfile();
+            if (canAccessAdminPanel(profile.role)) {
+              setUser(profile);
+              return;
+            }
+          } catch {
+            // fall through
+          }
+        }
         authStorage.removeToken();
         setUser(null);
       } finally {
@@ -57,6 +71,31 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     };
 
     void restoreSession();
+  }, []);
+
+  // Keep React auth state in sync when another admin tab refreshes tokens.
+  useEffect(() => {
+    const onStorage = (event: StorageEvent) => {
+      if (
+        event.key !== 'admin_user_token' &&
+        event.key !== 'admin_refresh_token' &&
+        event.key !== 'admin_user_data'
+      ) {
+        return;
+      }
+
+      const nextUser = authStorage.getUser();
+      if (!authStorage.getToken() && !authStorage.getRefreshToken()) {
+        setUser(null);
+        return;
+      }
+      if (nextUser && canAccessAdminPanel(nextUser.role)) {
+        setUser(nextUser);
+      }
+    };
+
+    window.addEventListener('storage', onStorage);
+    return () => window.removeEventListener('storage', onStorage);
   }, []);
 
   const login = useCallback(

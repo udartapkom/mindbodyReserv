@@ -6,6 +6,7 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import type { PlategaPaymentStatus } from './payment.types';
+import { safeEqualString } from '../common/utils/safe-equal.util';
 
 export type PlategaCreateTransactionInput = {
   amount: number;
@@ -69,7 +70,13 @@ export class PlategaClient {
     if (!this.isConfigured()) {
       return false;
     }
-    return merchantId === this.merchantId && secret === this.secret;
+    if (typeof merchantId !== 'string' || typeof secret !== 'string') {
+      return false;
+    }
+    return (
+      safeEqualString(merchantId.trim(), this.merchantId) &&
+      safeEqualString(secret.trim(), this.secret)
+    );
   }
 
   async createTransaction(

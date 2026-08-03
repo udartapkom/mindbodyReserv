@@ -1,9 +1,25 @@
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
+import type { NestExpressApplication } from '@nestjs/platform-express';
+import helmet from 'helmet';
 import { AppModule } from './app.module';
+import { assertProductionSecrets } from './common/utils/production-secrets.util';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  assertProductionSecrets();
+
+  const app = await NestFactory.create<NestExpressApplication>(AppModule);
+
+  // So Throttler / logs see the real client IP behind nginx.
+  app.set('trust proxy', 1);
+
+  app.use(
+    helmet({
+      // API is JSON; CSP is for browsers loading HTML — keep defaults otherwise.
+      contentSecurityPolicy: false,
+      crossOriginResourcePolicy: { policy: 'cross-origin' },
+    }),
+  );
 
   app.useGlobalPipes(
     new ValidationPipe({

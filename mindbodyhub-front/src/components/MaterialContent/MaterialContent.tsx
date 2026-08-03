@@ -20,6 +20,7 @@ function MaterialContent({ blocks }: MaterialContentProps) {
 
   const toc = extractMaterialToc(blocks);
   const anchorByBlockId = new Map(toc.map((item) => [item.blockId, item.id]));
+  const firstParagraphId = blocks.find((block) => block.type === "paragraph")?.id;
 
   return (
     <div className={styles.materialContent}>
@@ -59,12 +60,21 @@ function MaterialContent({ blocks }: MaterialContentProps) {
               </h3>
             );
           }
-          case "paragraph":
+          case "paragraph": {
+            const isLead = block.id === firstParagraphId;
             return (
-              <p key={block.id} className={styles.materialContent__paragraph}>
+              <p
+                key={block.id}
+                className={
+                  isLead
+                    ? `${styles.materialContent__paragraph} ${styles.materialContent__paragraph_lead}`
+                    : styles.materialContent__paragraph
+                }
+              >
                 {renderInlineMarkdown(block.text, styles.materialContent__link)}
               </p>
             );
+          }
           case "list": {
             const items = block.items.filter((item) => item.trim().length > 0);
             if (items.length === 0) return null;
@@ -94,6 +104,7 @@ function MaterialContent({ blocks }: MaterialContentProps) {
                   key={block.id}
                   className={styles.materialContent__callout}
                 >
+                  <span className={styles.materialContent__calloutLabel}>Важно</span>
                   {renderInlineMarkdown(block.text, styles.materialContent__link)}
                 </aside>
               );

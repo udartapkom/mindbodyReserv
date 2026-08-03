@@ -42,4 +42,21 @@
         max-width: 720px;
         margin: 0 auto;
     }
+
+    &__about {
+        @include m.text16-400;
+        max-width: 640px;
+        margin: 16px auto 0;
+        color: v.$color-text-muted;
+    }
+
+    &__link {
+        color: v.$accent-color;
+        font-weight: 600;
+        text-decoration: none;
+
+        &:hover {
+            text-decoration: underline;
+        }
+    }
 }

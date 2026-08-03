@@ -39,4 +39,20 @@
         color: v.$text-dark-color;
         margin: 0;
     }
+
+    &__support {
+        @include m.text16-400;
+        color: v.$color-text-muted;
+        margin: 8px 0 0;
+    }
+
+    &__link {
+        color: v.$accent-color;
+        font-weight: 600;
+        text-decoration: none;
+
+        &:hover {
+            text-decoration: underline;
+        }
+    }
 }
