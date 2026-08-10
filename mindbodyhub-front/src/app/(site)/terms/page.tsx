@@ -1,9 +1,11 @@
 import { terms } from '@/content/terms';
 import styles from './page.module.scss';
+import Link from 'next/link';
 
 function TermsPage() {
     return (
         <main className={styles.terms}>
+            <Link href="/">Главная</Link>
             <h1>Пользовательское соглашение</h1>
             <p>{terms.date}</p>
             <div>
