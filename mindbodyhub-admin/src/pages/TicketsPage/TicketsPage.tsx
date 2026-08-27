@@ -1,7 +1,9 @@
 import { useEffect, useMemo, useRef, useState, type FormEvent } from 'react';
 import { ticketsApi } from '@/api/tickets';
+import { usersApi } from '@/api/users';
 import type { Ticket, UpdateTicketPayload } from '@/types/ticket';
 import { TicketSource, TicketStatus } from '@/types/ticket';
+import type { UserLookupItem } from '@/types/user';
 import styles from './TicketsPage.module.scss';
 
 const POLL_INTERVAL_MS = 12_000;
@@ -47,6 +49,52 @@ function statusBadgeClass(status: TicketStatus) {
   return styles.ticketsPage__badge_closed;
 }
 
+function userLabel(user: UserLookupItem) {
+  const name = [user.firstName, user.lastName].filter(Boolean).join(' ').trim();
+  return name ? `${name} · ${user.phone}` : user.phone;
+}
+
+function digitsOnly(value: string) {
+  return value.replace(/\D/g, '');
+}
+
+/** Match by name tokens and/or phone digits (8… / +7… / spaces). */
+function userMatchesQuery(user: UserLookupItem, rawQuery: string) {
+  const q = rawQuery.trim().toLowerCase();
+  if (!q) return true;
+
+  const name = [user.firstName, user.lastName, user.name]
+    .filter(Boolean)
+    .join(' ')
+    .toLowerCase();
+  const phone = (user.phone ?? '').toLowerCase();
+  const phoneDigits = digitsOnly(user.phone ?? '');
+  const queryDigits = digitsOnly(q);
+
+  if (queryDigits.length >= 3 && phoneDigits.includes(queryDigits)) {
+    return true;
+  }
+
+  // "8900…" vs stored "+7900…"
+  if (queryDigits.length >= 10) {
+    const normalizedQuery =
+      queryDigits.length === 11 && queryDigits.startsWith('8')
+        ? `7${queryDigits.slice(1)}`
+        : queryDigits;
+    if (phoneDigits.includes(normalizedQuery) || normalizedQuery.includes(phoneDigits)) {
+      return true;
+    }
+  }
+
+  const tokens = q.split(/\s+/).filter(Boolean);
+  return tokens.every((token) => {
+    if (digitsOnly(token).length >= 3) {
+      return phoneDigits.includes(digitsOnly(token)) || phone.includes(token);
+    }
+    return name.includes(token) || phone.includes(token);
+  });
+}
+
 function TicketsPage() {
   const [tickets, setTickets] = useState<Ticket[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -63,6 +111,15 @@ function TicketsPage() {
   const messagesRef = useRef<HTMLDivElement | null>(null);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   selectedIdRef.current = selectedTicket?.id ?? null;
+
+  const [composeOpen, setComposeOpen] = useState(false);
+  const [users, setUsers] = useState<UserLookupItem[]>([]);
+  const [userQuery, setUserQuery] = useState('');
+  const [composeUserId, setComposeUserId] = useState('');
+  const [composeMessage, setComposeMessage] = useState('');
+  const [composeError, setComposeError] = useState('');
+  const [isComposing, setIsComposing] = useState(false);
+  const [usersLoading, setUsersLoading] = useState(false);
 
   const lastMessageId = selectedTicket?.messages?.at(-1)?.id ?? null;
   const messagesCount = selectedTicket?.messages?.length ?? 0;
@@ -141,6 +198,59 @@ function TicketsPage() {
     if (statusFilter === 'all') return tickets;
     return tickets.filter((ticket) => ticket.status === statusFilter);
   }, [tickets, statusFilter]);
+
+  const filteredUsers = useMemo(() => {
+    const list = users.filter((u) => u.role !== 'admin');
+    const matched = list.filter((u) => userMatchesQuery(u, userQuery));
+    return matched.slice(0, 50);
+  }, [users, userQuery]);
+
+  const openCompose = async () => {
+    setComposeOpen(true);
+    setComposeError('');
+    setComposeMessage('');
+    setComposeUserId('');
+    setUserQuery('');
+    setUsersLoading(true);
+    try {
+      setUsers(await usersApi.lookup());
+    } catch {
+      setComposeError('Не удалось загрузить список пользователей');
+      setUsers([]);
+    } finally {
+      setUsersLoading(false);
+    }
+  };
+
+  const closeCompose = () => {
+    if (isComposing) return;
+    setComposeOpen(false);
+    setComposeError('');
+  };
+
+  const handleCompose = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (!composeUserId || !composeMessage.trim()) return;
+
+    setIsComposing(true);
+    setComposeError('');
+
+    try {
+      const created = await ticketsApi.createForUser({
+        userId: composeUserId,
+        message: composeMessage.trim(),
+      });
+      setTickets((prev) => [created, ...prev.filter((t) => t.id !== created.id)]);
+      setComposeOpen(false);
+      setComposeMessage('');
+      setComposeUserId('');
+      await openTicket(created);
+    } catch (error) {
+      setComposeError(getErrorMessage(error, 'Не удалось начать переписку'));
+    } finally {
+      setIsComposing(false);
+    }
+  };
 
   const openTicket = async (ticket: Ticket) => {
     setSaveError('');
@@ -264,26 +374,36 @@ function TicketsPage() {
           </p>
         </div>
 
-        <div className={styles.ticketsPage__filters}>
-          {(
-            [
-              ['all', `Все (${counts.all})`],
-              [TicketStatus.NEW, `Новые (${counts.new})`],
-              [TicketStatus.IN_PROGRESS, `В работе (${counts.in_progress})`],
-              [TicketStatus.CLOSED, `Закрытые (${counts.closed})`],
-            ] as const
-          ).map(([value, label]) => (
-            <button
-              key={value}
-              type="button"
-              className={`${styles.ticketsPage__filterBtn} ${
-                statusFilter === value ? styles.ticketsPage__filterBtn_active : ''
-              }`}
-              onClick={() => setStatusFilter(value)}
-            >
-              {label}
-            </button>
-          ))}
+        <div className={styles.ticketsPage__headerActions}>
+          <button
+            type="button"
+            className={`${styles.ticketsPage__actionBtn} ${styles.ticketsPage__actionBtn_primary}`}
+            onClick={() => void openCompose()}
+          >
+            Написать пользователю
+          </button>
+
+          <div className={styles.ticketsPage__filters}>
+            {(
+              [
+                ['all', `Все (${counts.all})`],
+                [TicketStatus.NEW, `Новые (${counts.new})`],
+                [TicketStatus.IN_PROGRESS, `В работе (${counts.in_progress})`],
+                [TicketStatus.CLOSED, `Закрытые (${counts.closed})`],
+              ] as const
+            ).map(([value, label]) => (
+              <button
+                key={value}
+                type="button"
+                className={`${styles.ticketsPage__filterBtn} ${
+                  statusFilter === value ? styles.ticketsPage__filterBtn_active : ''
+                }`}
+                onClick={() => setStatusFilter(value)}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
         </div>
       </header>
 
@@ -353,6 +473,88 @@ function TicketsPage() {
           </tbody>
         </table>
       </div>
+
+      {composeOpen ? (
+        <>
+          <button
+            type="button"
+            className={styles.ticketsPage__overlay}
+            aria-label="Закрыть"
+            onClick={closeCompose}
+          />
+          <aside className={styles.ticketsPage__drawer}>
+            <div className={styles.ticketsPage__drawerHeader}>
+              <h2 className={styles.ticketsPage__drawerTitle}>Новая переписка</h2>
+              <button type="button" className={styles.ticketsPage__close} onClick={closeCompose}>
+                ×
+              </button>
+            </div>
+
+            <div className={styles.ticketsPage__drawerBody}>
+              <label className={styles.ticketsPage__fieldLabel} htmlFor="userQuery">
+                Пользователь
+              </label>
+              <input
+                id="userQuery"
+                className={styles.ticketsPage__input}
+                value={userQuery}
+                onChange={(e) => setUserQuery(e.target.value)}
+                placeholder="Имя, фамилия или телефон"
+                autoComplete="off"
+              />
+
+              <div className={styles.ticketsPage__userList} role="listbox" aria-label="Пользователи">
+                {usersLoading ? (
+                  <p className={styles.ticketsPage__threadEmpty}>Загрузка пользователей…</p>
+                ) : filteredUsers.length === 0 ? (
+                  <p className={styles.ticketsPage__threadEmpty}>
+                    {users.length === 0 ? 'Список пользователей пуст' : 'Никого не найдено'}
+                  </p>
+                ) : (
+                  filteredUsers.map((user) => (
+                    <button
+                      key={user.id}
+                      type="button"
+                      role="option"
+                      aria-selected={composeUserId === user.id}
+                      className={`${styles.ticketsPage__userOption} ${
+                        composeUserId === user.id ? styles.ticketsPage__userOption_active : ''
+                      }`}
+                      onClick={() => setComposeUserId(user.id)}
+                    >
+                      {userLabel(user)}
+                    </button>
+                  ))
+                )}
+              </div>
+
+              <form onSubmit={(e) => void handleCompose(e)}>
+                <label className={styles.ticketsPage__fieldLabel} htmlFor="composeMessage">
+                  Сообщение
+                </label>
+                <textarea
+                  id="composeMessage"
+                  className={styles.ticketsPage__textarea}
+                  value={composeMessage}
+                  onChange={(e) => setComposeMessage(e.target.value)}
+                  placeholder="Текст, который увидит пользователь в кабинете"
+                  rows={5}
+                />
+
+                {composeError ? <p className={styles.ticketsPage__error}>{composeError}</p> : null}
+
+                <button
+                  type="submit"
+                  className={`${styles.ticketsPage__actionBtn} ${styles.ticketsPage__actionBtn_primary}`}
+                  disabled={isComposing || !composeUserId || !composeMessage.trim()}
+                >
+                  {isComposing ? 'Отправка…' : 'Начать переписку'}
+                </button>
+              </form>
+            </div>
+          </aside>
+        </>
+      ) : null}
 
       {selectedTicket ? (
         <>

@@ -10,6 +10,7 @@ import { StorageModule } from './storage/storage.module';
 import { MaterialsModule } from './materials/materials.module';
 import { KnowledgeModule } from './knowledge/knowledge.module';
 import { QuotesModule } from './quotes/quotes.module';
+import { InsightsModule } from './insights/insights.module';
 import { TariffsModule } from './tariffs/tariffs.module';
 import { TicketsModule } from './tickets/tickets.module';
 import { PaymentsModule } from './payments/payments.module';
@@ -53,6 +54,7 @@ import { SystemModule } from './system/system.module';
     MaterialsModule,
     KnowledgeModule,
     QuotesModule,
+    InsightsModule,
     TicketsModule,
     PaymentsModule,
     SettingsModule,

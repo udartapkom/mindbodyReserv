@@ -77,7 +77,10 @@ DB_NAME="${DB_NAME:-mindbodyhub}"
 DB_USER="${DB_USER:-mindbodyhub}"
 for migration in \
   deploy/migrations/014_refresh_token_hash_unique.sql \
-  deploy/migrations/015_notify_tariff_expiry.sql
+  deploy/migrations/015_notify_tariff_expiry.sql \
+  deploy/migrations/016_insights.sql \
+  deploy/migrations/017_notify_new_insights.sql \
+  deploy/migrations/018_fix_migration_owners.sql
 do
   if [[ -f "$migration" ]]; then
     echo "    applying $migration"

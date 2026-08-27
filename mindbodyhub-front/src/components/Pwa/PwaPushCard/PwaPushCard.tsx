@@ -105,6 +105,7 @@ function PwaPushCard() {
     key:
       | "notifySupportReplies"
       | "notifyNewMaterials"
+      | "notifyNewInsights"
       | "notifyDailyQuote"
       | "notifyTariffExpiry",
     value: boolean,
@@ -206,6 +207,17 @@ function PwaPushCard() {
             }}
           />
           {pwaPushCopy.notifyMaterials}
+        </label>
+        <label className={styles.toggle}>
+          <input
+            type="checkbox"
+            checked={user.notifyNewInsights}
+            disabled={isSavingPrefs}
+            onChange={(event) => {
+              void handlePrefChange("notifyNewInsights", event.target.checked);
+            }}
+          />
+          {pwaPushCopy.notifyInsights}
         </label>
         <label className={styles.toggle}>
           <input

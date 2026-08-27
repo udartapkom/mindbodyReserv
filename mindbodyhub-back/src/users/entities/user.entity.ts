@@ -61,6 +61,9 @@ export class User {
   @Column({ name: 'notify_daily_quote', default: false })
   notifyDailyQuote: boolean;
 
+  @Column({ name: 'notify_new_insights', default: false })
+  notifyNewInsights: boolean;
+
   @Column({ name: 'notify_tariff_expiry', default: true })
   notifyTariffExpiry: boolean;
 

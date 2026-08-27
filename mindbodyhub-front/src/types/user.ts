@@ -23,6 +23,7 @@ export type User = {
   notifySupportReplies: boolean;
   notifyNewMaterials: boolean;
   notifyDailyQuote: boolean;
+  notifyNewInsights: boolean;
   notifyTariffExpiry: boolean;
   createdAt: string;
   updatedAt: string;
@@ -34,6 +35,7 @@ export type UpdateProfilePayload = {
   notifySupportReplies?: boolean;
   notifyNewMaterials?: boolean;
   notifyDailyQuote?: boolean;
+  notifyNewInsights?: boolean;
   notifyTariffExpiry?: boolean;
 };
 

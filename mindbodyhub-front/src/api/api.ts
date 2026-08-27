@@ -429,6 +429,32 @@ export type QuotesPageResponse = {
   hasMore: boolean;
 };
 
+export type InsightListItem = {
+  id: string;
+  title: string;
+  slug: string;
+  publishedAt: string | null;
+};
+
+export type Insight = {
+  id: string;
+  title: string;
+  slug: string;
+  status: string;
+  blocks: import("@/types/material").MaterialBlock[];
+  publishedAt: string | null;
+  createdAt?: string;
+  updatedAt?: string;
+};
+
+export type InsightsPageResponse = {
+  items: InsightListItem[];
+  total: number;
+  page: number;
+  limit: number;
+  hasMore: boolean;
+};
+
 export const quotes = {
   getFeed: async (page = 1, limit = 10) => {
     const params = new URLSearchParams({
@@ -444,6 +470,24 @@ export const quotes = {
     return fetchWithAuth(`${getApiBaseUrl()}/quotes/cabinet/today`).then((res) =>
       checkResponse<Quote | null>(res),
     );
+  },
+};
+
+export const insights = {
+  getFeed: async (page = 1, limit = 10) => {
+    const params = new URLSearchParams({
+      page: String(page),
+      limit: String(limit),
+    });
+    return fetchWithAuth(`${getApiBaseUrl()}/insights/cabinet?${params}`).then(
+      (res) => checkResponse<InsightsPageResponse>(res),
+    );
+  },
+
+  getBySlug: async (slug: string) => {
+    return fetchWithAuth(
+      `${getApiBaseUrl()}/insights/cabinet/${encodeURIComponent(slug)}`,
+    ).then((res) => checkResponse<Insight>(res));
   },
 };
 

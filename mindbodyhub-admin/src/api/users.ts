@@ -52,6 +52,14 @@ export const usersApi = {
     return normalizeUser(user);
   },
 
+  resetPassword: async (id: string, newPassword: string): Promise<void> => {
+    await fetchWithAuth(`${getApiBaseUrl()}/users/${id}/password`, {
+      method: 'PATCH',
+      headers: authHeaders(),
+      body: JSON.stringify({ newPassword }),
+    }).then((res) => checkResponse<{ success: true }>(res));
+  },
+
   uploadAvatar: async (id: string, file: File): Promise<User> => {
     const formData = new FormData();
     formData.append('file', file);

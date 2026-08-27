@@ -15,3 +15,10 @@ CREATE TABLE IF NOT EXISTS tariff_expiry_reminders (
 
 CREATE INDEX IF NOT EXISTS idx_tariff_expiry_reminders_user_id
   ON tariff_expiry_reminders (user_id);
+
+DO $$
+BEGIN
+  IF EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'mindbodyhub') THEN
+    EXECUTE 'ALTER TABLE tariff_expiry_reminders OWNER TO mindbodyhub';
+  END IF;
+END $$;

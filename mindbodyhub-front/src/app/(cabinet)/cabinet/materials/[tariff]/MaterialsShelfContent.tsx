@@ -3,14 +3,15 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { problems, type Quote } from '@/api/api';
+import { problems } from '@/api/api';
 import type { Problem } from '@/api/responsesTypes';
 import { useAuth } from '@/context/AuthContext';
+import { REGISTERED_ACCESS_TYPE } from '@/types/material';
 import {
   canAccessMaterialShelf,
   getMaterialShelfLabel,
-  isPaidMaterialShelf,
-  type PaidMaterialShelf,
+  isCabinetMaterialShelf,
+  type CabinetMaterialShelf,
 } from '@/utils/materialAccess';
 import styles from './page.module.scss';
 
@@ -25,14 +26,19 @@ function matchesQuery(material: Problem, query: string): boolean {
 }
 
 function MaterialsShelfContent({ tariff }: MaterialsShelfContentProps) {
-  if (!isPaidMaterialShelf(tariff)) {
+  if (!isCabinetMaterialShelf(tariff)) {
     notFound();
   }
 
-  const shelf = tariff as PaidMaterialShelf;
-  const { user } = useAuth();
-  const hasAccess = canAccessMaterialShelf(shelf, user?.tariff);
+  const shelf = tariff as CabinetMaterialShelf;
+  const { user, isAuthenticated } = useAuth();
+  const hasAccess = canAccessMaterialShelf(
+    shelf,
+    user?.tariff,
+    isAuthenticated,
+  );
   const label = getMaterialShelfLabel(shelf);
+  const isRegisteredShelf = shelf === REGISTERED_ACCESS_TYPE;
 
   const [materials, setMaterials] = useState<Problem[]>([]);
   const [isLoading, setIsLoading] = useState(hasAccess);
@@ -92,17 +98,23 @@ function MaterialsShelfContent({ tariff }: MaterialsShelfContentProps) {
           </Link>
           <h1 className={styles.shelf__title}>{label}</h1>
           <p className={styles.shelf__lead}>
-            Этот раздел доступен только на тарифе «{label}».
+            {isRegisteredShelf
+              ? 'Этот раздел доступен всем зарегистрированным пользователям.'
+              : `Этот раздел доступен только на тарифе «${label}».`}
           </p>
         </header>
         <div className={styles.shelf__empty}>
           <p className={styles.shelf__emptyTitle}>Раздел закрыт</p>
           <p className={styles.shelf__emptyText}>
-            Подключите подходящий тариф, чтобы открыть материалы полки «{label}».
+            {isRegisteredShelf
+              ? 'Войдите в аккаунт, чтобы открыть материалы.'
+              : `Подключите подходящий тариф, чтобы открыть материалы полки «${label}».`}
           </p>
-          <Link className={styles.shelf__cta} href="/price">
-            Смотреть тарифы
-          </Link>
+          {!isRegisteredShelf ? (
+            <Link className={styles.shelf__cta} href="/price">
+              Смотреть тарифы
+            </Link>
+          ) : null}
         </div>
       </section>
     );
@@ -121,7 +133,9 @@ function MaterialsShelfContent({ tariff }: MaterialsShelfContentProps) {
         </Link>
         <h1 className={styles.shelf__title}>{label}</h1>
         <p className={styles.shelf__lead}>
-          Только материалы тарифа «{label}».
+          {isRegisteredShelf
+            ? 'Материалы для всех зарегистрированных.'
+            : `Только материалы тарифа «${label}».`}
           {!isLoading ? ` Сейчас: ${materials.length}.` : null}
         </p>
       </header>

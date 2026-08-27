@@ -10,7 +10,7 @@ const shortLabels: Record<string, string> = {
   '/cabinet': 'Главная',
   '/cabinet/materials': 'Материалы',
   '/cabinet/support': 'Помощь',
-  '/cabinet/faq': 'FAQ',
+  '/cabinet/insights': 'Инсайты',
   '/cabinet/profile': 'Профиль',
 };
 

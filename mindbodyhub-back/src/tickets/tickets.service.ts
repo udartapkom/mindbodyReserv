@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { PushNotifyService } from '../notifications/push-notify.service';
 import { VkNotifyService } from '../notifications/vk-notify.service';
+import { UsersService } from '../users/users.service';
 import { TicketMessage } from './entities/ticket-message.entity';
 import { Ticket } from './entities/ticket.entity';
 import {
@@ -31,6 +32,7 @@ export class TicketsService {
     private readonly ticketsRepository: Repository<Ticket>,
     @InjectRepository(TicketMessage)
     private readonly messagesRepository: Repository<TicketMessage>,
+    private readonly usersService: UsersService,
     private readonly vkNotify: VkNotifyService,
     private readonly pushNotify: PushNotifyService,
   ) {}
@@ -90,6 +92,52 @@ export class TicketsService {
       phone: saved.phone,
       message: saved.message,
       source: saved.source,
+    });
+
+    return saved;
+  }
+
+  /** Admin starts a conversation with a registered user (first message from admin). */
+  async createByAdmin(
+    adminUserId: string,
+    userId: string,
+    message: string,
+  ): Promise<Ticket> {
+    const user = await this.usersService.findById(userId);
+    if (!user) {
+      throw new NotFoundException('Пользователь не найден');
+    }
+
+    const body = message.trim();
+    const name = [user.firstName, user.lastName]
+      .filter(Boolean)
+      .join(' ')
+      .trim();
+
+    const ticket = this.ticketsRepository.create({
+      name: name || user.phone,
+      phone: user.phone,
+      message: body,
+      source: TicketSource.CABINET,
+      userId: user.id,
+      status: TicketStatus.IN_PROGRESS,
+      adminNote: null,
+    });
+
+    const saved = await this.ticketsRepository.save(ticket);
+
+    await this.messagesRepository.save(
+      this.messagesRepository.create({
+        ticketId: saved.id,
+        authorType: TicketMessageAuthor.ADMIN,
+        authorUserId: adminUserId,
+        body,
+      }),
+    );
+
+    void this.pushNotify.notifySupportReply(user.id, {
+      ticketId: saved.id,
+      preview: body,
     });
 
     return saved;

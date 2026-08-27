@@ -284,6 +284,12 @@
     text-align: center;
   }
 
+  &__fieldHint {
+    @include m.text14-400;
+    margin: -8px 0 14px;
+    color: v.$text-light-color;
+  }
+
   &__fields {
     display: flex;
     flex-direction: column;

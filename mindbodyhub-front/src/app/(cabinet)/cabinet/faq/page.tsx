@@ -1,8 +1,6 @@
+import { redirect } from 'next/navigation';
+
+/** Legacy FAQ stub — replaced by Insights. */
 export default function CabinetFaqPage() {
-    return (
-        <section>
-            <h1>Вопросы и ответы</h1>
-            <p>Раздел FAQ</p>
-        </section>
-    );
+  redirect('/cabinet/insights');
 }

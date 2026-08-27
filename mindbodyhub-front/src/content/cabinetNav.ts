@@ -10,6 +10,6 @@ export const cabinetNavItems: CabinetNavItem[] = [
     { href: '/cabinet/materials', label: 'Материалы', icon: 'pencil' },
     { href: '/cabinet/quotes', label: 'Цитаты', icon: 'quote' },
     { href: '/cabinet/support', label: 'Поддержка', icon: 'headset' },
-    { href: '/cabinet/faq', label: 'Вопросы и ответы', icon: 'question' },
+    { href: '/cabinet/insights', label: 'Инсайты', icon: 'brain' },
     { href: '/cabinet/profile', label: 'Профиль', icon: 'user' },
 ];

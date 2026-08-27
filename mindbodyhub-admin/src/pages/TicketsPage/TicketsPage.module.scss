@@ -24,10 +24,53 @@
     margin: 0;
   }
 
+  &__headerActions {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 12px;
+  }
+
   &__filters {
     display: flex;
     gap: 8px;
     flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+
+  &__userList {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    max-height: 220px;
+    overflow: auto;
+    margin-bottom: 14px;
+    padding: 4px;
+    border: 1px solid v.$color-border;
+    border-radius: 8px;
+    background: v.$white-color;
+  }
+
+  &__userOption {
+    @include m.text14-400;
+    width: 100%;
+    text-align: left;
+    padding: 10px 12px;
+    border: none;
+    border-radius: 6px;
+    background: transparent;
+    color: v.$text-dark-color;
+    cursor: pointer;
+
+    &:hover {
+      background: v.$light-accent-color;
+    }
+
+    &_active {
+      background: v.$light-accent-color;
+      color: v.$accent-color;
+      font-weight: 500;
+    }
   }
 
   &__filterBtn {

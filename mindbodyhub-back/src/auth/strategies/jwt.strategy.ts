@@ -30,11 +30,13 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       throw new UnauthorizedException();
     }
 
-    const user = await this.usersService.findById(payload.sub);
+    let user = await this.usersService.findById(payload.sub);
 
     if (!user || !user.isActive) {
       throw new UnauthorizedException();
     }
+
+    user = await this.usersService.ensureTariffNotExpired(user);
 
     return {
       id: user.id,

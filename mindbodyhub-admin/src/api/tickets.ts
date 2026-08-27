@@ -2,6 +2,11 @@ import { getApiBaseUrl } from './api';
 import { authHeaders, checkResponse, fetchWithAuth } from './http';
 import type { Ticket, TicketMessage, UpdateTicketPayload } from '@/types/ticket';
 
+export type CreateAdminTicketPayload = {
+  userId: string;
+  message: string;
+};
+
 export const ticketsApi = {
   getAll: (): Promise<Ticket[]> =>
     fetchWithAuth(`${getApiBaseUrl()}/tickets`, {
@@ -11,6 +16,13 @@ export const ticketsApi = {
   getById: (id: string): Promise<Ticket> =>
     fetchWithAuth(`${getApiBaseUrl()}/tickets/${id}`, {
       headers: authHeaders(),
+    }).then((res) => checkResponse<Ticket>(res)),
+
+  createForUser: (payload: CreateAdminTicketPayload): Promise<Ticket> =>
+    fetchWithAuth(`${getApiBaseUrl()}/tickets/admin`, {
+      method: 'POST',
+      headers: authHeaders(),
+      body: JSON.stringify(payload),
     }).then((res) => checkResponse<Ticket>(res)),
 
   update: (id: string, payload: UpdateTicketPayload): Promise<Ticket> =>

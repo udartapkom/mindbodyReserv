@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation';
 import {
-  isPaidMaterialShelf,
-  type PaidMaterialShelf,
+  isCabinetMaterialShelf,
+  type CabinetMaterialShelf,
 } from '@/utils/materialAccess';
 import MaterialsShelfContent from './MaterialsShelfContent';
 
@@ -11,9 +11,9 @@ type PageProps = {
 
 export default async function CabinetMaterialsShelfPage({ params }: PageProps) {
   const { tariff } = await params;
-  if (!isPaidMaterialShelf(tariff)) {
+  if (!isCabinetMaterialShelf(tariff)) {
     notFound();
   }
 
-  return <MaterialsShelfContent tariff={tariff as PaidMaterialShelf} />;
+  return <MaterialsShelfContent tariff={tariff as CabinetMaterialShelf} />;
 }

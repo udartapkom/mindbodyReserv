@@ -34,5 +34,9 @@ export type MaterialReaderShellProps = {
     materialId?: string;
     offsetForCabinetNav?: boolean;
   };
+  /** Default true. Insights omit TOC («Содержание»). */
+  showToc?: boolean;
+  /** Default true. Insights omit reading-progress chrome. */
+  enableScrollAids?: boolean;
   className?: string;
 };

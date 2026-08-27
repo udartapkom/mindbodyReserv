@@ -19,6 +19,7 @@ import type { AuthUser } from '../auth/decorators/current-user.decorator';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { detectImageFromBuffer } from '../common/utils/image-magic.util';
+import { AdminResetPasswordDto } from './dto/admin-reset-password.dto';
 import { AdminUpdateUserDto } from './dto/admin-update-user.dto';
 import { User } from './entities/user.entity';
 import { toPublicProfile } from './user.mapper';
@@ -121,6 +122,21 @@ export class UsersController {
     }
 
     return this.toEnrichedProfile(user);
+  }
+
+  @Patch(':id/password')
+  @Roles(UserRole.ADMIN)
+  async resetPassword(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() dto: AdminResetPasswordDto,
+  ): Promise<{ success: true }> {
+    const existing = await this.usersService.findById(id);
+
+    if (!existing) {
+      throw new NotFoundException('User not found');
+    }
+
+    return this.authService.adminResetPassword(id, dto.newPassword);
   }
 
   @Post(':id/avatar')

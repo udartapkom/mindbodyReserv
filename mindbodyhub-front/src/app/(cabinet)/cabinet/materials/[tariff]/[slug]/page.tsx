@@ -1,8 +1,8 @@
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 import {
-  isPaidMaterialShelf,
-  type PaidMaterialShelf,
+  isCabinetMaterialShelf,
+  type CabinetMaterialShelf,
 } from '@/utils/materialAccess';
 import MaterialDetailContent from './MaterialDetailContent';
 
@@ -17,13 +17,13 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 export default async function CabinetMaterialDetailPage({ params }: PageProps) {
   const { tariff, slug } = await params;
-  if (!isPaidMaterialShelf(tariff)) {
+  if (!isCabinetMaterialShelf(tariff)) {
     notFound();
   }
 
   return (
     <MaterialDetailContent
-      tariff={tariff as PaidMaterialShelf}
+      tariff={tariff as CabinetMaterialShelf}
       slug={slug}
     />
   );

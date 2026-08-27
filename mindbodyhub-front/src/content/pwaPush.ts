@@ -1,7 +1,7 @@
 export const pwaPushCopy = {
   title: "Уведомления",
   subtitle:
-    "Получайте пуш о ответах поддержки, новых материалах, цитате дня и окончании тарифа. На iPhone нужен ярлык на экране.",
+    "Получайте пуш о ответах поддержки, новых материалах, инсайтах, цитате дня и окончании тарифа. На iPhone нужен ярлык на экране.",
   enableButton: "Включить уведомления",
   enabledStatus: "Уведомления включены на этом устройстве.",
   deniedStatus:
@@ -13,6 +13,7 @@ export const pwaPushCopy = {
   prefsTitle: "Что присылать",
   notifySupport: "Ответы техподдержки",
   notifyMaterials: "Новые материалы",
+  notifyInsights: "Новые инсайты",
   notifyQuote: "Цитата дня",
   notifyTariffExpiry: "Окончание тарифа",
   prefsSaved: "Настройки уведомлений сохранены",

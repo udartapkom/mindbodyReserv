@@ -1,6 +1,7 @@
 import {
   ConflictException,
   Injectable,
+  NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
@@ -180,7 +181,8 @@ export class AuthService {
       throw new UnauthorizedException();
     }
 
-    return this.enrichPublicProfile(user);
+    const freshUser = await this.usersService.ensureTariffNotExpired(user);
+    return this.enrichPublicProfile(freshUser);
   }
 
   async updateProfile(
@@ -194,6 +196,7 @@ export class AuthService {
       notifySupportReplies: dto.notifySupportReplies,
       notifyNewMaterials: dto.notifyNewMaterials,
       notifyDailyQuote: dto.notifyDailyQuote,
+      notifyNewInsights: dto.notifyNewInsights,
       notifyTariffExpiry: dto.notifyTariffExpiry,
     });
 
@@ -250,11 +253,31 @@ export class AuthService {
     return { success: true };
   }
 
+  /** Admin-forced password set — does not require the current password. */
+  async adminResetPassword(
+    userId: string,
+    newPassword: string,
+  ): Promise<{ success: true }> {
+    const user = await this.usersService.findById(userId);
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    const passwordHash = await argon2.hash(newPassword);
+    await this.usersService.updatePassword(userId, passwordHash);
+    await this.revokeAllRefreshTokens(userId);
+
+    return { success: true };
+  }
+
   private async issueTokens(user: User): Promise<AuthTokensResponse> {
+    const freshUser = await this.usersService.ensureTariffNotExpired(user);
+
     const accessPayload: AccessTokenPayload = {
-      sub: user.id,
-      phone: user.phone,
-      role: user.role,
+      sub: freshUser.id,
+      phone: freshUser.phone,
+      role: freshUser.role,
       type: 'access',
     };
 
@@ -271,7 +294,7 @@ export class AuthService {
 
     await this.refreshTokensRepository.save(
       this.refreshTokensRepository.create({
-        userId: user.id,
+        userId: freshUser.id,
         tokenHash: this.hashToken(refreshToken),
         expiresAt,
       }),
@@ -280,7 +303,7 @@ export class AuthService {
     return {
       accessToken,
       refreshToken,
-      user: await this.enrichAuthUserSummary(user),
+      user: await this.enrichAuthUserSummary(freshUser),
     };
   }
 

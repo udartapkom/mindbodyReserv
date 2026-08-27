@@ -1,0 +1,18 @@
+@use '../../../../../styles/mixins' as m;
+@use '../../../../../styles/variables' as v;
+
+.wrap {
+  max-width: 720px;
+}
+
+.hint {
+  @include m.text16-400;
+  margin: 0;
+  color: v.$text-light-color;
+}
+
+.error {
+  @include m.text16-400;
+  margin: 0;
+  color: v.$color-error;
+}

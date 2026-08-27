@@ -228,6 +228,36 @@ export class PushNotifyService {
     );
   }
 
+  /** Insights are available on any tariff — notify all opted-in active users. */
+  async notifyNewInsight(insight: {
+    title: string;
+    slug: string;
+  }): Promise<void> {
+    if (!this.isConfigured()) {
+      return;
+    }
+
+    const users = await this.usersRepository.find({
+      where: {
+        isActive: true,
+        notifyNewInsights: true,
+      },
+      select: ['id'],
+    });
+
+    if (users.length === 0) {
+      return;
+    }
+
+    const payload: PushPayload = {
+      title: 'Новый инсайт',
+      body: insight.title,
+      url: `/cabinet/insights/${insight.slug}`,
+    };
+
+    await Promise.all(users.map((user) => this.sendToUser(user.id, payload)));
+  }
+
   private async findMaterialRecipients(
     materialTariffType: string,
   ): Promise<string[]> {
@@ -250,11 +280,11 @@ export class PushNotifyService {
     slug: string;
     tariffType: string;
   }): string {
-    if (
-      material.tariffType === FREE_ACCESS_TYPE ||
-      material.tariffType === REGISTERED_ACCESS_TYPE
-    ) {
+    if (material.tariffType === FREE_ACCESS_TYPE) {
       return `/problems/${material.slug}`;
+    }
+    if (material.tariffType === REGISTERED_ACCESS_TYPE) {
+      return `/cabinet/materials/${REGISTERED_ACCESS_TYPE}/${material.slug}`;
     }
     return `/cabinet/materials/${material.tariffType}/${material.slug}`;
   }

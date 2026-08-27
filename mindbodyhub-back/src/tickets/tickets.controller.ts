@@ -16,6 +16,7 @@ import { Public } from '../auth/decorators/public.decorator';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { UsersService } from '../users/users.service';
 import { UserRole } from '../users/user-role.enum';
+import { CreateAdminTicketDto } from './dto/create-admin-ticket.dto';
 import { CreateCabinetTicketDto } from './dto/create-cabinet-ticket.dto';
 import { CreateTicketMessageDto } from './dto/create-ticket-message.dto';
 import { CreateTicketDto } from './dto/create-ticket.dto';
@@ -119,6 +120,21 @@ export class TicketsController {
   async findAll(): Promise<TicketDto[]> {
     const tickets = await this.ticketsService.findAll();
     return tickets.map((ticket) => toTicketDto(ticket));
+  }
+
+  @Post('admin')
+  @Roles(UserRole.ADMIN, UserRole.EDITOR)
+  async createByAdmin(
+    @CurrentUser() user: AuthUser,
+    @Body() dto: CreateAdminTicketDto,
+  ): Promise<TicketDto> {
+    const ticket = await this.ticketsService.createByAdmin(
+      user.id,
+      dto.userId,
+      dto.message,
+    );
+    const messages = await this.ticketsService.findMessages(ticket.id);
+    return toTicketDto(ticket, messages);
   }
 
   @Get(':id')

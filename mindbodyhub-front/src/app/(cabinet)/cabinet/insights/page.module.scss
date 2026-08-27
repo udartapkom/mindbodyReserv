@@ -1,0 +1,80 @@
+@use '../../../../styles/mixins' as m;
+@use '../../../../styles/variables' as v;
+
+.insights {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  max-width: 720px;
+
+  &__header {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  &__title {
+    @include m.text32-600;
+    margin: 0;
+  }
+
+  &__lead {
+    @include m.text16-500;
+    margin: 0;
+    color: v.$text-light-color;
+  }
+
+  &__error {
+    @include m.text14-400;
+    margin: 0;
+    color: v.$color-error;
+  }
+
+  &__hint {
+    @include m.text16-400;
+    margin: 0;
+    color: v.$text-light-color;
+  }
+
+  &__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  &__card {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 20px;
+    border: 1px solid v.$color-border;
+    border-radius: 16px;
+    background: v.$white-color;
+    box-shadow: v.$block-shadow;
+    text-decoration: none;
+    color: inherit;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+
+    &:hover {
+      border-color: rgba(v.$accent-color, 0.45);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
+    }
+  }
+
+  &__date {
+    @include m.text14-400;
+    color: v.$text-light-color;
+  }
+
+  &__cardTitle {
+    @include m.text16-500;
+  }
+
+  &__sentinel {
+    height: 1px;
+    width: 100%;
+  }
+}

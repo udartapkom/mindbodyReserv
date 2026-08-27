@@ -22,6 +22,7 @@ export function normalizeUser(raw: Partial<User> & Pick<User, 'id' | 'phone' | '
     notifySupportReplies: raw.notifySupportReplies ?? true,
     notifyNewMaterials: raw.notifyNewMaterials ?? false,
     notifyDailyQuote: raw.notifyDailyQuote ?? false,
+    notifyNewInsights: raw.notifyNewInsights ?? false,
     notifyTariffExpiry: raw.notifyTariffExpiry ?? true,
     createdAt: raw.createdAt ?? '',
     updatedAt: raw.updatedAt ?? '',

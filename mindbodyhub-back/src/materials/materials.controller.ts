@@ -113,16 +113,18 @@ export class MaterialsController {
     return materials.map(toMaterialDto);
   }
 
-  /** Paid cabinet shelves — exact tariffType only (trial|popular|vip). */
+  /** Cabinet shelves — registered (any auth user) + paid exact shelves. */
   @Get('cabinet/:tariffType')
   async findCabinetShelf(
     @Param('tariffType') tariffType: string,
     @CurrentUser() user: AuthUser,
   ): Promise<MaterialDto[]> {
     const type = tariffType.trim();
-    if (!isPaidTariffShelf(type)) {
+    const allowed =
+      type === REGISTERED_ACCESS_TYPE || isPaidTariffShelf(type);
+    if (!allowed) {
       throw new BadRequestException(
-        'Раздел материалов: укажите trial, popular или vip',
+        'Раздел материалов: укажите registered, trial, popular или vip',
       );
     }
 
@@ -132,7 +134,11 @@ export class MaterialsController {
         userTariff: user.tariff,
       })
     ) {
-      throw new ForbiddenException('Раздел доступен на более высоком тарифе');
+      throw new ForbiddenException(
+        type === REGISTERED_ACCESS_TYPE
+          ? 'Раздел доступен зарегистрированным пользователям'
+          : 'Раздел доступен на соответствующем тарифе',
+      );
     }
 
     const materials = await this.materialsService.findPublishedExact(type);

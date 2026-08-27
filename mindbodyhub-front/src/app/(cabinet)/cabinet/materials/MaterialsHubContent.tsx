@@ -2,21 +2,25 @@
 
 import Link from 'next/link';
 import { useAuth } from '@/context/AuthContext';
+import { REGISTERED_ACCESS_TYPE } from '@/types/material';
 import {
+  CABINET_MATERIAL_SHELVES,
   canAccessMaterialShelf,
   getMaterialShelfLabel,
-  PAID_MATERIAL_SHELVES,
+  isPaidMaterialShelf,
 } from '@/utils/materialAccess';
 import styles from './page.module.scss';
 
 const SHELF_DESCRIPTIONS: Record<string, string> = {
+  [REGISTERED_ACCESS_TYPE]:
+    'Материалы для всех зарегистрированных — доступны с любого аккаунта и тарифа.',
   trial: 'Материалы пробного тарифа — материалы тарифа Философия.',
   popular: 'Материалы популярного тарифа — Отношения & секс.',
   vip: 'Материалы VIP — Психология здоровья & бизнеса.',
 };
 
 function MaterialsHubContent() {
-  const { user } = useAuth();
+  const { user, isAuthenticated } = useAuth();
   const userTariff = user?.tariff;
 
   return (
@@ -24,13 +28,17 @@ function MaterialsHubContent() {
       <header className={styles.materials__header}>
         <h1 className={styles.materials__title}>Материалы</h1>
         <p className={styles.materials__lead}>
-          Выберите раздел тарифа. В каждом разделе — только материалы этой полки.
+          Выберите раздел. В каждом — только материалы этой полки.
         </p>
       </header>
 
       <ul className={styles.materials__shelves}>
-        {PAID_MATERIAL_SHELVES.map((shelf) => {
-          const open = canAccessMaterialShelf(shelf, userTariff);
+        {CABINET_MATERIAL_SHELVES.map((shelf) => {
+          const open = canAccessMaterialShelf(
+            shelf,
+            userTariff,
+            isAuthenticated,
+          );
           const label = getMaterialShelfLabel(shelf);
           return (
             <li key={shelf}>
@@ -51,7 +59,9 @@ function MaterialsHubContent() {
                   <p className={styles.materials__shelfMeta}>Открыть раздел →</p>
                 ) : (
                   <p className={styles.materials__shelfLocked}>
-                    Доступно на тарифе «{label}»
+                    {isPaidMaterialShelf(shelf)
+                      ? `Доступно на тарифе «${label}»`
+                      : 'Войдите в аккаунт, чтобы открыть раздел'}
                   </p>
                 )}
               </Link>

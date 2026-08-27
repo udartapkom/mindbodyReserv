@@ -10,13 +10,13 @@ import { useMaterialBySlug } from "@/hooks/useMaterialBySlug";
 import {
   getMaterialAccessLabel,
   getMaterialShelfLabel,
-  type PaidMaterialShelf,
+  type CabinetMaterialShelf,
 } from "@/utils/materialAccess";
 import { getAdjacentMaterials } from "@/utils/materialToc";
 import styles from "./page.module.scss";
 
 type MaterialDetailContentProps = {
-  tariff: PaidMaterialShelf;
+  tariff: CabinetMaterialShelf;
   slug: string;
 };
 

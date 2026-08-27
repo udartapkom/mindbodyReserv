@@ -26,6 +26,7 @@ export type UpdateUserProfileData = {
   notifySupportReplies?: boolean;
   notifyNewMaterials?: boolean;
   notifyDailyQuote?: boolean;
+  notifyNewInsights?: boolean;
   notifyTariffExpiry?: boolean;
 };
 
@@ -55,6 +56,24 @@ export class UsersService {
 
   findByPhone(phone: string): Promise<User | null> {
     return this.usersRepository.findOne({ where: { phone } });
+  }
+
+  /**
+   * If paid tariff is past tariffExpiresAt, drop to free immediately.
+   * Complements the daily cron (cron alone misses when the API was down at 03:00 UTC).
+   */
+  async ensureTariffNotExpired(user: User): Promise<User> {
+    if (
+      user.tariff === UserTariff.FREE ||
+      !user.tariffExpiresAt ||
+      user.tariffExpiresAt.getTime() >= Date.now()
+    ) {
+      return user;
+    }
+
+    user.tariff = UserTariff.FREE;
+    user.tariffExpiresAt = null;
+    return this.usersRepository.save(user);
   }
 
   findAll(): Promise<User[]> {
@@ -114,6 +133,10 @@ export class UsersService {
 
     if (data.notifyDailyQuote !== undefined) {
       user.notifyDailyQuote = data.notifyDailyQuote;
+    }
+
+    if (data.notifyNewInsights !== undefined) {
+      user.notifyNewInsights = data.notifyNewInsights;
     }
 
     if (data.notifyTariffExpiry !== undefined) {

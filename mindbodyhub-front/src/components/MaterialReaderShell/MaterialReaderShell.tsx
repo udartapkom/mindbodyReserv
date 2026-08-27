@@ -21,9 +21,11 @@ function MaterialReaderShell({
   adjacent = null,
   layout = "site",
   scrollAids,
+  showToc = true,
+  enableScrollAids = true,
   className,
 }: MaterialReaderShellProps) {
-  const toc = extractMaterialToc(document.blocks);
+  const toc = showToc ? extractMaterialToc(document.blocks) : [];
   const readingTimeLabel = formatReadingTimeLabel(
     estimateReadingMinutes(document.blocks),
   );
@@ -43,10 +45,12 @@ function MaterialReaderShell({
 
   return (
     <div className={rootClass}>
-      <MaterialScrollAids
-        materialId={materialId}
-        offsetForCabinetNav={scrollAids?.offsetForCabinetNav}
-      />
+      {enableScrollAids ? (
+        <MaterialScrollAids
+          materialId={materialId}
+          offsetForCabinetNav={scrollAids?.offsetForCabinetNav}
+        />
+      ) : null}
       <div className={styles.backWrap}>
         <Link className={styles.back} href={back.href}>
           {back.label}
@@ -88,7 +92,9 @@ function MaterialReaderShell({
         <div className={styles.divider} />
 
         <div className={styles.body}>
-          <MaterialToc items={toc} className={styles.toc} />
+          {showToc ? (
+            <MaterialToc items={toc} className={styles.toc} />
+          ) : null}
           <div className={styles.main}>
             <MaterialContent blocks={document.blocks} />
             {adjacent ? (

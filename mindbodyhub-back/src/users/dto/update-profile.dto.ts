@@ -39,5 +39,9 @@ export class UpdateProfileDto {
 
   @IsOptional()
   @IsBoolean()
+  notifyNewInsights?: boolean;
+
+  @IsOptional()
+  @IsBoolean()
   notifyTariffExpiry?: boolean;
 }

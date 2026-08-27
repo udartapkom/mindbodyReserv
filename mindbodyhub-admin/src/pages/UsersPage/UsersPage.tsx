@@ -76,6 +76,7 @@ function UsersPage() {
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [mode, setMode] = useState<DrawerMode>(null);
   const [form, setForm] = useState<AdminUpdateUserPayload>({});
+  const [newPassword, setNewPassword] = useState('');
   const [saveError, setSaveError] = useState('');
   const [isSaving, setIsSaving] = useState(false);
   const [actionId, setActionId] = useState<string | null>(null);
@@ -123,6 +124,7 @@ function UsersPage() {
     setSelectedUser(user);
     setMode(nextMode);
     setSaveError('');
+    setNewPassword('');
     setAvatarPreview((prev) => {
       if (prev) URL.revokeObjectURL(prev);
       return null;
@@ -143,6 +145,7 @@ function UsersPage() {
     setSelectedUser(null);
     setMode(null);
     setSaveError('');
+    setNewPassword('');
     setAvatarPreview((prev) => {
       if (prev) URL.revokeObjectURL(prev);
       return null;
@@ -180,6 +183,13 @@ function UsersPage() {
       };
 
       const updated = await usersApi.update(selectedUser.id, payload);
+
+      const trimmedPassword = newPassword.trim();
+      if (trimmedPassword) {
+        await usersApi.resetPassword(selectedUser.id, trimmedPassword);
+        setNewPassword('');
+      }
+
       updateUserInList(updated);
       setMode('view');
     } catch (error) {
@@ -666,6 +676,23 @@ function UsersPage() {
                     />
                     Активен
                   </label>
+
+                  <label className={styles.usersPage__fieldLabel} htmlFor="newPassword">
+                    Сброс пароля
+                  </label>
+                  <input
+                    id="newPassword"
+                    className={styles.usersPage__input}
+                    type="password"
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                    placeholder="Оставьте пустым, чтобы не менять"
+                    autoComplete="new-password"
+                  />
+                  <p className={styles.usersPage__fieldHint}>
+                    Минимум 8 символов, заглавная буква, цифра и спецсимвол. После сброса
+                    все сессии пользователя завершатся.
+                  </p>
 
                   {saveError ? <p className={styles.usersPage__error}>{saveError}</p> : null}
 
